@@ -395,6 +395,11 @@ class DataList{
 				$orderBy[$i-1][$tob[0]] = (strtolower(trim($SortDirection))=='desc' ? 'desc' : 'asc');
 			}
 
+			/* clear FilterAnd for filters that are not defined (no FilterField) */
+			for($i = 1; $i <= (3 * $FiltersPerGroup); $i++){
+				if($FilterField[$i] == '') $FilterAnd[$i] = '';
+			}
+
 			$currDir=dirname(__FILE__).'/hooks'; // path to hooks folder
 			$uff="{$currDir}/{$this->TableName}.filters.{$mi['username']}.php"; // user-specific filter file
 			$gff="{$currDir}/{$this->TableName}.filters.{$mi['group']}.php"; // group-specific filter file
@@ -702,13 +707,7 @@ class DataList{
 					$buttonsCount++;
 				}
 
-				$quick_search_html .= '<div class="input-group" id="quick-search">';
-					$quick_search_html .= '<input type="text" name="SearchString" value="' . html_attr($SearchString) . '" class="form-control" placeholder="' . html_attr($this->QuickSearchText) . '">';
-					$quick_search_html .= '<span class="input-group-btn">';
-						$quick_search_html .= '<button name="Search_x" value="1" id="Search" type="submit" onClick="' . $resetSelection . ' document.myform.NoDV.value=1; return true;"  class="btn btn-default" title="' . html_attr($this->QuickSearchText) . '"><i class="glyphicon glyphicon-search"></i></button>';
-						$quick_search_html .= '<button name="NoFilter_x" value="1" id="NoFilter_x" type="submit" onClick="' . $resetSelection . ' document.myform.NoDV.value=1; return true;"  class="btn btn-default" title="' . html_attr($Translation['Reset Filters']) . '"><i class="glyphicon glyphicon-remove-circle"></i></button>';
-					$quick_search_html .= '</span>';
-				$quick_search_html .= '</div>';
+				$quick_search_html .= quick_search_html($SearchString, $this->QuickSearchText, $this->SeparateDV);
 			}else{
 				$buttons_all .= '<button class="btn btn-primary" type="button" id="sendToPrinter" onClick="window.print();"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print'] . '</button>';
 				$buttons_all .= '<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-remove-circle"></i> ' . $Translation['Cancel Printing'] . '</button>';
@@ -1307,7 +1306,7 @@ class DataList{
 		for($i = 1; $i <= datalist_filters_count * $FiltersPerGroup; $i++){
 			if(!isset($fand[$i]) && !isset($ffield[$i]) && !isset($fop[$i]) && !isset($fvalue[$i])) continue;
 
-			if((!$fvalue[$i] && !in_array($fop[$i], array('is-empty', 'is-not-empty'))) || !$ffield[$i]){
+			if(($fvalue[$i] == '' && !in_array($fop[$i], array('is-empty', 'is-not-empty'))) || !$ffield[$i]){
 				unset($fand[$i], $ffield[$i], $fop[$i], $fvalue[$i]);
 			}else{
 				if(!$fand[$i]) $fand[$i] = 'and';

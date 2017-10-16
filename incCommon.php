@@ -38,6 +38,7 @@
 		getUploadDir($dir) -- if dir is empty, returns upload dir configured in defaultLang.php, else returns $dir.
 		PrepareUploadedFile($FieldName, $MaxSize, $FileTypes='jpg|jpeg|gif|png', $NoRename=false, $dir="") -- validates and moves uploaded file for given $FieldName into the given $dir (or the default one if empty)
 		get_home_links($homeLinks, $default_classes, $tgroup) -- process $homeLinks array and return custom links for homepage. Applies $default_classes to links if links have classes defined, and filters links by $tgroup (using '*' matches all table_group values)
+		quick_search_html($search_term, $label, $separate_dv = true) -- returns HTML code for the quick search box.
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	*/
 
@@ -1253,6 +1254,34 @@ EOT;
 		$html = ob_get_contents();
 		ob_end_clean();
 
+		return $html;
+	}
+
+	#########################################################
+
+	function quick_search_html($search_term, $label, $separate_dv = true){
+		global $Translation;
+
+		$safe_search = html_attr($search_term);
+		$safe_label = html_attr($label);
+		$safe_clear_label = html_attr($Translation['Reset Filters']);
+
+		if($separate_dv){
+			$reset_selection = "document.myform.SelectedID.value = '';";
+		}else{
+			$reset_selection = "document.myform.writeAttribute('novalidate', 'novalidate');";
+		}
+		$reset_selection .= ' document.myform.NoDV.value=1; return true;';
+
+		$html = <<<EOT
+		<div class="input-group" id="quick-search">
+			<input type="text" id="SearchString" name="SearchString" value="{$safe_search}" class="form-control" placeholder="{$safe_label}">
+			<span class="input-group-btn">
+				<button name="Search_x" value="1" id="Search" type="submit" onClick="{$reset_selection}" class="btn btn-default" title="{$safe_label}"><i class="glyphicon glyphicon-search"></i></button>
+				<button name="ClearQuickSearch" value="1" id="ClearQuickSearch" type="submit" onClick="\$j('#SearchString').val(''); {$reset_selection}" class="btn btn-default" title="{$safe_clear_label}"><i class="glyphicon glyphicon-remove-circle"></i></button>
+			</span>
+		</div>
+EOT;
 		return $html;
 	}
 

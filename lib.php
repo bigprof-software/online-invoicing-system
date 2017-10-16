@@ -46,8 +46,8 @@ include("$currDir/admin/incFunctions.php");
 	if(count($_REQUEST)) $_REQUEST = array_trim($_REQUEST);
 
 	// include nav menu links and hook functions
-	@include("$currDir/hooks/links-navmenu.php");
 	@include_once("$currDir/hooks/__global.php");
+	@include_once("$currDir/hooks/links-navmenu.php");
 
 	// check sessions config
 	$noPathCheck = true;
