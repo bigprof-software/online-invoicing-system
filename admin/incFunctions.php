@@ -41,6 +41,7 @@
 		Request($var) -- class for providing sanitized values of given request variable (->sql, ->attr, ->html, ->url, and ->raw)
 		Notification() -- class for providing a standardized html notifications functionality
 		sendmail($mail) -- sends an email using PHPMailer as specified in the assoc array $mail( ['to', 'name', 'subject', 'message', 'debug'] ) and returns true on success or an error message on failure
+		safe_html($str) -- sanitize HTML strings, and apply nl2br() to non-HTML ones
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	*/
 	########################################################################
@@ -52,7 +53,8 @@
 				'clients' => 'Clients',
 				'invoices' => 'Invoices',
 				'invoice_items' => 'Invoice items',
-				'items' => 'Items'
+				'items' => 'Items',
+				'item_prices' => 'Prices History'
 			);
 
 			return $arrTables;
@@ -246,7 +248,7 @@
 					$errorNum = db_errno($db_link);
 					$errorMsg = htmlspecialchars(db_error($db_link));
 
-					if(getLoggedAdmin()) $errorMsg .= "<pre>{$Translation['query:']}\n" . htmlspecialchars($statment) . "</pre><i class=\"text-right\">{$Translation['admin-only info']}</i>";
+					if(getLoggedAdmin()) $errorMsg .= "<pre class=\"ltr\">{$Translation['query:']}\n" . htmlspecialchars($statment) . "</pre><i class=\"text-right\">{$Translation['admin-only info']}</i>";
 
 					echo Notification::placeholder();
 					echo Notification::show(array(
@@ -309,14 +311,14 @@
 	########################################################################
 	function logOutUser(){
 		// destroys current session
-		$_SESSION = array();
 		if(isset($_COOKIE[session_name()])){
-			setcookie(session_name(), '', time()-42000, '/');
+			setcookie(session_name(), '', time() - 42000, '/');
 		}
-		if(isset($_COOKIE['online_inovicing_system_rememberMe'])){
-			setcookie('online_inovicing_system_rememberMe', '', time()-42000);
+		if(isset($_COOKIE[session_name() . '_rememberMe'])){
+			setcookie(session_name() . '_rememberMe', '', time() - 42000);
 		}
 		session_destroy();
+		$_SESSION = array();
 	}
 	########################################################################
 	function getPKFieldName($tn){
@@ -360,12 +362,12 @@
 		echo "<div class=\"alert alert-danger\">{$msg}</div>";
 	}
 	########################################################################
-	function redirect($URL, $absolute=FALSE){
-		$fullURL = ($absolute ? $URL : application_url($URL));
-		if(!headers_sent()) header("Location: $fullURL");
+	function redirect($url, $absolute = false){
+		$fullURL = ($absolute ? $url : application_url($url));
+		if(!headers_sent()) header("Location: {$fullURL}");
 
-		echo "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0;url=$fullURL\">";
-		echo "<br><br><a href=\"$fullURL\">Click here</a> if you aren't automatically redirected.";
+		echo "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0;url={$fullURL}\">";
+		echo "<br><br><a href=\"{$fullURL}\">Click here</a> if you aren't automatically redirected.";
 		exit;
 	}
 	########################################################################
@@ -875,6 +877,7 @@
 	}
 	#########################################################
 	function html_attr($str){
+		if(version_compare(PHP_VERSION, '5.2.3') >= 0) return htmlspecialchars($str, ENT_QUOTES, datalist_db_encoding, false);
 		return htmlspecialchars($str, ENT_QUOTES, datalist_db_encoding);
 	}
 	#########################################################
@@ -1100,4 +1103,13 @@
 
 		return true;
 	}
+	#########################################################
+	function safe_html($str){
+		/* if $str has no HTML tags, apply nl2br */
+		if($str == strip_tags($str)) return nl2br($str);
 
+		$hc = new CI_Input();
+		$hc->charset = datalist_db_encoding;
+
+		return $hc->xss_clean($str);
+	}

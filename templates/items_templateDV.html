@@ -10,6 +10,7 @@
 			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm" href="invoice_items_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="invoice_items_link"><i class="glyphicon glyphicon-list-alt"></i> Invoice items</a>
 			<a class="visible-xs btn btn-default btn-lg btn-block hidden vspacer-sm" href="invoice_items_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="xs_invoice_items_link"><i class="glyphicon glyphicon-list-alt"></i> Invoice items</a>
 			<input type="hidden" id="invoice_items_hclink" value="invoice_items_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>">
+			<input type="hidden" id="item_prices_hclink" value="item_prices_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>">
 			<div class="clearfix"></div>
 		</div>
 	</div>
@@ -28,16 +29,18 @@
 				</div>
 
 				<div class="form-group">
-					<label for="item_description" class="control-label col-lg-3">Item description</label>
+					<label for="item_description" class="control-label col-lg-3">Item Description</label>
 					<div class="col-lg-9">
-						<input maxlength="1000" type="text" class="form-control" name="item_description" id="item_description" value="<%%VALUE(item_description)%%>">
+						<input maxlength="" type="text" class="form-control" name="item_description" id="item_description" value="<%%VALUE(item_description)%%>">
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label for="unit_price" class="control-label col-lg-3">Unit price</label>
+					<label for="unit_price" class="control-label col-lg-3">Unit price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#unit_price-description"></i></label>
 					<div class="col-lg-9">
-						<input maxlength="13" type="text" class="form-control" name="unit_price" id="unit_price" value="<%%VALUE(unit_price)%%>">
+						<span class="help-block collapse" id="unit_price-description"><div class="alert alert-info">This is the most recent unit price as obtained from "Item prices" table.</div></span>
+
+						<div class="form-control-static" id="unit_price"><%%VALUE(unit_price)%%></div>
 					</div>
 				</div>
 
@@ -168,7 +171,7 @@
 					parent_id = $j(this).prevAll('[type=radio]').eq(0).val();
 				}
 
-				if(parent_id != '{empty_value}'){
+				if(parent_id != '{empty_value}' && parent_id != undefined && parent_id != ''){
 					var parent_link = $j(this).parents('.form-group').children('label').data('parent_link');
 					switch(parent_link){
 						case 'view_parent_hidden':

@@ -41,7 +41,7 @@
 				<div class="form-group">
 					<label for="unit_price" class="control-label col-lg-3">Unit price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#unit_price-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="unit_price-description"><div class="alert alert-info">This field displays the item price, once the item is selected.</div></span>
+						<span class="help-block collapse" id="unit_price-description"><div class="alert alert-info">This field displays the item price, once the item is selected. Item price is retrieved from <a href="item_prices_view.php">Prices History</a> table based on the invoice date.</div></span>
 
 						<input maxlength="13" type="text" class="form-control" name="unit_price" id="unit_price" value="<%%VALUE(unit_price)%%>">
 					</div>
@@ -101,6 +101,9 @@
 				}, 2000);
 			}
 
+			/* enable DV action buttons to float on scrolling down the form */
+			enable_dvab_floating();
+
 			$j('select, input[type=text], textarea').not(':disabled').eq(0).focus();
 			$j('form').eq(0).change(function(){
 				if($j(this).data('already_changed')) return;
@@ -147,7 +150,7 @@
 					parent_id = $j(this).prevAll('[type=radio]').eq(0).val();
 				}
 
-				if(parent_id != '{empty_value}'){
+				if(parent_id != '{empty_value}' && parent_id != undefined && parent_id != ''){
 					var parent_link = $j(this).parents('.form-group').children('label').data('parent_link');
 					switch(parent_link){
 						case 'view_parent_hidden':

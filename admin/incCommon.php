@@ -1,7 +1,7 @@
 <?php
 	error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
-	if(!defined('datalist_db_encoding')) define('datalist_db_encoding', 'iso-8859-1');
+	if(!defined('datalist_db_encoding')) define('datalist_db_encoding', 'UTF-8');
 	if(function_exists('set_magic_quotes_runtime')) @set_magic_quotes_runtime(0);
 	ob_start();
 	$currDir = dirname(__FILE__);
@@ -48,9 +48,9 @@
 	@ini_set('session.serialize_handler', 'php');
 	@ini_set('session.use_cookies', '1');
 	@ini_set('session.use_only_cookies', '1');
-	@header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
-	@header('Pragma: no-cache'); // HTTP 1.0.
-	@header('Expires: 0'); // Proxies.
+	@ini_set('session.use_strict_mode', '1');
+	@session_cache_expire(2);
+	@session_cache_limiter($_SERVER['REQUEST_METHOD'] == 'POST' ? 'private' : 'nocache');
 	@session_name('online_inovicing_system');
 	session_start();
 
@@ -62,10 +62,9 @@
 	########################################################################
 
 	// do we have an admin log out request?
-	if($_GET['signOut']==1){
+	if(isset($_GET['signOut'])){
 		logOutUser();
-		?><META HTTP-EQUIV="Refresh" CONTENT="0;url=../index.php"><?php
-		exit;
+		redirect('../index.php?signIn=1');
 	}
 
 	// is there a logged user?

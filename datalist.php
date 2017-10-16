@@ -109,6 +109,11 @@ class DataList{
 		}
 	}
 
+	function set_headers(){
+		@header('Content-Type: text/html; charset=' . datalist_db_encoding);
+		@header('X-Frame-Options: SAMEORIGIN'); // prevent iframing by other sites to prevent clickjacking
+	}
+
 	function Render(){
 	// get post and get variables
 		global $Translation;
@@ -138,16 +143,6 @@ class DataList{
 		$Search_x = $_REQUEST["Search_x"];
 		$SearchString = (get_magic_quotes_gpc() ? stripslashes($_REQUEST['SearchString']) : $_REQUEST['SearchString']);
 		$CSV_x = $_REQUEST["CSV_x"];
-
-		$FilterAnd = $_REQUEST["FilterAnd"];
-		$FilterField = $_REQUEST["FilterField"];
-		$FilterOperator = $_REQUEST["FilterOperator"];
-		if(is_array($_REQUEST['FilterValue'])){
-			foreach($_REQUEST['FilterValue'] as $fvi=>$fv){
-				$FilterValue[$fvi]=(get_magic_quotes_gpc() ? stripslashes($fv) : $fv);
-			}
-		}
-
 		$Print_x = $_REQUEST['Print_x'];
 		$PrintTV = $_REQUEST['PrintTV'];
 		$PrintDV = $_REQUEST['PrintDV'];
@@ -160,29 +155,11 @@ class DataList{
 		$addNew_x = $_REQUEST['addNew_x'];
 		$dvprint_x = $_REQUEST['dvprint_x'];
 		$DisplayRecords = (in_array($_REQUEST['DisplayRecords'], array('user', 'group')) ? $_REQUEST['DisplayRecords'] : 'all');
+		list($FilterAnd, $FilterField, $FilterOperator, $FilterValue) = $this->validate_filters($_REQUEST, $FiltersPerGroup);
 
 		$mi = getMemberInfo();
 
-	// insure authenticity of user inputs:
-		if(is_array($FilterAnd)){
-			foreach($FilterAnd as $i => $f){
-				if($f && !preg_match('/^(and|or)$/i', trim($f))){
-					$FilterAnd[$i] = 'and';
-				}
-			}
-		}
-		if(is_array($FilterField)){
-			foreach($FilterField as $ffi => $ffn){
-				$FilterField[$ffi] = intval($ffn);
-			}
-		}
-		if(is_array($FilterOperator)){
-			foreach($FilterOperator as $i => $f){
-				if($f && !in_array(trim($f), array_keys($GLOBALS['filter_operators']))){
-					$FilterOperator[$i] = '';
-				}
-			}
-		}
+	// validate user inputs
 		if(!preg_match('/^\s*[1-9][0-9]*\s*(asc|desc)?(\s*,\s*[1-9][0-9]*\s*(asc|desc)?)*$/i', $SortField)){
 			$SortField = '';
 		}
@@ -246,7 +223,7 @@ class DataList{
 			elseif($Filter_x != '') $current_view = 'Filters';
 		}
 
-		$this->HTML .= '<div class="row"><div class="col-xs-11 col-md-12">';
+		$this->HTML .= '<div class="row"><div class="col-xs-12">';
 		$this->HTML .= '<form ' . (datalist_image_uploads_exist ? 'enctype="multipart/form-data" ' : '') . 'method="post" name="myform" action="' . $this->ScriptFileName . '">';
 		if($Embedded) $this->HTML .= '<input name="Embedded" value="1" type="hidden">';
 		if($AutoClose) $this->HTML .= '<input name="AutoClose" value="1" type="hidden">';
@@ -284,7 +261,7 @@ class DataList{
 			foreach($this->filterers as $filterer => $caption){
 				if($_REQUEST['filterer_' . $filterer] != '') $filtersGET .= '&filterer_' . $filterer . '=' . urlencode($_REQUEST['filterer_' . $filterer]);
 			}
-			for($i = 1; $i <= (20 * $FiltersPerGroup); $i++){ // Number of filters allowed
+			for($i = 1; $i <= (datalist_filters_count * $FiltersPerGroup); $i++){ // Number of filters allowed
 				if($FilterField[$i] != '' && $FilterOperator[$i] != '' && ($FilterValue[$i] != '' || strpos($FilterOperator[$i], 'empty'))){
 					$filtersGET .= "&FilterAnd[{$i}]={$FilterAnd[$i]}&FilterField[{$i}]={$FilterField[$i]}&FilterOperator[{$i}]={$FilterOperator[$i]}&FilterValue[{$i}]=" . urlencode($FilterValue[$i]);
 				}
@@ -349,7 +326,7 @@ class DataList{
 			foreach($this->filterers as $filterer => $caption){
 				if($_REQUEST['filterer_' . $filterer] != '') $filtersGET .= '&filterer_' . $filterer . '=' . urlencode($_REQUEST['filterer_' . $filterer]);
 			}
-			for($i = 1; $i <= (20 * $FiltersPerGroup); $i++){ // Number of filters allowed
+			for($i = 1; $i <= (datalist_filters_count * $FiltersPerGroup); $i++){ // Number of filters allowed
 				if($FilterField[$i] != '' && $FilterOperator[$i] != '' && ($FilterValue[$i] != '' || strpos($FilterOperator[$i], 'empty'))){
 					$filtersGET .= "&FilterAnd[{$i}]={$FilterAnd[$i]}&FilterField[{$i}]={$FilterField[$i]}&FilterOperator[{$i}]={$FilterOperator[$i]}&FilterValue[{$i}]=" . urlencode($FilterValue[$i]);
 				}
@@ -379,7 +356,7 @@ class DataList{
 
 		elseif($SaveFilter_x != '' && $this->AllowSavingFilters){
 			$filter_link = $_SERVER['HTTP_REFERER'] . '?SortField=' . urlencode($SortField) . '&SortDirection=' . $SortDirection . '&';
-			for($i = 1; $i <= (20 * $FiltersPerGroup); $i++){ // Number of filters allowed
+			for($i = 1; $i <= (datalist_filters_count * $FiltersPerGroup); $i++){ // Number of filters allowed
 				if(($FilterField[$i] != '' || $i == 1) && $FilterOperator[$i] != '' && ($FilterValue[$i] != '' || strpos($FilterOperator[$i], 'empty'))){
 					$filter_link .= urlencode("FilterAnd[$i]") . '=' . urlencode($FilterAnd[$i]) . '&';
 					$filter_link .= urlencode("FilterField[$i]") . '=' . urlencode($FilterField[$i]) . '&';
@@ -453,6 +430,7 @@ class DataList{
 				$this->HTML .= '<input name="FirstRecord" type="hidden" value="1" />';
 
 				$this->ContentType='filters';
+			$this->set_headers();
 			return;
 		}
 
@@ -987,8 +965,6 @@ class DataList{
 			$this->HTML .= "\n\t</tr>\n\n</thead>\n\n<tbody><!-- tv data below -->\n";
 
 			$i = 0;
-			$hc=new CI_Input();
-			$hc->charset = datalist_db_encoding;
 			if($RecordCount){
 				$i = $FirstRecord;
 			// execute query for table view
@@ -1036,14 +1012,7 @@ class DataList{
 						for($j = 0; $j < $FieldCountTV; $j++){
 							$fieldTVCaption = current(array_slice($this->QueryFieldsTV, $j, 1));
 
-							$fd = $row[$j];
-							/* apply nl2br only for non-HTML data */
-							if($row[$j] == strip_tags($row[$j])){
-								$fd = nl2br($row[$j]);
-							}
-
-							/* Sanitize output against XSS attacks */
-							$fd = $hc->xss_clean($fd);
+							$fd = safe_html($row[$j]);
 
 							/*
 								the TV template could contain field placeholders in the format 
@@ -1297,6 +1266,62 @@ class DataList{
 		if(is_file($dvJSHooksFile) && ($this->ContentType=='detailview' || $this->ContentType=='tableview+detailview')){
 			$this->HTML.="\n<script src=\"hooks/{$this->TableName}-dv.js\"></script>\n";
 		}
+
+		$this->set_headers();
+		return;
 	}
+
+	function validate_filters($req, $FiltersPerGroup = 4, $is_gpc = true){
+		$fand = (isset($req['FilterAnd']) && is_array($req['FilterAnd']) ? $req['FilterAnd'] : array());
+		$ffield = (isset($req['FilterField']) && is_array($req['FilterField']) ? $req['FilterField'] : array());
+		$fop = (isset($req['FilterOperator']) && is_array($req['FilterOperator']) ? $req['FilterOperator'] : array());
+		$fvalue = (isset($req['FilterValue']) && is_array($req['FilterValue']) ? $req['FilterValue'] : array());
+
+		/* make sure FilterAnd is either 'and' or 'or' */
+		foreach($fand as $i => $f){
+			if($f && !preg_match('/^(and|or)$/i', trim($f))) $fand[$i] = 'and';
+		}
+
+		/* FilterField must be a positive integer */
+		foreach($ffield as $ffi => $ffn){
+			$ffield[$ffi] = max(0, intval($ffn));
+		}
+
+		/* validate FilterOperator */
+		foreach($fop as $i => $f){
+			$fop[$i] = trim($f);
+			if($f && !in_array(trim($f), array_keys($GLOBALS['filter_operators']))){
+				$fop[$i] = '';
+			}
+		}
+
+		/* undo magic quotes if gpc */
+		if($is_gpc){
+			foreach($fvalue as $fvi => $fv){
+				$fvalue[$fvi] = (get_magic_quotes_gpc() ? stripslashes($fv) : $fv);
+			}
+		}
+
+		/* clear fand, ffield and fop for filters having no value or no field */
+		/* assume equal-to op and 'and' if missing */
+		for($i = 1; $i <= datalist_filters_count * $FiltersPerGroup; $i++){
+			if(!isset($fand[$i]) && !isset($ffield[$i]) && !isset($fop[$i]) && !isset($fvalue[$i])) continue;
+
+			if((!$fvalue[$i] && !in_array($fop[$i], array('is-empty', 'is-not-empty'))) || !$ffield[$i]){
+				unset($fand[$i], $ffield[$i], $fop[$i], $fvalue[$i]);
+			}else{
+				if(!$fand[$i]) $fand[$i] = 'and';
+				if(!$fop[$i]) $fop[$i] = 'equal-to';
+			}
+		}
+
+		/* set a default value of 'and' for FilterAnd at the beginning of each filter group if not set */
+		for($i = 1; $i <= datalist_filters_count * $FiltersPerGroup; $i += $FiltersPerGroup){
+			if(!isset($fand[$i])) $fand[$i] = 'and';
+		}
+
+		return array($fand, $ffield, $fop, $fvalue);
+	}
+
 }
 

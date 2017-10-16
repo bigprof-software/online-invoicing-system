@@ -119,10 +119,8 @@
 				</div>
 
 				<div class="form-group">
-					<label for="tax" class="control-label col-lg-3">Tax <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#tax-description"></i></label>
+					<label for="tax" class="control-label col-lg-3">Tax %</label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="tax-description"><div class="alert alert-info">Automatically calculated from invoice items.</div></span>
-
 						<input maxlength="12" type="text" class="form-control" name="tax" id="tax" value="<%%VALUE(tax)%%>">
 					</div>
 				</div>
@@ -144,8 +142,10 @@
 				</div>
 
 				<div class="form-group">
-					<label for="invoice_template" class="control-label col-lg-3">Invoice Template</label>
+					<label for="invoice_template" class="control-label col-lg-3">Invoice template <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#invoice_template-description"></i></label>
 					<div class="col-lg-9">
+						<span class="help-block collapse" id="invoice_template-description"><div class="alert alert-info">Choose the template to use when printing this invoice</div></span>
+
 						<%%COMBO(invoice_template)%%>
 					</div>
 				</div>
@@ -204,6 +204,9 @@
 				$j('.nicEdit-panelContain').parent().next().width('88%');
 				$j('.nicEdit-main').width('99%');
 			});
+			/* enable DV action buttons to float on scrolling down the form */
+			enable_dvab_floating();
+
 			$j('select, input[type=text], textarea').not(':disabled').eq(0).focus();
 			$j('form').eq(0).change(function(){
 				if($j(this).data('already_changed')) return;
@@ -282,7 +285,7 @@
 					parent_id = $j(this).prevAll('[type=radio]').eq(0).val();
 				}
 
-				if(parent_id != '{empty_value}'){
+				if(parent_id != '{empty_value}' && parent_id != undefined && parent_id != ''){
 					var parent_link = $j(this).parents('.form-group').children('label').data('parent_link');
 					switch(parent_link){
 						case 'view_parent_hidden':

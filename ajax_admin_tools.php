@@ -99,7 +99,7 @@
 			<div class="clearfix"></div>
 
 			<style>
-				#admin-tools-menu-button{ display: inline-block !important; }
+				#admin-tools-menu-button{ display: inline-block !important; margin: 0 1em; }
 				#admin-tools-menu{ padding: 1em 2em; }
 				#admin-tools-menu .dl-horizontal dd, #admin-tools-menu .dl-horizontal dt{ padding: 1em 0; }
 			</style>

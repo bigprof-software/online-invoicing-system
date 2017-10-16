@@ -9,14 +9,14 @@
 		'clients' => array(   
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
 			'name' => array('appgini' => 'VARCHAR(200) unique '),
-			'contact' => array('appgini' => 'VARCHAR(40) '),
+			'contact' => array('appgini' => 'VARCHAR(255) '),
 			'title' => array('appgini' => 'VARCHAR(40) '),
 			'address' => array('appgini' => 'TEXT '),
 			'city' => array('appgini' => 'VARCHAR(40) '),
 			'country' => array('appgini' => 'VARCHAR(40) '),
 			'phone' => array('appgini' => 'VARCHAR(100) '),
 			'email' => array('appgini' => 'VARCHAR(80) '),
-			'website' => array('appgini' => 'VARCHAR(40) '),
+			'website' => array('appgini' => 'VARCHAR(200) '),
 			'comments' => array('appgini' => 'TEXT ')
 		),
 		'invoices' => array(   
@@ -33,7 +33,7 @@
 			'client_comments' => array('appgini' => 'INT unsigned '),
 			'subtotal' => array('appgini' => 'DECIMAL(9,2) '),
 			'discount' => array('appgini' => 'DECIMAL(4,2) default \'0\' '),
-			'tax' => array('appgini' => 'DECIMAL(9,2) default \'0.1\' '),
+			'tax' => array('appgini' => 'DECIMAL(9,2) default \'0\' '),
 			'total' => array('appgini' => 'DECIMAL(9,2) default \'0\' '),
 			'comments' => array('appgini' => 'TEXT '),
 			'invoice_template' => array('appgini' => 'VARCHAR(100) ')
@@ -48,8 +48,14 @@
 		),
 		'items' => array(   
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'item_description' => array('appgini' => 'VARCHAR(1000) '),
+			'item_description' => array('appgini' => 'TEXT '),
 			'unit_price' => array('appgini' => 'DECIMAL(10,2) default \'0.00\' ')
+		),
+		'item_prices' => array(   
+			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
+			'item' => array('appgini' => 'INT unsigned '),
+			'price' => array('appgini' => 'DECIMAL(10,2) default \'0.00\' '),
+			'date' => array('appgini' => 'DATE ')
 		)
 	);
 

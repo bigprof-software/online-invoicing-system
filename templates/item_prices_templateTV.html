@@ -1,0 +1,10 @@
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the <%%SELECT%%> and <%%ENDSELECT%%> formatters around it-->
+
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- add the following to the item_prices_init() hook (in hooks/item_prices.php file) -->
+<!--     $options->ShowTableHeader = 0;     -->
+
+		<td id="item_prices-item-<%%VALUE(id)%%>" class="item_prices-item"><%%SELECT%%><%%VALUE(item)%%><%%ENDSELECT%%></td>
+		<td id="item_prices-price-<%%VALUE(id)%%>" class="item_prices-price text-right"><%%SELECT%%><%%VALUE(price)%%><%%ENDSELECT%%></td>
+		<td id="item_prices-date-<%%VALUE(id)%%>" class="item_prices-date"><%%SELECT%%><%%VALUE(date)%%><%%ENDSELECT%%></td>

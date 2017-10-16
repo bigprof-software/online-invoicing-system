@@ -264,7 +264,7 @@
 			if(!@is_writable("{$curr_dir}/images")){
 				$checks[] = array(
 					'class' => 'warning',
-					'message' => 'WARNING: <dfn><abbr title="' . dirname(__FILE__) . '/images">images</abbr></dfn> folder is not writeable. This will prevent file uploads from working correctly. Please set that folder as writeable (for example, <code>chmod 777</code> in linux.)'
+					'message' => '<div style="text-direction: ltr; text-align: left;">WARNING: <dfn><abbr title="' . dirname(__FILE__) . '/images">images</abbr></dfn> folder is not writeable. This will prevent file uploads from working correctly. Please set that folder as writeable.<br><br>For example, you might need to <code>chmod 777</code> using FTP, or if this is a linux system and you have shell access, better try using <code>chown -R www-data:www-data ' . dirname(__FILE__) . '</code>, replacing <i>www-data</i> with the actual username running the server process if necessary.</div>'
 				);
 			}
 

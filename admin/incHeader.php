@@ -14,9 +14,6 @@
 		<link id="browser_favicon" rel="shortcut icon" href="<?php echo PREPEND_PATH; ?>resources/table_icons/administrator.png">
 
 		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/initializr/css/bootstrap.css">
-		<!--[if gt IE 8]><!-->
-			<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/initializr/css/bootstrap-theme.css">
-		<!--<![endif]-->
 		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>dynamic.css.php">
 
 		<!--[if lt IE 9]>
@@ -151,10 +148,17 @@
 			.hidden-block{
 				display: none;
 			}
+			.menu-item-icon{
+				margin-right: .5em;
+			}
+			.rtl .menu-item-icon{
+				margin-right: inherit !important;
+				margin-left: .5em;
+			}
 		</style>
 	</head>
 	<body>
-	<div class="container theme-bootstrap theme-3d">
+	<div class="container theme-bootstrap theme-compact">
 
 		<!-- top navbar -->
 		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -165,7 +169,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="pageHome.php"><span class="text-primary"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></span></a>
+				<a class="navbar-brand" href="pageHome.php"><span class="text-info"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></span></a>
 			</div>
 
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -173,35 +177,36 @@
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-globe"></i> <?php echo $Translation['groups']; ?> <b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<li><a href="pageViewGroups.php"><?php echo $Translation['view groups']; ?></a></li>
-							<li><a href="pageEditGroup.php"><?php echo   $Translation['add group']  ; ?></a></li>
+							<li><a href="pageViewGroups.php"><i class="glyphicon menu-item-icon text-info glyphicon-eye-open"></i> <?php echo $Translation['view groups']; ?></a></li>
+							<li><a href="pageEditGroup.php"><i class="glyphicon menu-item-icon text-info glyphicon-plus"></i> <?php echo   $Translation['add group']  ; ?></a></li>
 							<li class="divider"></li>
-							<li><a href="pageEditGroup.php?groupID=<?php echo sqlValue("select groupID from membership_groups where name='" . makeSafe($adminConfig['anonymousGroup']) . "'"); ?>"><?php echo  $Translation['edit anonymous permissions'] ; ?></a></li>
+							<li><a href="pageEditGroup.php?groupID=<?php echo sqlValue("select groupID from membership_groups where name='" . makeSafe($adminConfig['anonymousGroup']) . "'"); ?>"><i class="glyphicon menu-item-icon text-info glyphicon-user"></i> <?php echo  $Translation['edit anonymous permissions'] ; ?></a></li>
 						</ul>
 					</li>
 
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> <?php echo $Translation['members']  ;?> <b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<li><a href="pageViewMembers.php"><?php echo $Translation['view members'] ; ?></a></li>
-							<li><a href="pageEditMember.php"><?php echo $Translation['add member']  ; ?></a></li>
+							<li><a href="pageViewMembers.php"><i class="glyphicon menu-item-icon text-info glyphicon-eye-open"></i> <?php echo $Translation['view members'] ; ?></a></li>
+							<li><a href="pageEditMember.php"><i class="glyphicon menu-item-icon text-info glyphicon-plus"></i> <?php echo $Translation['add member']  ; ?></a></li>
 							<li class="divider"></li>
-							<li><a href="pageViewRecords.php"><?php echo $Translation["view members' records"]; ?> </a></li>
+							<li><a href="pageViewRecords.php"><i class="glyphicon menu-item-icon text-info glyphicon-th"></i> <?php echo $Translation["view members' records"]; ?> </a></li>
 						</ul>
 					</li>
 
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation["utilities"] ; ?> <b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<li><a href="pageSettings.php"><?php echo $Translation["admin settings"]  ; ?></a></li>
+							<li><a href="pageSettings.php"><i class="glyphicon menu-item-icon text-info glyphicon-cog"></i> <?php echo $Translation["admin settings"]  ; ?></a></li>
 							<li class="divider"></li>
-							<li><a href="pageRebuildThumbnails.php"><?php echo  $Translation["rebuild thumbnails"]  ; ?></a></li>
-							<li><a href="pageRebuildFields.php"><?php echo  $Translation['rebuild fields'] ; ?></a></li>
-							<li><a href="pageUploadCSV.php"><?php echo $Translation['import CSV'] ; ?></a></li>
-							<li><a href="pageTransferOwnership.php"><?php echo $Translation['batch transfer'] ; ?></a></li>
-							<li><a href="pageMail.php?sendToAll=1"><?php echo $Translation['mail all users'] ; ?></a></li>
+							<li><a href="pageRebuildThumbnails.php"><i class="glyphicon menu-item-icon text-info glyphicon-picture"></i> <?php echo  $Translation["rebuild thumbnails"]  ; ?></a></li>
+							<li><a href="pageRebuildFields.php"><i class="glyphicon menu-item-icon text-info glyphicon-refresh"></i> <?php echo  $Translation['rebuild fields'] ; ?></a></li>
+							<li><a href="pageUploadCSV.php"><i class="glyphicon menu-item-icon text-info glyphicon-upload"></i> <?php echo $Translation['import CSV'] ; ?></a></li>
+							<li><a href="pageTransferOwnership.php"><i class="glyphicon menu-item-icon text-info glyphicon-random"></i> <?php echo $Translation['batch transfer'] ; ?></a></li>
+							<li><a href="pageMail.php?sendToAll=1"><i class="glyphicon menu-item-icon text-info glyphicon-envelope"></i> <?php echo $Translation['mail all users'] ; ?></a></li>
+							<li><a href="pageBackupRestore.php"><i class="glyphicon menu-item-icon text-info glyphicon-tasks"></i> <?php echo $Translation['database backups'] ; ?></a></li>
 							<li class="divider"></li>
-							<li><a href="http://forums.appgini.com" target="_blank"><i class="glyphicon glyphicon-new-window"></i> <?php echo $Translation['AppGini forum']; ?></a></li>
+							<li><a href="https://forums.appgini.com" target="_blank"><i class="glyphicon menu-item-icon text-info glyphicon-new-window"></i> <?php echo $Translation['AppGini forum']; ?></a></li>
 						</ul>
 					</li>
 

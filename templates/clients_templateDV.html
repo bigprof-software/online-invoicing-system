@@ -37,7 +37,7 @@
 				<div class="form-group">
 					<label for="contact" class="control-label col-lg-3">Contact</label>
 					<div class="col-lg-9">
-						<input maxlength="40" type="text" class="form-control" name="contact" id="contact" value="<%%VALUE(contact)%%>">
+						<input maxlength="255" type="text" class="form-control" name="contact" id="contact" value="<%%VALUE(contact)%%>">
 					</div>
 				</div>
 
@@ -97,7 +97,7 @@
 								<a id="website-link" href="link.php?t=clients&f=website&i=<%%VALUE(id)%%>" target="_blank"><%%VALUE(website)%%></a>
 								<label for="website"><button type="button" id="website-edit-link" class="btn btn-default hspacer-lg vspacer-sm" data-toggle="collapse" data-target="#website" title="<%%TRANSLATION(Edit)%%>"><i class="glyphicon glyphicon-pencil"></i></button></label>
 							</div>
-							<script>jQuery(function(){ var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;' || e_website == 'blank.gif') jQuery('#website-link').hide(); });</script><input maxlength="40" type="text" class="form-control collapse" name="website" id="website" value="<%%VALUE(website)%%>">					</div>
+							<script>jQuery(function(){ var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;' || e_website == 'blank.gif') jQuery('#website-link').hide(); });</script><input maxlength="200" type="text" class="form-control collapse" name="website" id="website" value="<%%VALUE(website)%%>">					</div>
 
 					</div>
 				</div>
@@ -163,6 +163,9 @@
 				$j('.nicEdit-panelContain').parent().next().width('88%');
 				$j('.nicEdit-main').width('99%');
 			});
+			/* enable DV action buttons to float on scrolling down the form */
+			enable_dvab_floating();
+
 			$j('select, input[type=text], textarea').not(':disabled').eq(0).focus();
 			$j('form').eq(0).change(function(){
 				if($j(this).data('already_changed')) return;
@@ -241,7 +244,7 @@
 					parent_id = $j(this).prevAll('[type=radio]').eq(0).val();
 				}
 
-				if(parent_id != '{empty_value}'){
+				if(parent_id != '{empty_value}' && parent_id != undefined && parent_id != ''){
 					var parent_link = $j(this).parents('.form-group').children('label').data('parent_link');
 					switch(parent_link){
 						case 'view_parent_hidden':

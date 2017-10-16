@@ -1,10 +1,14 @@
 <?php header('Content-type: text/css'); ?>
 
 @media (min-width: 768px){ .container{ width: 90% !important; } }
+@media (max-width: 767px){ .detail_view{ padding: 0; } }
 @media print{
 	a[href]:after{ content: "" !important; }
 	.container{ width: 98% !important; }
 }
+
+.rtl{ direction: rtl !important; }
+.ltr{ direction: ltr !important; }
 
 .navbar-brand{ text-transform: capitalize; }
 

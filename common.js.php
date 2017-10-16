@@ -1,5 +1,5 @@
 <?php
-	if(!defined('datalist_db_encoding')) define('datalist_db_encoding', 'iso-8859-1');
+	if(!defined('datalist_db_encoding')) define('datalist_db_encoding', 'UTF-8');
 	if(function_exists('date_default_timezone_set')) @date_default_timezone_set('America/New_York');
 
 	/* force caching */
@@ -124,7 +124,7 @@ jQuery(function(){
 		$j('.detail_view .img-responsive').css({'max-width' : parseInt($j('.detail_view').width() * full_img_factor) + 'px'});
 
 		/* remove labels from truncated buttons, leaving only glyphicons */
-		$j('.btn:truncated').each(function(){
+		$j('.btn.truncate:truncated').each(function(){
 			// hide text
 			var label = $j(this).html();
 			var mlabel = label.replace(/.*(<i.*?><\/i>).*/, '$1');
@@ -251,6 +251,10 @@ function invoice_items_validateData(){
 	return true;
 }
 function items_validateData(){
+	$j('.has-error').removeClass('has-error');
+	return true;
+}
+function item_prices_validateData(){
 	$j('.has-error').removeClass('has-error');
 	return true;
 }
