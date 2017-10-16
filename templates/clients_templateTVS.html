@@ -1,0 +1,19 @@
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the  and  formatters around it-->
+
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- add the following to the clients_init() hook (in hooks/clients.php file) -->
+<!--     $options->ShowTableHeader = 0;     -->
+
+		<td id="clients-name-<%%VALUE(id)%%>" class="clients-name"><%%VALUE(name)%%></td>
+		<td id="clients-contact-<%%VALUE(id)%%>" class="clients-contact"><%%VALUE(contact)%%></td>
+		<td id="clients-title-<%%VALUE(id)%%>" class="clients-title"><%%VALUE(title)%%></td>
+		<td id="clients-address-<%%VALUE(id)%%>" class="clients-address"><%%VALUE(address)%%></td>
+		<td id="clients-city-<%%VALUE(id)%%>" class="clients-city"><%%VALUE(city)%%></td>
+		<td id="clients-country-<%%VALUE(id)%%>" class="clients-country"><%%VALUE(country)%%></td>
+		<td id="clients-phone-<%%VALUE(id)%%>" class="clients-phone"><%%VALUE(phone)%%></td>
+		<td id="clients-email-<%%VALUE(id)%%>" class="clients-email"><a href="mailto:<%%VALUE(email)%%>" title="<%%VALUE(email)%%>" class="btn btn-default"><i class="glyphicon glyphicon-envelope text-info"></i></a></td>
+		<td id="clients-website-<%%VALUE(id)%%>" class="clients-website"><a href="link.php?t=clients&f=website&i=<%%VALUE(id)%%>" target="_blank"><%%VALUE(website)%%></a></td>
+		<script>$j(function(){
+			var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;') $j(/*<*/ '#clients-website-<%%VALUE(id)%%>' /*>*/).html('');
+		});</script>
