@@ -33,8 +33,6 @@
 
 	// drop-downs config
 	$lookups = array(   
-		'clients' => array(  
-		),
 		'invoices' => array(   
 			'client' => array(
 				'parent_table' => 'clients',
@@ -113,6 +111,8 @@
 				'list_type' => 0,
 				'not_null' => false
 			)
+		),
+		'clients' => array(  
 		),
 		'invoice_items' => array(   
 			'invoice' => array(

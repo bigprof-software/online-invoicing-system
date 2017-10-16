@@ -64,7 +64,7 @@
 			/* hide current table in homepage? */
 			$tChkHL = array_search($tn, array('invoice_items'));
 			/* allow homepage 'add new' for current table? */
-			$tChkAHAN = array_search($tn, array());
+			$tChkAHAN = array_search($tn, array('clients','items'));
 
 			$t_perm = getTablePermissions($tn);
 			$can_insert = $t_perm['insert'];

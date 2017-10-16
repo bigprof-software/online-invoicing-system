@@ -6,8 +6,6 @@
 	/*************************************/
 
 		$pcConfig = array(
-			'clients' => array(   
-			),
 			'invoices' => array(   
 				'client' => array(   
 					'parent-table' => 'clients',
@@ -15,7 +13,7 @@
 					'child-primary-key' => 'id',
 					'child-primary-key-index' => 0,
 					'tab-label' => 'Invoices',
-					'auto-close' => false,
+					'auto-close' => true,
 					'table-icon' => 'resources/table_icons/attributes_display.png',
 					'display-refresh' => true,
 					'display-add-new' => true,
@@ -34,6 +32,8 @@
 					'query' => "SELECT `invoices`.`id` as 'id', `invoices`.`code` as 'code', `invoices`.`status` as 'status', if(`invoices`.`date_due`,date_format(`invoices`.`date_due`,'%d/%m/%Y'),'') as 'date_due', IF(    CHAR_LENGTH(`clients1`.`name`), CONCAT_WS('',   `clients1`.`name`), '') as 'client', IF(    CHAR_LENGTH(`clients1`.`contact`), CONCAT_WS('',   `clients1`.`contact`), '') as 'client_contact', IF(    CHAR_LENGTH(`clients1`.`address`), CONCAT_WS('',   `clients1`.`address`), '') as 'client_address', IF(    CHAR_LENGTH(`clients1`.`phone`), CONCAT_WS('',   `clients1`.`phone`), '') as 'client_phone', IF(    CHAR_LENGTH(`clients1`.`email`), CONCAT_WS('',   `clients1`.`email`), '') as 'client_email', IF(    CHAR_LENGTH(`clients1`.`website`), CONCAT_WS('',   `clients1`.`website`), '') as 'client_website', IF(    CHAR_LENGTH(`clients1`.`comments`), CONCAT_WS('',   `clients1`.`comments`), '') as 'client_comments', FORMAT(`invoices`.`subtotal`, 2) as 'subtotal', `invoices`.`discount` as 'discount', FORMAT(`invoices`.`tax`, 2) as 'tax', FORMAT(`invoices`.`total`, 2) as 'total', `invoices`.`comments` as 'comments', `invoices`.`invoice_template` as 'invoice_template' FROM `invoices` LEFT JOIN `clients` as clients1 ON `clients1`.`id`=`invoices`.`client` "
 				)
 			),
+			'clients' => array(   
+			),
 			'invoice_items' => array(   
 				'invoice' => array(   
 					'parent-table' => 'invoices',
@@ -41,7 +41,7 @@
 					'child-primary-key' => 'id',
 					'child-primary-key-index' => 0,
 					'tab-label' => 'Invoice items',
-					'auto-close' => false,
+					'auto-close' => true,
 					'table-icon' => 'resources/table_icons/barcode.png',
 					'display-refresh' => true,
 					'display-add-new' => true,
@@ -65,7 +65,7 @@
 					'child-primary-key' => 'id',
 					'child-primary-key-index' => 0,
 					'tab-label' => 'Invoice items',
-					'auto-close' => false,
+					'auto-close' => true,
 					'table-icon' => 'resources/table_icons/barcode.png',
 					'display-refresh' => true,
 					'display-add-new' => true,
@@ -87,6 +87,30 @@
 			'items' => array(   
 			),
 			'item_prices' => array(   
+				'item' => array(   
+					'parent-table' => 'items',
+					'parent-primary-key' => 'id',
+					'child-primary-key' => 'id',
+					'child-primary-key-index' => 0,
+					'tab-label' => 'Price history',
+					'auto-close' => true,
+					'table-icon' => 'resources/table_icons/card_money.png',
+					'display-refresh' => true,
+					'display-add-new' => true,
+					'forced-where' => '',
+					'display-fields' => array(1 => 'Item', 2 => 'Price', 3 => 'Date'),
+					'display-field-names' => array(1 => 'item', 2 => 'price', 3 => 'date'),
+					'sortable-fields' => array(0 => '`item_prices`.`id`', 1 => '`item_prices`.`item`', 2 => '`item_prices`.`price`', 3 => '`item_prices`.`date`'),
+					'records-per-page' => 10,
+					'default-sort-by' => 3,
+					'default-sort-direction' => 'desc',
+					'open-detail-view-on-click' => true,
+					'display-page-selector' => true,
+					'show-page-progress' => true,
+					'template' => 'children-item_prices',
+					'template-printable' => 'children-item_prices-printable',
+					'query' => "SELECT `item_prices`.`id` as 'id', IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') as 'item', `item_prices`.`price` as 'price', if(`item_prices`.`date`,date_format(`item_prices`.`date`,'%d/%m/%Y'),'') as 'date' FROM `item_prices` LEFT JOIN `items` as items1 ON `items1`.`id`=`item_prices`.`item` "
+				)
 			)
 		);
 

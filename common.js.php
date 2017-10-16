@@ -237,13 +237,13 @@ function fix_table_responsive_width(){
 	}
 }
 
-function clients_validateData(){
-	$j('.has-error').removeClass('has-error');
-	return true;
-}
 function invoices_validateData(){
 	$j('.has-error').removeClass('has-error');
 	if(!$j('[name=status]:checked').length){ modal_window({ message: '<div class="alert alert-danger"><?php echo addslashes($Translation['field not null']); ?></div>', title: "<?php echo addslashes($Translation['error:']); ?> Status", close: function(){ $j('[name=status]').focus(); $j('[name=status]').parents('.form-group').addClass('has-error'); } }); return false; };
+	return true;
+}
+function clients_validateData(){
+	$j('.has-error').removeClass('has-error');
 	return true;
 }
 function invoice_items_validateData(){

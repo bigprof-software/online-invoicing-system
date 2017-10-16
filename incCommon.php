@@ -46,8 +46,8 @@
 	function getTableList($skip_authentication = false){
 		$arrAccessTables = array();
 		$arrTables = array(   
-			'clients' => array('Clients', '', 'resources/table_icons/administrator.png', 'None'),
 			'invoices' => array('Invoices', '', 'resources/table_icons/attributes_display.png', 'None'),
+			'clients' => array('Clients', '', 'resources/table_icons/administrator.png', 'None'),
 			'invoice_items' => array('Invoice items', '', 'resources/table_icons/barcode.png', 'None'),
 			'items' => array('Items', '', 'resources/table_icons/installer_box.png', 'None'),
 			'item_prices' => array('Prices History', 'This is where you can keep track of the price history of each item and update item prices when they change.', 'resources/table_icons/card_money.png', 'None')
@@ -137,8 +137,8 @@
 
 	function get_sql_fields($table_name){
 		$sql_fields = array(   
-			'clients' => "`clients`.`id` as 'id', `clients`.`name` as 'name', `clients`.`contact` as 'contact', `clients`.`title` as 'title', `clients`.`address` as 'address', `clients`.`city` as 'city', `clients`.`country` as 'country', CONCAT_WS('-', LEFT(`clients`.`phone`,3), MID(`clients`.`phone`,4,3), RIGHT(`clients`.`phone`,4)) as 'phone', `clients`.`email` as 'email', `clients`.`website` as 'website', `clients`.`comments` as 'comments'",
 			'invoices' => "`invoices`.`id` as 'id', `invoices`.`code` as 'code', `invoices`.`status` as 'status', if(`invoices`.`date_due`,date_format(`invoices`.`date_due`,'%d/%m/%Y'),'') as 'date_due', IF(    CHAR_LENGTH(`clients1`.`name`), CONCAT_WS('',   `clients1`.`name`), '') as 'client', IF(    CHAR_LENGTH(`clients1`.`contact`), CONCAT_WS('',   `clients1`.`contact`), '') as 'client_contact', IF(    CHAR_LENGTH(`clients1`.`address`), CONCAT_WS('',   `clients1`.`address`), '') as 'client_address', IF(    CHAR_LENGTH(`clients1`.`phone`), CONCAT_WS('',   `clients1`.`phone`), '') as 'client_phone', IF(    CHAR_LENGTH(`clients1`.`email`), CONCAT_WS('',   `clients1`.`email`), '') as 'client_email', IF(    CHAR_LENGTH(`clients1`.`website`), CONCAT_WS('',   `clients1`.`website`), '') as 'client_website', IF(    CHAR_LENGTH(`clients1`.`comments`), CONCAT_WS('',   `clients1`.`comments`), '') as 'client_comments', FORMAT(`invoices`.`subtotal`, 2) as 'subtotal', `invoices`.`discount` as 'discount', FORMAT(`invoices`.`tax`, 2) as 'tax', FORMAT(`invoices`.`total`, 2) as 'total', `invoices`.`comments` as 'comments', `invoices`.`invoice_template` as 'invoice_template'",
+			'clients' => "`clients`.`id` as 'id', `clients`.`name` as 'name', `clients`.`contact` as 'contact', `clients`.`title` as 'title', `clients`.`address` as 'address', `clients`.`city` as 'city', `clients`.`country` as 'country', CONCAT_WS('-', LEFT(`clients`.`phone`,3), MID(`clients`.`phone`,4,3), RIGHT(`clients`.`phone`,4)) as 'phone', `clients`.`email` as 'email', `clients`.`website` as 'website', `clients`.`comments` as 'comments'",
 			'invoice_items' => "`invoice_items`.`id` as 'id', IF(    CHAR_LENGTH(`invoices1`.`code`), CONCAT_WS('',   `invoices1`.`code`), '') as 'invoice', IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') as 'item', FORMAT(`invoice_items`.`unit_price`, 2) as 'unit_price', FORMAT(`invoice_items`.`qty`, 3) as 'qty', FORMAT(`invoice_items`.`price`, 2) as 'price'",
 			'items' => "`items`.`id` as 'id', `items`.`item_description` as 'item_description', `items`.`unit_price` as 'unit_price'",
 			'item_prices' => "`item_prices`.`id` as 'id', IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') as 'item', `item_prices`.`price` as 'price', if(`item_prices`.`date`,date_format(`item_prices`.`date`,'%d/%m/%Y'),'') as 'date'"
@@ -155,16 +155,16 @@
 
 	function get_sql_from($table_name, $skip_permissions = false){
 		$sql_from = array(   
-			'clients' => "`clients` ",
 			'invoices' => "`invoices` LEFT JOIN `clients` as clients1 ON `clients1`.`id`=`invoices`.`client` ",
+			'clients' => "`clients` ",
 			'invoice_items' => "`invoice_items` LEFT JOIN `invoices` as invoices1 ON `invoices1`.`id`=`invoice_items`.`invoice` LEFT JOIN `items` as items1 ON `items1`.`id`=`invoice_items`.`item` ",
 			'items' => "`items` ",
 			'item_prices' => "`item_prices` LEFT JOIN `items` as items1 ON `items1`.`id`=`item_prices`.`item` "
 		);
 
 		$pkey = array(   
-			'clients' => 'id',
 			'invoices' => 'id',
+			'clients' => 'id',
 			'invoice_items' => 'id',
 			'items' => 'id',
 			'item_prices' => 'id'
@@ -215,19 +215,6 @@
 	function get_defaults($table){
 		/* array of tables and their fields, with default values (or empty), excluding automatic values */
 		$defaults = array(
-			'clients' => array(
-				'id' => '',
-				'name' => '',
-				'contact' => '',
-				'title' => '',
-				'address' => '',
-				'city' => '',
-				'country' => '',
-				'phone' => '',
-				'email' => '',
-				'website' => '',
-				'comments' => ''
-			),
 			'invoices' => array(
 				'id' => '',
 				'code' => '',
@@ -246,6 +233,19 @@
 				'total' => '0',
 				'comments' => '',
 				'invoice_template' => ''
+			),
+			'clients' => array(
+				'id' => '',
+				'name' => '',
+				'contact' => '',
+				'title' => '',
+				'address' => '',
+				'city' => '',
+				'country' => '',
+				'phone' => '',
+				'email' => '',
+				'website' => '',
+				'comments' => ''
 			),
 			'invoice_items' => array(
 				'id' => '',

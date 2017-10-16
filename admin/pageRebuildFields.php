@@ -6,19 +6,6 @@
 
 	/* application schema as created in AppGini */
 	$schema = array(   
-		'clients' => array(   
-			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'name' => array('appgini' => 'VARCHAR(200) unique '),
-			'contact' => array('appgini' => 'VARCHAR(255) '),
-			'title' => array('appgini' => 'VARCHAR(40) '),
-			'address' => array('appgini' => 'TEXT '),
-			'city' => array('appgini' => 'VARCHAR(40) '),
-			'country' => array('appgini' => 'VARCHAR(40) '),
-			'phone' => array('appgini' => 'VARCHAR(100) '),
-			'email' => array('appgini' => 'VARCHAR(80) '),
-			'website' => array('appgini' => 'VARCHAR(200) '),
-			'comments' => array('appgini' => 'TEXT ')
-		),
 		'invoices' => array(   
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
 			'code' => array('appgini' => 'VARCHAR(20) unique '),
@@ -37,6 +24,19 @@
 			'total' => array('appgini' => 'DECIMAL(9,2) default \'0\' '),
 			'comments' => array('appgini' => 'TEXT '),
 			'invoice_template' => array('appgini' => 'VARCHAR(100) ')
+		),
+		'clients' => array(   
+			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
+			'name' => array('appgini' => 'VARCHAR(200) unique '),
+			'contact' => array('appgini' => 'VARCHAR(255) '),
+			'title' => array('appgini' => 'VARCHAR(40) '),
+			'address' => array('appgini' => 'TEXT '),
+			'city' => array('appgini' => 'VARCHAR(40) '),
+			'country' => array('appgini' => 'VARCHAR(40) '),
+			'phone' => array('appgini' => 'VARCHAR(100) '),
+			'email' => array('appgini' => 'VARCHAR(80) '),
+			'website' => array('appgini' => 'VARCHAR(200) '),
+			'comments' => array('appgini' => 'TEXT ')
 		),
 		'invoice_items' => array(   
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),

@@ -50,8 +50,8 @@
 	if(!function_exists('getTableList')){
 		function getTableList($skip_authentication = false){
 			$arrTables = array(   
-				'clients' => 'Clients',
 				'invoices' => 'Invoices',
+				'clients' => 'Clients',
 				'invoice_items' => 'Invoice items',
 				'items' => 'Items',
 				'item_prices' => 'Prices History'
