@@ -13,7 +13,7 @@
 	*/
 	$block_classes = array(
 		'first' => array(
-			'grid_column' => 'col-sm-12 col-md-8 col-lg-6',
+			'grid_column' => 'col-sm-6 col-md-4 col-lg-3',
 			'panel' => 'panel-warning',
 			'link' => 'btn-warning'
 		),

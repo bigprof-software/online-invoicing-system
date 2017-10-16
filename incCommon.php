@@ -51,7 +51,7 @@
 			'clients' => array('Clients', '', 'resources/table_icons/administrator.png', 'None'),
 			'invoice_items' => array('Invoice items', '', 'resources/table_icons/barcode.png', 'None'),
 			'items' => array('Items', '', 'resources/table_icons/installer_box.png', 'None'),
-			'item_prices' => array('Prices History', 'This is where you can keep track of the price history of each item and update item prices when they change.', 'resources/table_icons/card_money.png', 'None')
+			'item_prices' => array('Prices History', '', 'resources/table_icons/card_money.png', 'None')
 		);
 		if($skip_authentication || getLoggedAdmin()) return $arrTables;
 

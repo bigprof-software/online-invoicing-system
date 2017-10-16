@@ -278,7 +278,7 @@ function invoices_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 	$combo_client = new DataCombo;
 	// combobox: invoice_template
 	$combo_invoice_template = new Combo;
-	$combo_invoice_template->ListType = 2;
+	$combo_invoice_template->ListType = 0;
 	$combo_invoice_template->MultipleSeparator = ', ';
 	$combo_invoice_template->ListBoxHeight = 10;
 	$combo_invoice_template->RadiosPerLine = 1;
@@ -492,7 +492,7 @@ function invoices_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 		$jsReadOnly .= "\tjQuery('#discount').replaceWith('<div class=\"form-control-static\" id=\"discount\">' + (jQuery('#discount').val() || '') + '</div>');\n";
 		$jsReadOnly .= "\tjQuery('#tax').replaceWith('<div class=\"form-control-static\" id=\"tax\">' + (jQuery('#tax').val() || '') + '</div>');\n";
 		$jsReadOnly .= "\tjQuery('#total').replaceWith('<div class=\"form-control-static\" id=\"total\">' + (jQuery('#total').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('input[name=invoice_template]').parent().html('<div class=\"form-control-static\">' + jQuery('input[name=invoice_template]:checked').next().text() + '</div>')\n";
+		$jsReadOnly .= "\tjQuery('#invoice_template').replaceWith('<div class=\"form-control-static\" id=\"invoice_template\">' + (jQuery('#invoice_template').val() || '') + '</div>'); jQuery('#invoice_template-multi-selection-help').hide();\n";
 		$jsReadOnly .= "\tjQuery('.select2-container').hide();\n";
 
 		$noUploads = true;

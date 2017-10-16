@@ -43,7 +43,7 @@ $j(function () {
 			cache: false,
 			success: function (response) {
 				$j('#subtotal').val(response)
-				console.log("ok");
+				//console.log("ok");
 			},
 		});
 
@@ -55,10 +55,10 @@ $j(function () {
 
 				var subtotal = "0.00";
 			}
-			console.log(subtotal);
+			//console.log(subtotal);
 
 			var discount = $j('#discount').val();
-			console.log(discount)
+			//console.log(discount)
 
 			if (($j('#discount').val().length == 0)||(!$j.isNumeric(discount))) {
 
@@ -68,7 +68,7 @@ $j(function () {
 			}
 
 			var tax = $j('#tax').val();
-			console.log(tax)
+			//console.log(tax)
 
 				if (($j('#tax').val().length == 0)||(!$j.isNumeric(tax))) {
 
@@ -92,8 +92,8 @@ $j(function () {
 			}
 			
 			var tax = $j('#tax').val("0.00");
-			console.log(tax)
-			console.log(subtotal);
+			//console.log(tax)
+			//console.log(subtotal);
 			var discount = $j('#discount').val();
 
 
@@ -103,7 +103,7 @@ $j(function () {
 			}
 
 		
-			console.log(discount)
+			//console.log(discount)
 			var total = parseFloat(subtotal) * (1 - parseFloat(discount) / 100);
 			var n = total.toFixed(2);
 			$j('#total').val(n);
