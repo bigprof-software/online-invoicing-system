@@ -76,7 +76,7 @@
 	}
 
 	function item_prices_after_insert($data, $memberInfo, &$args){
-
+		update_item_latest_price($data['item']);
 		return TRUE;
 	}
 
@@ -86,17 +86,17 @@
 	}
 
 	function item_prices_after_update($data, $memberInfo, &$args){
-
+		update_item_latest_price($data['item']);
 		return TRUE;
 	}
 
 	function item_prices_before_delete($selectedID, &$skipChecks, $memberInfo, &$args){
-
+		$GLOBALS['deleted_item_id'] = sqlValue("select item from item_prices where id='{$selectedID}'");
 		return TRUE;
 	}
 
 	function item_prices_after_delete($selectedID, $memberInfo, &$args){
-
+		update_item_latest_price($GLOBALS['deleted_item_id']);
 	}
 
 	function item_prices_dv($selectedID, $memberInfo, &$html, &$args){
