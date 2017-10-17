@@ -38,6 +38,12 @@
 			'website' => array('appgini' => 'VARCHAR(200) '),
 			'comments' => array('appgini' => 'TEXT ')
 		),
+		'item_prices' => array(   
+			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
+			'item' => array('appgini' => 'INT unsigned '),
+			'price' => array('appgini' => 'DECIMAL(10,2) default \'0.00\' '),
+			'date' => array('appgini' => 'DATE ')
+		),
 		'invoice_items' => array(   
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
 			'invoice' => array('appgini' => 'INT unsigned '),
@@ -50,12 +56,6 @@
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
 			'item_description' => array('appgini' => 'TEXT '),
 			'unit_price' => array('appgini' => 'DECIMAL(10,2) default \'0.00\' ')
-		),
-		'item_prices' => array(   
-			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'item' => array('appgini' => 'INT unsigned '),
-			'price' => array('appgini' => 'DECIMAL(10,2) default \'0.00\' '),
-			'date' => array('appgini' => 'DATE ')
 		)
 	);
 

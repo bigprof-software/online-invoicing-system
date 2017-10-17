@@ -114,6 +114,19 @@
 		),
 		'clients' => array(  
 		),
+		'item_prices' => array(   
+			'item' => array(
+				'parent_table' => 'items',
+				'parent_pk_field' => 'id',
+				'parent_caption' => '`items`.`item_description`',
+				'parent_from' => '`items` ',
+				'filterers' => array(),
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false
+			)
+		),
 		'invoice_items' => array(   
 			'invoice' => array(
 				'parent_table' => 'invoices',
@@ -139,19 +152,6 @@
 			)
 		),
 		'items' => array(  
-		),
-		'item_prices' => array(   
-			'item' => array(
-				'parent_table' => 'items',
-				'parent_pk_field' => 'id',
-				'parent_caption' => '`items`.`item_description`',
-				'parent_from' => '`items` ',
-				'filterers' => array(),
-				'custom_query' => '',
-				'inherit_permissions' => false,
-				'list_type' => 0,
-				'not_null' => false
-			)
 		)
 	);
 

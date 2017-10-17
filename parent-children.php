@@ -34,6 +34,32 @@
 			),
 			'clients' => array(   
 			),
+			'item_prices' => array(   
+				'item' => array(   
+					'parent-table' => 'items',
+					'parent-primary-key' => 'id',
+					'child-primary-key' => 'id',
+					'child-primary-key-index' => 0,
+					'tab-label' => 'Price history',
+					'auto-close' => true,
+					'table-icon' => 'resources/table_icons/card_money.png',
+					'display-refresh' => true,
+					'display-add-new' => true,
+					'forced-where' => '',
+					'display-fields' => array(1 => 'Item', 2 => 'Price', 3 => 'Date'),
+					'display-field-names' => array(1 => 'item', 2 => 'price', 3 => 'date'),
+					'sortable-fields' => array(0 => '`item_prices`.`id`', 1 => '`item_prices`.`item`', 2 => '`item_prices`.`price`', 3 => '`item_prices`.`date`'),
+					'records-per-page' => 10,
+					'default-sort-by' => 3,
+					'default-sort-direction' => 'desc',
+					'open-detail-view-on-click' => true,
+					'display-page-selector' => true,
+					'show-page-progress' => true,
+					'template' => 'children-item_prices',
+					'template-printable' => 'children-item_prices-printable',
+					'query' => "SELECT `item_prices`.`id` as 'id', IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') as 'item', `item_prices`.`price` as 'price', if(`item_prices`.`date`,date_format(`item_prices`.`date`,'%d/%m/%Y'),'') as 'date' FROM `item_prices` LEFT JOIN `items` as items1 ON `items1`.`id`=`item_prices`.`item` "
+				)
+			),
 			'invoice_items' => array(   
 				'invoice' => array(   
 					'parent-table' => 'invoices',
@@ -85,32 +111,6 @@
 				)
 			),
 			'items' => array(   
-			),
-			'item_prices' => array(   
-				'item' => array(   
-					'parent-table' => 'items',
-					'parent-primary-key' => 'id',
-					'child-primary-key' => 'id',
-					'child-primary-key-index' => 0,
-					'tab-label' => 'Price history',
-					'auto-close' => true,
-					'table-icon' => 'resources/table_icons/card_money.png',
-					'display-refresh' => true,
-					'display-add-new' => true,
-					'forced-where' => '',
-					'display-fields' => array(1 => 'Item', 2 => 'Price', 3 => 'Date'),
-					'display-field-names' => array(1 => 'item', 2 => 'price', 3 => 'date'),
-					'sortable-fields' => array(0 => '`item_prices`.`id`', 1 => '`item_prices`.`item`', 2 => '`item_prices`.`price`', 3 => '`item_prices`.`date`'),
-					'records-per-page' => 10,
-					'default-sort-by' => 3,
-					'default-sort-direction' => 'desc',
-					'open-detail-view-on-click' => true,
-					'display-page-selector' => true,
-					'show-page-progress' => true,
-					'template' => 'children-item_prices',
-					'template-printable' => 'children-item_prices-printable',
-					'query' => "SELECT `item_prices`.`id` as 'id', IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') as 'item', `item_prices`.`price` as 'price', if(`item_prices`.`date`,date_format(`item_prices`.`date`,'%d/%m/%Y'),'') as 'date' FROM `item_prices` LEFT JOIN `items` as items1 ON `items1`.`id`=`item_prices`.`item` "
-				)
 			)
 		);
 

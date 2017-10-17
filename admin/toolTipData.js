@@ -47,6 +47,24 @@ clients_delete1Tip=["",spacer+"This option allows each member of the group to de
 clients_delete2Tip=["",spacer+"This option allows each member of the group to delete any record owned by any member of the group in the 'Clients' table."];
 clients_delete3Tip=["",spacer+"This option allows each member of the group to delete any records in the 'Clients' table."];
 
+// item_prices table
+item_prices_addTip=["",spacer+"This option allows all members of the group to add records to the 'Prices History' table. A member who adds a record to the table becomes the 'owner' of that record."];
+
+item_prices_view0Tip=["",spacer+"This option prohibits all members of the group from viewing any record in the 'Prices History' table."];
+item_prices_view1Tip=["",spacer+"This option allows each member of the group to view only his own records in the 'Prices History' table."];
+item_prices_view2Tip=["",spacer+"This option allows each member of the group to view any record owned by any member of the group in the 'Prices History' table."];
+item_prices_view3Tip=["",spacer+"This option allows each member of the group to view all records in the 'Prices History' table."];
+
+item_prices_edit0Tip=["",spacer+"This option prohibits all members of the group from modifying any record in the 'Prices History' table."];
+item_prices_edit1Tip=["",spacer+"This option allows each member of the group to edit only his own records in the 'Prices History' table."];
+item_prices_edit2Tip=["",spacer+"This option allows each member of the group to edit any record owned by any member of the group in the 'Prices History' table."];
+item_prices_edit3Tip=["",spacer+"This option allows each member of the group to edit any records in the 'Prices History' table, regardless of their owner."];
+
+item_prices_delete0Tip=["",spacer+"This option prohibits all members of the group from deleting any record in the 'Prices History' table."];
+item_prices_delete1Tip=["",spacer+"This option allows each member of the group to delete only his own records in the 'Prices History' table."];
+item_prices_delete2Tip=["",spacer+"This option allows each member of the group to delete any record owned by any member of the group in the 'Prices History' table."];
+item_prices_delete3Tip=["",spacer+"This option allows each member of the group to delete any records in the 'Prices History' table."];
+
 // invoice_items table
 invoice_items_addTip=["",spacer+"This option allows all members of the group to add records to the 'Invoice items' table. A member who adds a record to the table becomes the 'owner' of that record."];
 
@@ -82,24 +100,6 @@ items_delete0Tip=["",spacer+"This option prohibits all members of the group from
 items_delete1Tip=["",spacer+"This option allows each member of the group to delete only his own records in the 'Items' table."];
 items_delete2Tip=["",spacer+"This option allows each member of the group to delete any record owned by any member of the group in the 'Items' table."];
 items_delete3Tip=["",spacer+"This option allows each member of the group to delete any records in the 'Items' table."];
-
-// item_prices table
-item_prices_addTip=["",spacer+"This option allows all members of the group to add records to the 'Prices History' table. A member who adds a record to the table becomes the 'owner' of that record."];
-
-item_prices_view0Tip=["",spacer+"This option prohibits all members of the group from viewing any record in the 'Prices History' table."];
-item_prices_view1Tip=["",spacer+"This option allows each member of the group to view only his own records in the 'Prices History' table."];
-item_prices_view2Tip=["",spacer+"This option allows each member of the group to view any record owned by any member of the group in the 'Prices History' table."];
-item_prices_view3Tip=["",spacer+"This option allows each member of the group to view all records in the 'Prices History' table."];
-
-item_prices_edit0Tip=["",spacer+"This option prohibits all members of the group from modifying any record in the 'Prices History' table."];
-item_prices_edit1Tip=["",spacer+"This option allows each member of the group to edit only his own records in the 'Prices History' table."];
-item_prices_edit2Tip=["",spacer+"This option allows each member of the group to edit any record owned by any member of the group in the 'Prices History' table."];
-item_prices_edit3Tip=["",spacer+"This option allows each member of the group to edit any records in the 'Prices History' table, regardless of their owner."];
-
-item_prices_delete0Tip=["",spacer+"This option prohibits all members of the group from deleting any record in the 'Prices History' table."];
-item_prices_delete1Tip=["",spacer+"This option allows each member of the group to delete only his own records in the 'Prices History' table."];
-item_prices_delete2Tip=["",spacer+"This option allows each member of the group to delete any record owned by any member of the group in the 'Prices History' table."];
-item_prices_delete3Tip=["",spacer+"This option allows each member of the group to delete any records in the 'Prices History' table."];
 
 /*
 	Style syntax:

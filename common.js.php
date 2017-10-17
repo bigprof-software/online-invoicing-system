@@ -246,15 +246,15 @@ function clients_validateData(){
 	$j('.has-error').removeClass('has-error');
 	return true;
 }
+function item_prices_validateData(){
+	$j('.has-error').removeClass('has-error');
+	return true;
+}
 function invoice_items_validateData(){
 	$j('.has-error').removeClass('has-error');
 	return true;
 }
 function items_validateData(){
-	$j('.has-error').removeClass('has-error');
-	return true;
-}
-function item_prices_validateData(){
 	$j('.has-error').removeClass('has-error');
 	return true;
 }

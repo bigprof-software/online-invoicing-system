@@ -52,9 +52,9 @@
 			$arrTables = array(   
 				'invoices' => 'Invoices',
 				'clients' => 'Clients',
+				'item_prices' => 'Prices History',
 				'invoice_items' => 'Invoice items',
-				'items' => 'Items',
-				'item_prices' => 'Prices History'
+				'items' => 'Items'
 			);
 
 			return $arrTables;
