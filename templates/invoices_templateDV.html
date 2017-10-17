@@ -119,8 +119,10 @@
 				</div>
 
 				<div class="form-group">
-					<label for="tax" class="control-label col-lg-3">Tax %</label>
+					<label for="tax" class="control-label col-lg-3">Tax % <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#tax-description"></i></label>
 					<div class="col-lg-9">
+						<span class="help-block collapse" id="tax-description"><div class="alert alert-info">Enter tax percentage here. Example: enter "10" (without the quotes) to apply a 10% tax to the invoice.</div></span>
+
 						<input maxlength="12" type="text" class="form-control" name="tax" id="tax" value="<%%VALUE(tax)%%>">
 					</div>
 				</div>
