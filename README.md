@@ -87,7 +87,7 @@ _**Contributions to this project are always welcome :)**_
 
 ## Changelog
 
-###### Version 2.3, released on Oct 16, 2017
+###### Version 2.3, released on Oct 17, 2017
 
 * First commit to Github :)
 * Revised and enhanced README.
