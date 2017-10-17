@@ -28,7 +28,7 @@ This is a PHP/MySQL web application that you run from a browser. You can install
 
 ### 1. Installing to a PC
 
-####System requirements
+#### System requirements
 
 This application can be installed on Windows, Linux and MacOS. Before installing, you should have the following software set up and running:
 
@@ -39,7 +39,7 @@ This application can be installed on Windows, Linux and MacOS. Before installing
 If you don't have the above software installed, we recommend installing
 [Xampp latest version](http://www.apachefriends.org/).
 
-####Installation steps
+#### Installation steps
 
 1. [Download the latest version as a zip file](https://github.com/bigprof-software/online-invoicing-system/archive/master.zip).
 
@@ -51,7 +51,7 @@ If you don't have the above software installed, we recommend installing
 
 ### 2. Installing to a web/intranet server
 
-####System requirements
+#### System requirements
 
 This application can be installed on both Windows and Linux servers. Before installing, make sure your server has the following software:
 
@@ -62,7 +62,7 @@ Make sure your has access to a MySQL/MariaDB database. You might need to set up 
 
 If your server has cPanel installed, here is a [screencast explaining how to install your application using cPanel](https://bigprof.com/appgini/screencasts/how-to-upload-your-appgini-web-application-to-a-web-server-using-ftp-and-cpanel).
 
-####Installation steps
+#### Installation steps
 
 1. [Download the latest version as a zip file](https://github.com/bigprof-software/online-invoicing-system/archive/master.zip).
 
