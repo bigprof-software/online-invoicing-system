@@ -1,156 +1,106 @@
 <?php
-$currDir = dirname(__FILE__) . '/../..';
-define('PREPEND_PATH', '../../');
-include("$currDir/defaultLang.php");
-include("$currDir/language.php");
-include("$currDir/lib.php");
-include_once("$currDir/header.php");
+	$app_dir = dirname(__FILE__) . '/../..';
+	define('PREPEND_PATH', '../../');
 
-$search_to = makeSafe($_REQUEST['id']);
+	include("$app_dir/defaultLang.php");
+	include("$app_dir/language.php");
+	include("$app_dir/lib.php");
+	include_once("$app_dir/header.php");
 
-$results = print_invoice_query($search_to);
-
-if( count($results) > 0 ){
-
-
-function convertNumberToWord($num = false) {
-	$num = str_replace(array(',', ' '), '', trim($num));
-	if (!$num) {
-		return false;
+	$id = max(0, intval($_REQUEST['id']));
+	if(!$id){
+		header('Location: ' . PREPEND_PATH . 'invoices_view.php');
+		exit;
 	}
-	$fractions = round($num - intval($num), 2);
-	$num = (int) $num;
-	$words = array();
-	$list1 = array('', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven',
-		'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
-	);
-	$list2 = array('', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety', 'Hundred');
-	$list3 = array('', 'Thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion', 'septillion',
-		'Octillion', 'Nonillion', 'decillion', 'undecillion', 'duodecillion', 'tredecillion', 'quattuordecillion',
-		'quindecillion', 'sexdecillion', 'septendecillion', 'octodecillion', 'novemdecillion', 'vigintillion'
-	);
-	$num_length = strlen($num);
-	$levels = (int) (($num_length + 2) / 3);
-	$max_length = $levels * 3;
-	$num = substr('00' . $num, -$max_length);
-	$num_levels = str_split($num, 3);
-	for ($i = 0; $i < count($num_levels); $i++) {
-		$levels--;
-		$hundreds = (int) ($num_levels[$i] / 100);
-		$hundreds = ($hundreds ? ' ' . $list1[$hundreds] . ' Hundred' . ( $hundreds == 1 ? '' : '' ) . ' ' : '');
-		$tens = (int) ($num_levels[$i] % 100);
-		$singles = '';
-		if ($tens < 20) {
-			$tens = ($tens ? ' ' . $list1[$tens] . ' ' : '' );
-		} else {
-			$tens = (int) ($tens / 10);
-			$tens = ' ' . $list2[$tens] . ' ';
-			$singles = (int) ($num_levels[$i] % 10);
-			$singles = ' ' . $list1[$singles] . ' ';
-		}
-		$words[] = $hundreds . $tens . $singles . ( ( $levels && (int) ( $num_levels[$i] ) ) ? ' ' . $list3[$levels] . ' ' : '' );
-	} //end for loop
-	$commas = count($words);
-	if ($commas > 1) {
-		$commas = $commas - 1;
-	}
-	return implode(' ', $words) . ($fractions ? " and {$fractions}" : '');
-}
 
+	$results = print_invoice_query($id);
 
-?>
+	?>
+	
+	<a href="<?php echo PREPEND_PATH; ?>invoices_view.php?SelectedID=<?php echo urlencode($id) ?>" class="btn btn-info hidden-print btn-lg"><i class="glyphicon glyphicon-chevron-left"></i> <?php echo html_attr($Translation['Back']); ?></a>
+	<button class="btn btn-primary hidden-print btn-lg hspacer-lg" type="button" id="sendToPrinter" onclick="window.print();"><i class="glyphicon glyphicon-print"></i> Print</button>
 
-<div class="input-group">
-	<span class="input-group-btn">
-		<a href="../../invoices_view.php?SelectedID=<?php echo urlencode($_REQUEST['id']) ?>" class="btn btn-info hidden-print btn btn-secondary" role="button">Cancel printing</a>
-	</span>
-	<button class="btn btn-primary  hidden-print" type="button" id="sendToPrinter" onclick="window.print();"><i class="glyphicon glyphicon-print"></i> Print</button>
-</div>
+	<!-- Bootstarp image class needed here-->
 
+	<div>
+		<img src="<?php echo PREPEND_PATH; ?>resources/images/nontax.png" style="width: 200px; margin-bottom: 50px;">
+	</div>
 
+	<div style="font-weight: bold; font-size: 16px;">
+		<p>Invoice # <?php echo $results['totals']['code']; ?> </p>
+		<p>Client: <?php echo $results['totals']['name']; ?></p>
+		<?php $s = config("adminConfig"); ?>
 
-		
-<!-- Bootstarp image class needed here-->
+		<p>Due date: <?php echo date($s['PHPDateFormat'], strtotime($results['totals']['date_due'])); ?> </p>
+	</div>
 
-<div>
-	<img src="../../resources/images/nontax.png" style="width: 200px; margin-bottom: 50px;">
-</div>
-
-<div style="font-weight: bold; font-size: 16px;">
-	<p>Invoice ref # <?php echo $results['totals']['code']; ?> </p>
-	<p>Client: <?php echo $results['totals']['name']; ?></p>
-	<?php $s = config("adminConfig"); ?>
-
-	<p>Due date: <?php echo date($s['PHPDateFormat'], strtotime($results['totals']['date_due'])); ?> </p>
-</div>
-
-		
-		<div class="vspacer-lg"></div>
-
-		<table class="table table-striped table-bordered">
-			<thead>
-
-			<th class="text-center text-primary">Description</th>
-			<th class="text-center text-primary">$Unit price </th>
-
-			<th class="text-center text-primary">Quantity </th>
-
-			<th class="text-center text-primary">$Price </th>
-
-
-
-
-			</thead>
 			
-			<tbody>
-				
-				<?php for($i=0; $i< (count($results) - 1); $i++){?>
-					<tr>
+	<div class="vspacer-lg"></div>
 
-						<td class="text-left"><?php echo $results[$i]['item_description']; ?></td>
-						<td class="text-right"><?php echo number_format($results[$i]['unit_price'], 2); ?></td>
-						<td class="text-right"><?php echo number_format($results[$i]['qty'], 2); ?></td>
-						<td class="text-right"><?php echo number_format($results[$i]['price'], 2); ?></td>
-
-					</tr>
-				<?php } ?>
-			</tbody>
-			<tfoot>
-				
-				
-				
+	<table class="table table-hover table-bordered">
+		<thead>
+			<tr class="active">
+				<th class="text-center text-primary">Description</th>
+				<th class="text-center text-primary">Unit price </th>
+				<th class="text-center text-primary">Quantity </th>
+				<th class="text-center text-primary">Price </th>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<?php for($i=0; $i< (count($results) - 1); $i++){?>
 				<tr>
-					<th colspan="3" class="text-right">SubTotal </th>
-					<th class="text-right"><?php echo number_format($results['totals']['subtotal'], 2); ?></th>
+					<td class="text-left"><?php echo $results[$i]['item_description']; ?></td>
+					<td class="text-right"><?php echo number_format($results[$i]['unit_price'], 2); ?></td>
+					<td class="text-right"><?php echo number_format($results[$i]['qty'], 2); ?></td>
+					<td class="text-right"><?php echo number_format($results[$i]['price'], 2); ?><span class="invisible">)</span></td>
 				</tr>
-								
+			<?php } ?>
+			
+			<!-- subtotal -->
+			<?php if($results['totals']['discount'] != 0 && $results['totals']['tax'] != 0){ ?>
+				<tr class="active"><td colspan="4"></td></tr>
 				<tr>
-					<th colspan="3" class="text-right">Discount </th>
-					<th class="text-right"><?php echo number_format($results['totals']['discount'], 2); ?></th>
+					<th colspan="3" class="text-right">Subtotal </th>
+					<th class="text-right active"><?php echo number_format($results['totals']['subtotal'], 2); ?><span class="invisible">)</span></th>
 				</tr>
-				
+			<?php } ?>
+
+			<!-- discount -->
+			<?php if($results['totals']['discount'] != 0){ ?>
 				<tr>
-					<th colspan="3" class="text-right" style="color: red;">Total</th>
-					<th class="text-right" style="color: red;">$<?php echo number_format($results['totals']['total'], 2); ?></th>
+					<th colspan="3" class="text-right">Discount (<?php echo number_format($results['totals']['discount'], 2); ?>%)</th>
+					<th class="text-right active">
+						<?php if($results['totals']['discount_amount'] > 0){ ?>
+							(<?php echo number_format($results['totals']['discount_amount'], 2); ?>)
+						<?php }else{ ?>
+							<?php echo number_format($results['totals']['discount_amount'], 2); ?><span class="invisible">)</span>
+						<?php } ?>
+					</th>
 				</tr>
-				
+			<?php } ?>
+
+			<!-- tax -->
+			<?php if($results['totals']['tax'] != 0){ ?>
 				<tr>
-					<th colspan="4" class="text-right" style="color: red;"><?php echo "Only " . convertNumberToWord($results['totals']['total']) . " ".$currency_title."  due"; ?> </th>
-				</tr>       
+					<th colspan="3" class="text-right">Tax (<?php echo number_format($results['totals']['tax'], 2); ?>%)</th>
+					<th class="text-right active"><?php echo number_format($results['totals']['tax_amount'], 2); ?><span class="invisible">)</span></th>
+				</tr>
+			<?php } ?>
 
+			<tr class="active"><td colspan="4"></td></tr>
 
+			<!-- total -->
+			<tr class="active">
+				<th colspan="3" class="text-right">Total</th>
+				<th class="text-right"><?php echo number_format($results['totals']['total'], 2); ?><span class="invisible">)</span></th>
+			</tr>
+			<tr class="active">
+				<th colspan="4" class="text-right">Only <?php echo convertNumberToWord($results['totals']['total']) . ' ' . CURRENCY_TITLE; ?> Due.</th>
+			</tr>       
+		</tbody>
+	</table>
 
-
-			</tfoot>
-
-
-
-		</table>
-
-		<h4 class="text-center"><i>Thank you for your business</i></h4>
-<?php
-}else{
-	header('Location: ../../invoices_view.php');
-}
-include_once("$currDir/footer.php");
-?>
+	<h4 class="text-center"><i>Thank you for your business!</i></h4>
+	
+<?php include_once("$app_dir/footer.php"); ?>
