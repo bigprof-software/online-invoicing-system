@@ -20,4 +20,4 @@
 	$total = $subtotal * (1 - $discount / 100) * (1 + $tax / 100);
 	
 	sql("update invoices set subtotal='{$subtotal}', total='{$total}' where id='{$id}'",$eo);
-	echo number_format($subtotal, 2);
+	echo $subtotal;

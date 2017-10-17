@@ -124,77 +124,14 @@ function invoices_after_delete($selectedID, $memberInfo, &$args) {
 
 function invoices_dv($selectedID, $memberInfo, &$html, &$args) {
 	global $Translation;
-	if (isset($_REQUEST['dvprint_x']))
-		return;  // hna 3shan msh ytb3 el html code m3 el tb3a
-
+	
+	/* define all Translation strings needed by js code */
 	ob_start();
 	?>
-
 	<script>
-		$j(function () {
-	<?php if ($selectedID) { ?> 
-
-        
-				$j('#invoices_dv_action_buttons .btn-toolbar').append(
-						'<div class="btn-group-vertical btn-group-lg" style="width: 100%;">' +
-						'<button type="button" class="btn btn-default btn-lg" onclick="print_invoice_tax()">' +
-						'<i class="glyphicon glyphicon-print"></i> Print Invoice  </button>'
-
-						);
-
-setTimeout(function () {
-					$j('#deselect').removeClass('btn-warning').addClass('btn-default').get(0).lastChild.data = '<?php echo $Translation['Back']; ?>';
-				}, 1000);
-				
-				
-				
-				if ($j("input[type='radio']#type1:checked").val() !== "Tax") {
-						$j('#tax').hide();
-						$j('label[for="tax"]').hide();
-							//$j('#tax').val("0.00");
-						console.log("yoyo")
-				}
-
-	<?php } else { ?>
-	               $j('#total').val("0.00");
-				   
-				setTimeout(function () {
-					$j('#deselect').removeClass('btn-warning').addClass('btn-default').get(0).lastChild.data = '<?php echo $Translation['Back']; ?>';
-				}, 1000);
-				
-				
-				if ($j("input[type='radio']#type1:checked").val() !== "Tax") {
-						$j('#tax').hide();
-						//$j('#tax').val("0.00");
-						$j('label[for="tax"]').hide();
-						console.log("yoyo")
-				}
-				
-	<?php } ?>
-		});
-
-		/**
-		* function to redirect to the selected print invoice template
-		* @return void
-		*/
-		function print_invoice_tax() {
-			/**
-			* @var template string the name of the template (changing the selected option to lower case then *replacing spaces with underscores)
-			*/
-			var option = $j("#invoice_template").val();
-			
-			if(option.trim() != ""){
-				var template = option.toLowerCase().replace(/\s/g, '_') + ".php";
-				window.location = "hooks/invoice-templates/" + template + "?id=<?php echo urlencode($selectedID); ?>";
-			}else{
-				alert('you should select template to print');
-			}
-
-		}
-
-
+		window.Translation = window.Translation || {};
+		window.Translation['back'] = '<?php echo html_attr($Translation['Back']); ?>';
 	</script>
-
 	<?php
 	$form_code = ob_get_contents();
 	ob_end_clean();
