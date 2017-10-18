@@ -4,12 +4,7 @@
 	include("$currDir/language.php");
 	include("$currDir/lib.php");
 	
-	/* grant access to all users who have acess to the invoice_items table */
-	$od_from = get_sql_from('invoice_items');
-	if(!$od_from){
-		header("HTTP/1.0 401 Unauthorized");
-		exit;
-	}
+	restrict_access('items');
 	
 	$id = intval($_REQUEST['id']);
 	

@@ -1,10 +1,12 @@
 <?php
-$currDir = dirname(__FILE__) . '/..';
-define('PREPEND_PATH', '../');
-include("$currDir/defaultLang.php");
-include("$currDir/language.php");
-include("$currDir/lib.php");
-include_once("$currDir/header.php");
+	$app_dir = dirname(__FILE__) . '/..';
+	define('PREPEND_PATH', '../');
+	include("$app_dir/defaultLang.php");
+	include("$app_dir/language.php");
+	include("$app_dir/lib.php");
+
+	restrict_access();
+	include_once("$app_dir/header.php");
 
 
 $res = sql("SELECT I.id, I.status, I.date_due, I.total, C.name FROM invoices I, clients C WHERE I.client = C.id AND I.status='Unpaid' AND I.date_due <= LAST_DAY(CURRENT_DATE - INTERVAL 1 MONTH)", $eo);
@@ -80,6 +82,6 @@ $total_invoice_overdue = sqlValue("SELECT SUM(total) FROM invoices WHERE status=
 	echo '<div class="alert alert-danger">' . $Translation['No records found']. '</div>';
 }?>
 <?php
-include_once("$currDir/footer.php");
+include_once("$app_dir/footer.php");
 ?>
 </div>

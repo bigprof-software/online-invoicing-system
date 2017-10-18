@@ -5,7 +5,9 @@
 	include("$app_dir/language.php");
 	include("$app_dir/lib.php");
 
+	restrict_access();
 	include_once("$app_dir/header.php");
+
 
 	/* first and last year for year drop down */
 	$first_year = substr(sqlValue("select min(date_due) from invoices"), 0, 4);

@@ -4,6 +4,8 @@
 	include("$app_dir/defaultLang.php");
 	include("$app_dir/language.php");
 	include("$app_dir/lib.php");
+
+	restrict_access();
 	include_once("$app_dir/header.php");
 
 

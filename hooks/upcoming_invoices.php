@@ -4,6 +4,8 @@
 	include("$app_dir/defaultLang.php");
 	include("$app_dir/language.php");
 	include("$app_dir/lib.php");
+
+	restrict_access();
 	include_once("$app_dir/header.php");
 
 	$res = sql("SELECT i.id, c.name, i.date_due, i.total FROM invoices AS i, clients AS c WHERE i.client = c.id AND status='Unpaid' AND MONTH(date_due) = MONTH(CURRENT_DATE + INTERVAL 1 MONTH) AND YEAR(date_due) = YEAR(CURRENT_DATE + INTERVAL 1 MONTH)", $eo);

@@ -191,3 +191,11 @@
 		
 		return $out;
 	}
+	
+	function restrict_access($table = 'invoices'){
+		$from_chk = get_sql_from($table);
+		if(!$from_chk){
+			header("HTTP/1.0 401 Unauthorized");
+			exit;
+		}
+	}

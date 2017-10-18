@@ -1,10 +1,12 @@
 <?php
-$currDir = dirname(__FILE__) . '/..';
-define('PREPEND_PATH', '../');
-include("$currDir/defaultLang.php");
-include("$currDir/language.php");
-include("$currDir/lib.php");
-include_once("$currDir/header.php");
+	$app_dir = dirname(__FILE__) . '/..';
+	define('PREPEND_PATH', '../');
+	include("$app_dir/defaultLang.php");
+	include("$app_dir/language.php");
+	include("$app_dir/lib.php");
+
+	restrict_access();
+	include_once("$app_dir/header.php");
 
 
 
@@ -65,6 +67,6 @@ $total_invoice_due_and_upcoming = sqlValue("SELECT SUM(total) FROM invoices WHER
 	echo '<div class="alert alert-danger">' . $Translation['No records found']. '</div>';
 }?>
 <?php
-include_once("$currDir/footer.php");
+include_once("$app_dir/footer.php");
 ?>
 </div>
