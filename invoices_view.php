@@ -155,10 +155,10 @@
 	$x->DefaultSortField = '1';
 	$x->DefaultSortDirection = 'desc';
 
-	$x->ColWidth   = array(  60, 70, 100, 250, 200, 100, 70, 150);
-	$x->ColCaption = array("Code", "Status", "Date due", "Client", "Client contact", "Client phone", "Total", "Invoice template");
-	$x->ColFieldName = array('code', 'status', 'date_due', 'client', 'client_contact', 'client_phone', 'total', 'invoice_template');
-	$x->ColNumber  = array(2, 3, 4, 5, 6, 8, 15, 17);
+	$x->ColWidth   = array(  60, 70, 100, 250, 200, 100, 70);
+	$x->ColCaption = array("Code", "Status", "Date due", "Client", "Client contact", "Client phone", "Total");
+	$x->ColFieldName = array('code', 'status', 'date_due', 'client', 'client_contact', 'client_phone', 'total');
+	$x->ColNumber  = array(2, 3, 4, 5, 6, 8, 15);
 
 	// template paths below are based on the app main directory
 	$x->Template = 'templates/invoices_templateTV.html';
@@ -227,7 +227,6 @@
 			$sumRow.="<td></td>";
 			$sumRow.="<td></td>";
 			$sumRow.="<td class=\"text-right\">{$row[0]}</td>";
-			$sumRow.="<td></td>";
 			$sumRow.="</tr>";
 
 			$x->HTML=str_replace("<!-- tv data below -->", '', $x->HTML);

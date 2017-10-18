@@ -174,3 +174,20 @@
 		}
 		return implode(' ', $words) . ($fractions ? " and {$fractions}" : '');
 	}
+
+	/**
+	 *  @return HTML code for report action buttons (back, print, .. etc)
+	 */
+	function report_actions(){
+		global $Translation;
+		
+		ob_start();
+		?>
+		<a href="invoice_button.php" class="btn btn-info hidden-print btn-lg" role="button"><i class="glyphicon glyphicon-chevron-left"></i> <?php echo $Translation['Back']; ?></a>
+		<button class="btn btn-primary hidden-print btn-lg hspacer-lg" type="button" id="sendToPrinter" onclick="window.print();"><i class="glyphicon glyphicon-print"></i> <?php echo $Translation['Print']; ?></button>
+		<?php
+		$out = ob_get_contents();
+		ob_end_clean();
+		
+		return $out;
+	}
