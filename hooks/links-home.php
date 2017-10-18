@@ -23,7 +23,7 @@
 	$upcoming = sqlValue(sprintf($sql, ++$month, $year), $error); // due
 
 	$homeLinks[] = array(
-		'url' => 'hooks/invoice_button.php', 
+		'url' => 'hooks/reports.php', 
 		'title' => 'Reports', 
 		'description' => '<div id="reports-section"></div>',
 		'groups' => array('*'), // groups allowed to see this link, use '*' if you want to show the link to all groups

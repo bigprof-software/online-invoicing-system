@@ -19,7 +19,7 @@ $total_invoice_overdue = sqlValue("SELECT SUM(total) FROM invoices WHERE status=
 
   <div class="input-group">
    <span class="input-group-btn">
-  <a href="invoice_button.php" class="btn btn-info hidden-print btn btn-secondary" role="button">Back to Reports</a>
+  <a href="reports.php" class="btn btn-info hidden-print btn btn-secondary" role="button">Back to Reports</a>
    </span>
   	<button class="btn btn-primary  hidden-print" type="button" id="sendToPrinter" onclick="window.print();"><i class="glyphicon glyphicon-print"></i> Print</button>
   </div>
