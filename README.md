@@ -2,6 +2,10 @@
 
 Easy and lean invoicing for small businesses, consultants and freelancers, created using [AppGini](https://bigprof.com/appgini/).
 
+### [⇩ Download the latest release](https://github.com/bigprof-software/online-invoicing-system/archive/2.3.zip)
+
+##### [_Changelog_](https://github.com/bigprof-software/online-invoicing-system/releases)
+
 ## Features
 
 * Easily define your billable items, whether products or services.
@@ -41,7 +45,7 @@ If you don't have the above software installed, we recommend installing
 
 #### Installation steps
 
-1. [Download the latest version as a zip file](https://github.com/bigprof-software/online-invoicing-system/archive/master.zip).
+1. Download the latest release as a zip file from the download link at the top of this document.
 
 2. Extract the contents of the zip file into a folder inside your document root. (*[more info about how to find your 'document root'](http://www.karelia.com/sandvox/help/z/Document_Root.html)*).
 
@@ -64,7 +68,7 @@ If your server has cPanel installed, here is a [screencast explaining how to ins
 
 #### Installation steps
 
-1. [Download the latest version as a zip file](https://github.com/bigprof-software/online-invoicing-system/archive/master.zip).
+1. Download the latest release as a zip file from the download link at the top of this document.
 
 2. Extract the contents of the zip file and upload them to a folder inside your server document root. (*[more info about how to find your 'document root'](http://www.karelia.com/sandvox/help/z/Document_Root.html)*).
 
@@ -84,44 +88,3 @@ Since this application was created using AppGini, you can easily customize it by
 You can also perform more advanced customization, like adding reports, changing validation rules, adding business logic, ... etc. through hooks. Please refer to the [hooks documentation](https://bigprof.com/appgini/help/advanced-topics/hooks) for more details.
 
 _**Contributions to this project are always welcome :)**_
-
-## Changelog
-
-###### Version 2.3, released on Oct 17, 2017
-
-* First commit to Github :)
-* Revised and enhanced README.
-* Various source code conflicts resolved.
-
-###### Version 2.2, released on May 08, 2017
-
-* Generated using AppGini 5.62
-* Implemented PHPMailer as the mail function for apps, with SMTP support configurable in admin settings.
-* Included hooks/__global.php in admin area.
-* Added new hook in __global.php, sendmail_handler() for intercepting mail sending operations.
-* Fixed PHP 7.1 compatibility issue.
-* Fixed preg_replace calls with /e modifier.
-* Added validation checks to make sure undefined data formats are properly handled.
-* Fixed XSS vulnerability in quick search responsibly reported by Netsparker.
-* Added hooks/README.html.
-* Fixed error with line breaks in emails sent from the admin area.
-* Bug fix with sorting of formatted lookup fields.
-* Bug fix for array_map warning when a record is selected in a table with a non-numeric PK.
-
-###### Version 2.1
-
-* Generated using AppGini 5.61
-* Improved detail view loading performance by preloading lookup values.
-* Bug fixed: Redirects don't work correctly if a non-standard port is used. 
-* Configurable detail view template in DataList so that it can be set in hooks. 
-* Fixed sorting behavior of lookup fields containing numeric data in table view. 
-* Fixed a bug with anonymous users unable to directly access tables that they are allowed to view. 
-* Fixed bug with error reporting behavior of unique fields.
-
-###### Version 2.0
-
-* Generated using AppGini 5.60
-* Separate prices table to keep check of the price history.
-* Adding different types of reports.
-* Automatic calcuation of the invoice total with or w/o adding taxes and discount.
-* Ability to print your invoice using your company template.
