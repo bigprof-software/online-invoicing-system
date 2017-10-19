@@ -27,29 +27,29 @@
 		</button>
 	</div>
 	<div class="button-grid-classes">
-		<a class="button-classes" href="due_invoices.php">
+		<button id="search_by_year" type="button" 
+			class="button-classes" data-toggle="modal" 
+			data-target="#myModal3"><i class="glyphicon glyphicon-search"></i> Search By Year</button>
+	</div>
+	<div class="button-grid-classes">
+		<a href="overdue_invoices.php" class="button-classes btn-danger">
+			<i class="glyphicon glyphicon-search"></i> All Overdue Invoices
+		</a>
+	</div>
+	<div class="button-grid-classes">
+		<a class="button-classes btn-warning" href="due_invoices.php">
 			<i class="glyphicon glyphicon-search"></i> All Due Invoices
 		</a>
 	</div>
 	<div class="button-grid-classes">
-		<a class="button-classes" href="upcoming_invoices.php">
+		<a class="button-classes btn-success" href="upcoming_invoices.php">
 			<i class="glyphicon glyphicon-search"></i> All Upcoming Invoices
-		</a>
-	</div>
-	<div class="button-grid-classes">
-		<a href="overdue_invoices.php" class="button-classes">
-			<i class="glyphicon glyphicon-search"></i> All Overdue Invoices
 		</a>
 	</div>
 	<div class="button-grid-classes">
 		<a href="upcoming_and_due_invoices.php" class="button-classes">
 			<i class="glyphicon glyphicon-search"></i> Upcoming And Due Invoices
 		</a>
-	</div>
-	<div class="button-grid-classes">
-		<button id="search_by_year" type="button" 
-			class="button-classes" data-toggle="modal" 
-			data-target="#myModal3"><i class="glyphicon glyphicon-search"></i> Search By Year</button>
 	</div>
 </div>
 
@@ -158,24 +158,9 @@
 			$j('#search_by_year').click();
 		<?php } ?>
 
-		/*
-		$j('#from-date, #to-date').datepicker({
-			autoclose: false,
-			format: 'yyyy-mm-dd',
-			orientation: 'down'
-		});
-
-		$j('#from-date').change(function () {
-			$j('#to-date').datepicker('setStartDate', $j('#from-date').val());
-
-			var df = new Date($j('#from-date').datepicker('getDate'));
-			df.setMonth(df.getMonth() + 1);
-			$j('#to-date').datepicker('setDate', df);
-		});
-		*/
-		
 		/* replace .button-classes and .button-grid-classes */
-		$j('.button-classes').addClass('btn btn-info btn-lg btn-block');
+		$j('.button-classes').addClass('btn btn-lg btn-block');
+		$j('.button-classes:not(.btn-danger):not(.btn-success):not(.btn-warning):not(.btn-primary)').addClass('btn-info');
 		$j('.button-grid-classes').addClass('col-xs-6 col-sm-4 col-md-3 col-lg-2');
 	})
 </script>
