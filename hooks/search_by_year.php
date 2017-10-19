@@ -8,9 +8,10 @@
 	restrict_access();
 	include_once("$currDir/header.php");
 
-
-	$search_year = intval(makeSafe($_REQUEST['search']));
-	// echo $search_year;
+	// get requested year between 1990 and 2100, assume current year if not provided
+	$search_year = intval($_REQUEST['search']);
+	if(!$search_year) $search_year = date('Y');
+	$search_year = max(1990, min(2100, $search_year));
 
 	$paid_res = sql("SELECT SUM(total) AS total, MONTH(date_due) AS month FROM invoices WHERE status='Paid' AND YEAR(date_due)='{$search_year}'  GROUP BY month", $error);
 
@@ -50,61 +51,37 @@
 ?>
 
 
-<div class="row">
-	<div class="input-group">
-		<span class="input-group-btn">
-			<a href="reports.php" class="btn btn-info hidden-print btn btn-secondary" role="button">Back to Reports</a>
-		</span>
-		<button class="btn btn-primary  hidden-print" type="button" id="sendToPrinter" onclick="window.print();"><i class="glyphicon glyphicon-print"></i> Print</button>
-	</div>
-
-
-	<h1> Year <?php echo $search_year;?> </h1>
+	<?php echo report_actions(); ?>
+	
+	<div class="page-header"><h1>Year <?php echo $search_year;?></h1></div>
 
 	<table class="table table-striped table-bordered">
 	    <thead>
-
-
-	    <th class="text-center text-primary">Month </th>
-
-	    <th class="text-center text-primary">$Paid </th>
-
-	    <th class="text-center text-primary">$Not Paid </th>
-		<th class="text-center text-primary">$Total </th>
-
-
-
-	</thead>
-
-	<tbody>
-	<?php for($i =1; $i<=12; $i++) { ?>
-	    <tr>
-	        <td><?php echo date('F', strtotime("2017-{$i}-12")); ?></td>
-	        <td class="text-right"><?php echo number_format($monthly_paid[$i], 2); ?></td>
-	        <td class="text-right"><?php echo number_format($monthly_unpaid[$i], 2);?></td>
-			<td class="text-right"><?php echo number_format($monthly_paid[$i] + $monthly_unpaid[$i], 2);?></td>
-	    </tr>
-    <?php } ?>
-	</tbody>
-
-
-
-	<tfoot>
-	    <tr style="color: red; font-size: 16px;">
-	        <th class="text-left"> Totals</th>
-	        <th class="text-right">$<?php echo number_format(array_sum($monthly_paid), 2);?></th>
-					
-		  	<th class="text-right">$<?php echo number_format(array_sum($monthly_unpaid), 2);?></th>
-		  		  
-	  	  	<th class="text-right">$<?php echo number_format(array_sum($monthly_paid) + array_sum($monthly_unpaid), 2);?></th>
-			  
-		</tr>
-
-
-	</tfoot>
-
+			<tr>
+				<th class="text-center text-primary">Month </th>
+				<th class="text-center text-primary">Paid (<?php echo CURRENCY_SYMBOL; ?>)</th>
+				<th class="text-center text-primary">Not Paid (<?php echo CURRENCY_SYMBOL; ?>)</th>
+				<th class="text-center text-primary">Total (<?php echo CURRENCY_SYMBOL; ?>)</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php for($i =1; $i<=12; $i++) { ?>
+				<tr>
+					<td><?php echo date('F', strtotime("2017-{$i}-12")); ?></td>
+					<td class="text-right"><?php echo number_format($monthly_paid[$i], 2); ?></td>
+					<td class="text-right"><?php echo number_format($monthly_unpaid[$i], 2);?></td>
+					<td class="text-right"><?php echo number_format($monthly_paid[$i] + $monthly_unpaid[$i], 2);?></td>
+				</tr>
+			<?php } ?>
+		</tbody>
+		<tfoot>
+			<tr class="text-primary">
+				<th class="text-left"> Totals</th>
+				<th class="text-right"><?php echo number_format(array_sum($monthly_paid), 2);?></th>
+				<th class="text-right"><?php echo number_format(array_sum($monthly_unpaid), 2);?></th>
+				<th class="text-right"><?php echo number_format(array_sum($monthly_paid) + array_sum($monthly_unpaid), 2);?></th>
+			</tr>
+		</tfoot>
 	</table>
-	<?php
-	include_once("$currDir/footer.php");
-	?>
-</div>
+
+<?php include_once("$currDir/footer.php"); ?>
