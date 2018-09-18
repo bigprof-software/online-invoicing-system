@@ -5,7 +5,7 @@
 
 <div class="panel-body" id="items_dv_container">
 	<!-- child links -->
-	<div class="row">
+	<div class="row vspacer-md">
 		<div class="col-xs-12">
 			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm" href="item_prices_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="item_prices_link"><i class="glyphicon glyphicon-list-alt"></i> Prices History</a>
 			<a class="visible-xs btn btn-default btn-lg btn-block hidden vspacer-sm" href="item_prices_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="xs_item_prices_link"><i class="glyphicon glyphicon-list-alt"></i> Prices History</a>
@@ -16,7 +16,7 @@
 			<div class="clearfix"></div>
 		</div>
 	</div>
-	<hr>
+	<hr class="hidden-xs hidden-sm">
 
 	<div class="row">
 		<!-- form inputs -->
@@ -24,6 +24,7 @@
 			<fieldset class="form-horizontal">
 
 				<div class="form-group">
+					<hr class="hidden-md hidden-lg">
 					<label for="id" class="control-label col-lg-3">ID</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="id"><%%VALUE(id)%%></div>
@@ -31,6 +32,7 @@
 				</div>
 
 				<div class="form-group">
+					<hr class="hidden-md hidden-lg">
 					<label for="item_description" class="control-label col-lg-3">Item Description</label>
 					<div class="col-lg-9">
 						<input maxlength="" type="text" class="form-control" name="item_description" id="item_description" value="<%%VALUE(item_description)%%>">
@@ -38,6 +40,7 @@
 				</div>
 
 				<div class="form-group">
+					<hr class="hidden-md hidden-lg">
 					<label for="unit_price" class="control-label col-lg-3">Unit price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#unit_price-description"></i></label>
 					<div class="col-lg-9">
 						<span class="help-block collapse" id="unit_price-description"><div class="alert alert-info">This is the most recent unit price as obtained from "Item prices" table.</div></span>
@@ -50,6 +53,7 @@
 		</div>
 
 		<!-- DV action buttons -->
+		<hr class="hidden-md hidden-lg">
 		<div class="col-md-4 col-lg-2" id="items_dv_action_buttons">
 			<div class="btn-toolbar">
 				<div class="btn-group-vertical btn-group-lg" style="width: 100%;">
@@ -87,22 +91,23 @@
 			var record_added_ok = (location.search.split('record-added-ok=').length == 2);
 			var record_updated_ok = (location.search.split('record-updated-ok=').length == 2);
 			if((record_added_ok || record_updated_ok) && embedded_mode && autoclose_mode){
-				setTimeout(function(){
-					window.parent.jQuery('.modal').modal('hide');
-				}, 2000);
+				setTimeout(AppGini.closeParentModal, 2000);
 			}
 
 			/* enable DV action buttons to float on scrolling down the form */
 			enable_dvab_floating();
 
-			$j('select, input[type=text], textarea').not(':disabled').eq(0).focus();
+			if(!(embedded_mode && AppGini.mobileDevice())){
+				$j('select, input[type=text], textarea').not(':disabled').eq(0).focus();
+			}
+
 			$j('form').eq(0).change(function(){
 				if($j(this).data('already_changed')) return;
 				if($j('#deselect').length) $j('#deselect').removeClass('btn-default').addClass('btn-warning').get(0).lastChild.data = " <%%TRANSLATION(Cancel)%%>";
 				$j(this).data('already_changed', true);
 			});
 
-			$j('a[href="<%%TRANSLATION(ImageFolder)%%>"]').click(function(){ return false; });
+			$j('a[href="<%%TRANSLATION(ImageFolder)%%>"]').click(function(){ /* */ return false; });
 
 			if(embedded_mode){
 				/* hide links to children tables in embedded mode */
@@ -110,7 +115,7 @@
 
 				/* append embedded mode to all links */
 				var append_embedded = function(){
-					$j('a[href]:not([href^=#]):not([href^=javascript]):not([href$="Embedded=1"]):not([href*="link.php?t="]):not([href^="mailto:"])').each(
+					$j('a[href]:not([href^="#"]):not([href^="javascript"]):not([href$="Embedded=1"]):not([href*="link.php?t="]):not([href^="mailto:"])').each(
 						function(){
 							$j(this).attr('href', $j(this).attr('href') + '&Embedded=1');
 						}
@@ -155,10 +160,7 @@
 				});
 			}
 
-			/* find and hide parent links if field label has data 'parent_link' set to 'view_parent_hidden' */
-			$j('label[data-parent_link=view_parent_hidden]').each(function(){
-				$j(this).parents('.form-group').find('.view_parent').hide();
-			});
+			AppGini.hideViewParentLinks();
 
 			$j('form').on('click', '.view_parent', function(){
 				var pt = $j(this).attr('id').replace(/_view_parent$/, '');

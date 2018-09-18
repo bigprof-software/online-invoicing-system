@@ -5,8 +5,6 @@
 	~~~~~~ LIST OF FUNCTIONS ~~~~~~
 		getTableList() -- returns an associative array (tableName => tableData, tableData is array(tableCaption, tableDescription, tableIcon)) of tables accessible by current user
 		get_table_groups() -- returns an associative array (table_group => tables_array)
-		getLoggedMemberID() -- returns memberID of logged member. If no login, returns anonymous memberID
-		getLoggedGroupID() -- returns groupID of logged member, or anonymous groupID
 		logInMember() -- checks POST login. If not valid, redirects to index.php, else returns TRUE
 		getTablePermissions($tn) -- returns an array of permissions allowed for logged member to given table (allowAccess, allowInsert, allowView, allowEdit, allowDelete) -- allowAccess is set to true if any access level is allowed
 		get_sql_fields($tn) -- returns the SELECT part of the table view query
@@ -19,7 +17,6 @@
 		parseCode(code) -- calculates and returns special values to be inserted in automatic fields.
 		addFilter(i, filterAnd, filterField, filterOperator, filterValue) -- enforce a filter over data
 		clearFilters() -- clear all filters
-		getMemberInfo() -- returns an array containing the currently signed-in member's info
 		loadView($view, $data) -- passes $data to templates/{$view}.php and returns the output
 		loadTable($table, $data) -- loads table template, passing $data to it
 		filterDropdownBy($filterable, $filterers, $parentFilterers, $parentPKField, $parentCaption, $parentTable, &$filterableCombo) -- applies cascading drop-downs for a lookup field, returns js code to be inserted into the page
@@ -46,7 +43,8 @@
 
 	function getTableList($skip_authentication = false){
 		$arrAccessTables = array();
-		$arrTables = array(   
+		$arrTables = array(
+			/* 'table_name' => ['table caption', 'homepage description', 'icon', 'table group name'] */   
 			'invoices' => array('Invoices', '', 'resources/table_icons/attributes_display.png', 'None'),
 			'clients' => array('Clients', '', 'resources/table_icons/administrator.png', 'None'),
 			'item_prices' => array('Prices History', '', 'resources/table_icons/card_money.png', 'None'),
@@ -138,7 +136,7 @@
 
 	function get_sql_fields($table_name){
 		$sql_fields = array(   
-			'invoices' => "`invoices`.`id` as 'id', `invoices`.`code` as 'code', `invoices`.`status` as 'status', if(`invoices`.`date_due`,date_format(`invoices`.`date_due`,'%d/%m/%Y'),'') as 'date_due', IF(    CHAR_LENGTH(`clients1`.`name`), CONCAT_WS('',   `clients1`.`name`), '') as 'client', IF(    CHAR_LENGTH(`clients1`.`contact`), CONCAT_WS('',   `clients1`.`contact`), '') as 'client_contact', IF(    CHAR_LENGTH(`clients1`.`address`), CONCAT_WS('',   `clients1`.`address`), '') as 'client_address', IF(    CHAR_LENGTH(`clients1`.`phone`), CONCAT_WS('',   `clients1`.`phone`), '') as 'client_phone', IF(    CHAR_LENGTH(`clients1`.`email`), CONCAT_WS('',   `clients1`.`email`), '') as 'client_email', IF(    CHAR_LENGTH(`clients1`.`website`), CONCAT_WS('',   `clients1`.`website`), '') as 'client_website', IF(    CHAR_LENGTH(`clients1`.`comments`), CONCAT_WS('',   `clients1`.`comments`), '') as 'client_comments', FORMAT(`invoices`.`subtotal`, 2) as 'subtotal', `invoices`.`discount` as 'discount', FORMAT(`invoices`.`tax`, 2) as 'tax', FORMAT(`invoices`.`total`, 2) as 'total', `invoices`.`comments` as 'comments', `invoices`.`invoice_template` as 'invoice_template'",
+			'invoices' => "`invoices`.`id` as 'id', `invoices`.`code` as 'code', `invoices`.`status` as 'status', if(`invoices`.`date_due`,date_format(`invoices`.`date_due`,'%d/%m/%Y'),'') as 'date_due', IF(    CHAR_LENGTH(`clients1`.`name`), CONCAT_WS('',   `clients1`.`name`), '') as 'client', IF(    CHAR_LENGTH(`clients1`.`contact`), CONCAT_WS('',   `clients1`.`contact`), '') as 'client_contact', IF(    CHAR_LENGTH(`clients1`.`address`), CONCAT_WS('',   `clients1`.`address`), '') as 'client_address', IF(    CHAR_LENGTH(`clients1`.`phone`), CONCAT_WS('',   `clients1`.`phone`), '') as 'client_phone', IF(    CHAR_LENGTH(`clients1`.`email`), CONCAT_WS('',   `clients1`.`email`), '') as 'client_email', IF(    CHAR_LENGTH(`clients1`.`website`), CONCAT_WS('',   `clients1`.`website`), '') as 'client_website', IF(    CHAR_LENGTH(`clients1`.`comments`), CONCAT_WS('',   `clients1`.`comments`), '') as 'client_comments', FORMAT(`invoices`.`subtotal`, 2) as 'subtotal', `invoices`.`discount` as 'discount', FORMAT(`invoices`.`tax`, 2) as 'tax', FORMAT(`invoices`.`total`, 2) as 'total', `invoices`.`comments` as 'comments', `invoices`.`invoice_template` as 'invoice_template', `invoices`.`created` as 'created', `invoices`.`last_updated` as 'last_updated'",
 			'clients' => "`clients`.`id` as 'id', `clients`.`name` as 'name', `clients`.`contact` as 'contact', `clients`.`title` as 'title', `clients`.`address` as 'address', `clients`.`city` as 'city', `clients`.`country` as 'country', CONCAT_WS('-', LEFT(`clients`.`phone`,3), MID(`clients`.`phone`,4,3), RIGHT(`clients`.`phone`,4)) as 'phone', `clients`.`email` as 'email', `clients`.`website` as 'website', `clients`.`comments` as 'comments'",
 			'item_prices' => "`item_prices`.`id` as 'id', IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') as 'item', `item_prices`.`price` as 'price', if(`item_prices`.`date`,date_format(`item_prices`.`date`,'%d/%m/%Y'),'') as 'date'",
 			'invoice_items' => "`invoice_items`.`id` as 'id', IF(    CHAR_LENGTH(`invoices1`.`code`), CONCAT_WS('',   `invoices1`.`code`), '') as 'invoice', IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') as 'item', FORMAT(`invoice_items`.`unit_price`, 2) as 'unit_price', FORMAT(`invoice_items`.`qty`, 3) as 'qty', FORMAT(`invoice_items`.`price`, 2) as 'price'",
@@ -233,7 +231,9 @@
 				'tax' => '0',
 				'total' => '0',
 				'comments' => '',
-				'invoice_template' => ''
+				'invoice_template' => '',
+				'created' => '',
+				'last_updated' => ''
 			),
 			'clients' => array(
 				'id' => '',
@@ -270,52 +270,6 @@
 		);
 
 		return isset($defaults[$table]) ? $defaults[$table] : array();
-	}
-
-	#########################################################
-
-	function getLoggedGroupID(){
-		if($_SESSION['memberGroupID']!=''){
-			return $_SESSION['memberGroupID'];
-		}else{
-			if(!setAnonymousAccess()) return false;
-			return getLoggedGroupID();
-		}
-	}
-
-	#########################################################
-
-	function getLoggedMemberID(){
-		if($_SESSION['memberID']!=''){
-			return strtolower($_SESSION['memberID']);
-		}else{
-			if(!setAnonymousAccess()) return false;
-			return getLoggedMemberID();
-		}
-	}
-
-	#########################################################
-
-	function setAnonymousAccess(){
-		$adminConfig = config('adminConfig');
-		$anon_group_safe = addslashes($adminConfig['anonymousGroup']);
-		$anon_user_safe = strtolower(addslashes($adminConfig['anonymousMember']));
-
-		$eo = array('silentErrors' => true);
-
-		$res = sql("select groupID from membership_groups where name='{$anon_group_safe}'", $eo);
-		if(!$res){ return false; }
-		$row = db_fetch_array($res); $anonGroupID = $row[0];
-
-		$_SESSION['memberGroupID'] = ($anonGroupID ? $anonGroupID : 0);
-
-		$res = sql("select lcase(memberID) from membership_users where lcase(memberID)='{$anon_user_safe}' and groupID='{$anonGroupID}'", $eo);
-		if(!$res){ return false; }
-		$row = db_fetch_array($res); $anonMemberID = $row[0];
-
-		$_SESSION['memberID'] = ($anonMemberID ? $anonMemberID : 0);
-
-		return true;
 	}
 
 	#########################################################
@@ -457,12 +411,12 @@
 		$notify_template_no_fadeout = '<div id="%%ID%%" class="alert alert-dismissable %%CLASS%%" style="display: none; padding-top: 6px; padding-bottom: 6px;">' .
 					'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' .
 					'%%MSG%%</div>' .
-					'<script> jQuery(function(){ jQuery("#%%ID%%").show("slow"); }); </script>'."\n";
+					'<script> jQuery(function(){ /* */ jQuery("#%%ID%%").show("slow"); }); </script>'."\n";
 		$notify_template = '<div id="%%ID%%" class="alert %%CLASS%%" style="display: none; padding-top: 6px; padding-bottom: 6px;">%%MSG%%</div>' .
 					'<script>' .
 						'jQuery(function(){' .
 							'jQuery("#%%ID%%").show("slow", function(){' .
-								'setTimeout(function(){ jQuery("#%%ID%%").hide("slow"); }, 4000);' .
+								'setTimeout(function(){ /* */ jQuery("#%%ID%%").hide("slow"); }, 4000);' .
 							'});' .
 						'});' .
 					'</script>'."\n";
@@ -593,51 +547,6 @@
 		for($i=1; $i<=80; $i++){
 			addFilter($i, '', 0, '', '');
 		}
-	}
-
-	#########################################################
-
-	function getMemberInfo($memberID = ''){
-		static $member_info = array();
-
-		if(!$memberID){
-			$memberID = getLoggedMemberID();
-		}
-
-		// return cached results, if present
-		if(isset($member_info[$memberID])) return $member_info[$memberID];
-
-		$adminConfig = config('adminConfig');
-		$mi = array();
-
-		if($memberID){
-			$res = sql("select * from membership_users where memberID='" . makeSafe($memberID) . "'", $eo);
-			if($row = db_fetch_assoc($res)){
-				$mi = array(
-					'username' => $memberID,
-					'groupID' => $row['groupID'],
-					'group' => sqlValue("select name from membership_groups where groupID='{$row['groupID']}'"),
-					'admin' => ($adminConfig['adminUsername'] == $memberID ? true : false),
-					'email' => $row['email'],
-					'custom' => array(
-						$row['custom1'], 
-						$row['custom2'], 
-						$row['custom3'], 
-						$row['custom4']
-					),
-					'banned' => ($row['isBanned'] ? true : false),
-					'approved' => ($row['isApproved'] ? true : false),
-					'signupDate' => @date('n/j/Y', @strtotime($row['signupDate'])),
-					'comments' => $row['comments'],
-					'IP' => $_SERVER['REMOTE_ADDR']
-				);
-
-				// cache results
-				$member_info[$memberID] = $mi;
-			}
-		}
-
-		return $mi;
 	}
 
 	#########################################################
@@ -790,7 +699,7 @@
 			$filterJS.="\n\t}";
 			$filterJS.="\n\t$('{$filterable}').highlight();";
 			$filterJS.="\n};";
-			$filterJS.="\n$('{$filterer}').observe('change', function(){ window.setTimeout({$filterable}_change_by_{$filterer}, 25); });";
+			$filterJS.="\n$('{$filterer}').observe('change', function(){ /* */ window.setTimeout({$filterable}_change_by_{$filterer}, 25); });";
 			$filterJS.="\n";
 		}
 
@@ -1166,15 +1075,16 @@ EOT;
 
 	#########################################################
 
-	function PrepareUploadedFile($FieldName, $MaxSize, $FileTypes='jpg|jpeg|gif|png', $NoRename=false, $dir=""){
+	function PrepareUploadedFile($FieldName, $MaxSize, $FileTypes = 'jpg|jpeg|gif|png', $NoRename = false, $dir = ''){
 		global $Translation;
 		$f = $_FILES[$FieldName];
+		if($f['error'] == 4 || !$f['name']) return '';
 
 		$dir = getUploadDir($dir);
 
 		/* get php.ini upload_max_filesize in bytes */
 		$php_upload_size_limit = trim(ini_get('upload_max_filesize'));
-		$last = strtolower($php_upload_size_limit[strlen($php_upload_size_limit)-1]);
+		$last = strtolower($php_upload_size_limit[strlen($php_upload_size_limit) - 1]);
 		switch($last){
 			case 'g':
 				$php_upload_size_limit *= 1024;
@@ -1186,38 +1096,27 @@ EOT;
 
 		$MaxSize = min($MaxSize, $php_upload_size_limit);
 
-		if($f['error'] != 4 && $f['name']!=''){
-			if($f['size']>$MaxSize || $f['error']){
-				echo error_message(str_replace('<MaxSize>', intval($MaxSize / 1024), $Translation['file too large']));
-				exit;
-			}
-			if(!preg_match('/\.('.$FileTypes.')$/i', $f['name'], $ft)){
-				echo error_message(str_replace('<FileTypes>', str_replace('|', ', ', $FileTypes), $Translation['invalid file type']));
-				exit;
-			}
-
-			if($NoRename){
-				$n  = str_replace(' ', '_', $f['name']);
-			}else{
-				$n  = microtime();
-				$n  = str_replace(' ', '_', $n);
-				$n  = str_replace('0.', '', $n);
-				$n .= $ft[0];
-			}
-
-			if(!file_exists($dir)){
-				@mkdir($dir, 0777);
-			}
-
-			if(!@move_uploaded_file($f['tmp_name'], $dir . $n)){
-				echo error_message("Couldn't save the uploaded file. Try chmoding the upload folder '{$dir}' to 777.");
-				exit;
-			}else{
-				@chmod($dir.$n, 0666);
-				return $n;
-			}
+		if($f['size'] > $MaxSize || $f['error']){
+			echo error_message(str_replace('<MaxSize>', intval($MaxSize / 1024), $Translation['file too large']));
+			exit;
 		}
-		return "";
+		if(!preg_match('/\.(' . $FileTypes . ')$/i', $f['name'], $ft)){
+			echo error_message(str_replace('<FileTypes>', str_replace('|', ', ', $FileTypes), $Translation['invalid file type']));
+			exit;
+		}
+
+		$name = str_replace(' ', '_', $f['name']);
+		if(!$NoRename) $name = substr(md5(microtime() . rand(0, 100000)), -17) . $ft[0];
+
+		if(!file_exists($dir)) @mkdir($dir, 0777);
+
+		if(!@move_uploaded_file($f['tmp_name'], $dir . $name)){
+			echo error_message("Couldn't save the uploaded file. Try chmoding the upload folder '{$dir}' to 777.");
+			exit;
+		}
+
+		@chmod($dir . $name, 0666);
+		return $name;
 	}
 
 	#########################################################

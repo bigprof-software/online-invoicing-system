@@ -1,5 +1,6 @@
 <?php
 	/* initial preps and includes */
+	define('APPGINI_SETUP', true); /* needed in included files to tell that this is the setup script */
 	error_reporting(E_ERROR | E_WARNING | E_PARSE);
 	if(function_exists('set_magic_quotes_runtime')) @set_magic_quotes_runtime(0);
 	$curr_dir = dirname(__FILE__);
@@ -511,10 +512,10 @@
 			$('login-form').appear({ duration: 2 });
 			setTimeout("$('db_name').focus();", 2006);
 
-			$('db_name').observe('change', function(){ db_test(); });
-			$('db_password').observe('change', function(){ db_test(); });
-			$('db_server').observe('change', function(){ db_test(); });
-			$('db_username').observe('change', function(){ db_test(); });
+			$('db_name').observe('change', function(){ /* */ db_test(); });
+			$('db_password').observe('change', function(){ /* */ db_test(); });
+			$('db_server').observe('change', function(){ /* */ db_test(); });
+			$('db_username').observe('change', function(){ /* */ db_test(); });
 		});
 
 		/* validate data before submitting */
@@ -526,13 +527,13 @@
 
 			/* passwords not matching? */
 			if(p1 != p2){
-				modal_window({ message: '<div class="alert alert-danger"><?php echo addslashes($Translation['password no match']); ?></div>', title: "<?php echo addslashes($Translation['error:']); ?>", close: function(){ jQuery('#confirmPassword').focus(); } });
+				modal_window({ message: '<div class="alert alert-danger"><?php echo addslashes($Translation['password no match']); ?></div>', title: "<?php echo addslashes($Translation['error:']); ?>", close: function(){ /* */ jQuery('#confirmPassword').focus(); } });
 				return false;
 			}
 
 			/* user exists? */
 			if($('usernameNotAvailable').visible()){
-				modal_window({ message: '<div class="alert alert-danger"><?php echo addslashes($Translation['username invalid']); ?></div>', title: "<?php echo addslashes($Translation['error:']); ?>", close: function(){ jQuery('#username').focus(); } });
+				modal_window({ message: '<div class="alert alert-danger"><?php echo addslashes($Translation['username invalid']); ?></div>', title: "<?php echo addslashes($Translation['error:']); ?>", close: function(){ /* */ jQuery('#username').focus(); } });
 				return false;
 			}
 

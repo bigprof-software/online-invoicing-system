@@ -1,11 +1,15 @@
+<?php
+	$rdata = array_map('to_utf8', array_map('nl2br', array_map('html_attr_tags_ok', $rdata)));
+	$jdata = array_map('to_utf8', array_map('nl2br', array_map('html_attr_tags_ok', $jdata)));
+?>
 <script>
 	$j(function(){
 		var tn = 'invoice_items';
 
 		/* data for selected record, or defaults if none is selected */
 		var data = {
-			invoice: { id: '<?php echo $rdata['invoice']; ?>', value: '<?php echo $rdata['invoice']; ?>', text: '<?php echo $jdata['invoice']; ?>' },
-			item: { id: '<?php echo $rdata['item']; ?>', value: '<?php echo $rdata['item']; ?>', text: '<?php echo $jdata['item']; ?>' }
+			invoice: <?php echo json_encode(array('id' => $rdata['invoice'], 'value' => $rdata['invoice'], 'text' => $jdata['invoice'])); ?>,
+			item: <?php echo json_encode(array('id' => $rdata['item'], 'value' => $rdata['item'], 'text' => $jdata['item'])); ?>
 		};
 
 		/* initialize or continue using AppGini.cache for the current table */

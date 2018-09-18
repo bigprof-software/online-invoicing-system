@@ -337,7 +337,7 @@
 <script>
 	$j(function(){
 		// circumvent browser auto-completion of password field
-		setTimeout(function(){ $j('#adminPassword').val(''); }, 500);
+		setTimeout(function(){ /* */ $j('#adminPassword').val(''); }, 500);
 
 		// hide/show SMTP settings based on mail_function value
 		var mail_function_observer = function(){

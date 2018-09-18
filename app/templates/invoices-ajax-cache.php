@@ -1,16 +1,20 @@
+<?php
+	$rdata = array_map('to_utf8', array_map('nl2br', array_map('html_attr_tags_ok', $rdata)));
+	$jdata = array_map('to_utf8', array_map('nl2br', array_map('html_attr_tags_ok', $jdata)));
+?>
 <script>
 	$j(function(){
 		var tn = 'invoices';
 
 		/* data for selected record, or defaults if none is selected */
 		var data = {
-			client: { id: '<?php echo $rdata['client']; ?>', value: '<?php echo $rdata['client']; ?>', text: '<?php echo $jdata['client']; ?>' },
-			client_contact: '<?php echo $jdata['client_contact']; ?>',
-			client_address: '<?php echo $jdata['client_address']; ?>',
-			client_phone: '<?php echo $jdata['client_phone']; ?>',
-			client_email: '<?php echo $jdata['client_email']; ?>',
-			client_website: '<?php echo $jdata['client_website']; ?>',
-			client_comments: '<?php echo $jdata['client_comments']; ?>'
+			client: <?php echo json_encode(array('id' => $rdata['client'], 'value' => $rdata['client'], 'text' => $jdata['client'])); ?>,
+			client_contact: <?php echo json_encode($jdata['client_contact']); ?>,
+			client_address: <?php echo json_encode($jdata['client_address']); ?>,
+			client_phone: <?php echo json_encode($jdata['client_phone']); ?>,
+			client_email: <?php echo json_encode($jdata['client_email']); ?>,
+			client_website: <?php echo json_encode($jdata['client_website']); ?>,
+			client_comments: <?php echo json_encode($jdata['client_comments']); ?>
 		};
 
 		/* initialize or continue using AppGini.cache for the current table */

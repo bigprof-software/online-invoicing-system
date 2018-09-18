@@ -325,7 +325,7 @@
 
 		function notify(msg){
 			$j('#notify').html(msg).fadeIn();
-			window.setTimeout(function(){ $j('#notify').fadeOut(); }, 15000);
+			window.setTimeout(function(){ /* */ $j('#notify').fadeOut(); }, 15000);
 		}
 	</script>
 

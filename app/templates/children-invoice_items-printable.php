@@ -135,4 +135,4 @@
 		<?php } ?>
 	</div>
 </div>
-<script>$j(function(){ $j('img[src^="thumbnail.php?i=&"').parent().hide(); });</script>
+<script>$j(function(){ /* */ $j('img[src^="thumbnail.php?i=&"').parent().hide(); });</script>

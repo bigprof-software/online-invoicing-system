@@ -233,7 +233,7 @@
 				$j(function(){
 					show_remove_feed_link = function(){
 						if(!$j('.twitter-timeline-rendered').length){
-							setTimeout(function(){ show_remove_feed_link(); }, 1000);
+							setTimeout(function(){ /* */ show_remove_feed_link(); }, 1000);
 						}else{
 							$j('#remove-feed-link').removeClass('hidden');
 						}

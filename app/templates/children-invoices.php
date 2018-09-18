@@ -52,7 +52,7 @@
 				var url = $j('#' + param.ChildTable + '_hclink').val() + '&addNew_x=1&Embedded=1' + (param.AutoClose ? '&AutoClose=1' : '');
 				modal_window({
 					url: url,
-					close: function(){ <?php echo $current_table; ?>GetChildrenRecordsList({ Verb: 'reload' }); },
+					close: function(){ /* */ <?php echo $current_table; ?>GetChildrenRecordsList({ Verb: 'reload' }); },
 					size: 'full',
 					title: '<?php echo addslashes("{$config['tab-label']}: {$Translation['Add New']}"); ?>'
 				});
@@ -61,7 +61,7 @@
 				var url = param.ChildTable + '_view.php?Embedded=1&SelectedID=' + escape(command.ChildID) + (param.AutoClose ? '&AutoClose=1' : '');
 				modal_window({
 					url: url,
-					close: function(){ <?php echo $current_table; ?>GetChildrenRecordsList({ Verb: 'reload' }); },
+					close: function(){ /* */ <?php echo $current_table; ?>GetChildrenRecordsList({ Verb: 'reload' }); },
 					size: 'full',
 					title: '<?php echo addslashes($config['tab-label']); ?>'
 				});
@@ -172,4 +172,4 @@
 	</div>
 	<div class="col-xs-1 md-hidden lg-hidden"></div>
 </div>
-<script>$j(function(){ $j('img[src^="thumbnail.php?i=&"').parent().hide(); });</script>
+<script>$j(function(){ /* */ $j('img[src^="thumbnail.php?i=&"').parent().hide(); });</script>

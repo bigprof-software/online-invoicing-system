@@ -45,7 +45,7 @@ div.datePicker{ font-size: 1.3em; }
 .text-bold{ font-weight: bold; }
 .text-italic{ font-style: italic; }
 
-.form-control, .help-block .alert{ width: 90% !important; }
+/* .form-control, .help-block .alert{ width: 90% !important; } */
 .input-group .form-control{ width: 100% !important; }
 .form-inline .form-control{ width: auto !important; }
 .panel .btn{ overflow: hidden; }
@@ -55,10 +55,16 @@ div.datePicker{ font-size: 1.3em; }
 
 .navbar ul.dropdown-menu{ max-height: 400px; overflow-y: auto; }
 
-.date_combo { padding-right: 0 !important; }
-.date_combo select { width: 100% !important; padding-left: 0; padding-right: 0; }
+.date_combo { padding-right: 0.5em; }
+/* .date_combo select { width: 100% !important; padding-left: 0; padding-right: 0; } */
 
 img[src="blank.gif"] { max-height: 10px !important; }
+
+/* fix for scrolling wide tables horizontally on iOS, https://stackoverflow.com/a/39073181/1945185 */
+.table-responsive .table {
+	max-width: none;
+	-webkit-overflow-scrolling: touch !important;
+}
 
 
 /* fixes for glyph icons in some themes */
@@ -77,6 +83,19 @@ img[src="blank.gif"] { max-height: 10px !important; }
 .no-caption .field-caption-tv{  display: none; }
 .no-caption dd{ margin-left: 0; margin-right: 0; }
 
+.nav-tabs a img{ margin: 0 0.25em; }
+
+/* rotation classes */
+.rotate90{ -ms-transform: rotate(90deg); -webkit-transform: rotate(90deg); transform: rotate(90deg); }
+.rotate180{ -ms-transform: rotate(180deg); -webkit-transform: rotate(180deg); transform: rotate(180deg); }
+.rotate270{ -ms-transform: rotate(270deg); -webkit-transform: rotate(270deg); transform: rotate(270deg); }
+
+/* compacting mobile borders for DV */
+.detail_view .form-group hr { margin: 0 0 0.5em 0; border-top-style: dashed; }
+
+/* tv tools button widths */
+.tv-tools .btn { width: 5em; }
+
 /* compact theme styles */
 .container.theme-compact{ font-size: 0.857em; }
 
@@ -94,7 +113,7 @@ img[src="blank.gif"] { max-height: 10px !important; }
 	margin-bottom: 8px;
 }
 
-.theme-compact .form-control {
+.theme-compact .form-control, .theme-compact .input-group-addon {
 	font-size: 12px;
 	height: auto;
 	padding: 4px 6px;

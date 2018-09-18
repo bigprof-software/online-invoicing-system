@@ -2,7 +2,7 @@
 
 Easy and lean invoicing for small businesses, consultants and freelancers, created using [AppGini](https://bigprof.com/appgini/).
 
-### [⇩ Download the latest release](https://github.com/bigprof-software/online-invoicing-system/archive/2.5.zip)
+### [⇩ Download the latest release](https://github.com/bigprof-software/online-invoicing-system/archive/2.6.zip)
 
 ##### [_Changelog_](https://github.com/bigprof-software/online-invoicing-system/releases)
 
@@ -12,6 +12,10 @@ Easy and lean invoicing for small businesses, consultants and freelancers, creat
 * View customers activity and the full invoices history of each client.
 * Check which customers ordered which items.
 * Multiple customizable templates for invoices.
+	* To define a new invoice template, make a copy of hooks/invoice-templates/corporate_clients.php
+	* Rename the copy to any suitable name, making sure to preserve the .php extension and keep it in the same folder.
+	* Edit the template in any code editor as you see fit.
+	* Add the template name to the file hooks/invoices.invoice_template.csv
 * Apply discounts and taxes.
 * Show invoice total in digits and letters.
 * Price history for items to keep log of price changes and apply the correct price to invoices based on their issue date.

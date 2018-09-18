@@ -48,6 +48,7 @@
 	@ini_set('session.serialize_handler', 'php');
 	@ini_set('session.use_cookies', '1');
 	@ini_set('session.use_only_cookies', '1');
+	@ini_set('session.cookie_httponly', '1');
 	@ini_set('session.use_strict_mode', '1');
 	@session_cache_expire(2);
 	@session_cache_limiter($_SERVER['REQUEST_METHOD'] == 'POST' ? 'private' : 'nocache');

@@ -488,4 +488,6 @@
 	$Translation['confirm restore'] = 'Restoring your database from a backup file would OVERWRITE all existing data AND users/passwords, reverting all to the state when the backup was taken.\n\nDuring the restore process, maintenance mode will be enabled to prevent users from modifying the database, and will be disabled once the restore is finished.\n\nAre you sure you want to continue?';
 	$Translation['confirm backup'] = 'During the backup process, maintenance mode will be enabled to prevent users from modifying the database, and will be disabled once the backup is finished.\n\nAre you sure you want to continue?';
 	$Translation['cant create backup folder'] = 'Error: Can\'t create or write to admin/backups folder. Please check your folder permissions and ownership or contact your server administrator for help.';
-	
+	$Translation['fix all'] = 'FIX ALL FIELDS';
+	$Translation['backup before fix'] = 'It\'s highly recommended that you create a database backup first before attempting to make any fixes here.';
+	$Translation['about backups'] = 'Backups are performed using mysqldump commandline tool. If no backups are being created, it could be due to the web server not having permission to run mysqldump.';

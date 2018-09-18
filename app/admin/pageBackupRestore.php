@@ -11,6 +11,7 @@
 				$lang, /* translation text */
 				$request, /* assoc array that stores $_REQUEST */
 				$error_back_link,
+				$backup_log,
 				$initial_ts; /* initial timestamp */
 
 		public function __construct($request = array()){
@@ -38,6 +39,7 @@
 			$this->process_request($request);
 			$out = call_user_func_array(array($this, $this->request['action']), array());
 			if($out === true || $out === false){
+				echo $this->backup_log;
 				if(!$out) @header("{$_SERVER['SERVER_PROTOCOL']} 500 Internal Server Error");
 				return;
 			}
@@ -112,12 +114,10 @@
 		 *  @return UTF8-encoded array/string
 		 */
 		protected function utf8ize($mixed) {
-			if(is_array($mixed)){
-				foreach($mixed as $key => $value){
-					$mixed[$key] = $this->utf8ize($value);
-				}
-			}elseif(is_string($mixed)){
-				return utf8_encode($mixed);
+			if(!is_array($mixed)) return to_utf8($mixed);
+
+			foreach($mixed as $key => $value){
+				$mixed[$key] = $this->utf8ize($value);
 			}
 			return $mixed;
 		}
@@ -159,6 +159,13 @@
 			</script>
 
 			<?php
+				echo Notification::show(array(
+					'message' => '<i class="glyphicon glyphicon-info-sign"></i> ' . $this->lang['about backups'],
+					'class' => 'info',
+					'dismiss_days' => 30,
+					'id' => 'info-about-backups'
+				));
+
 				if(!$can_backup){
 					echo Notification::show(array(
 						'message' => $this->lang['cant create backup folder'],
@@ -170,6 +177,7 @@
 
 			<?php if($can_backup){ ?>
 				<button type="button" class="vspacer-lg btn btn-primary btn-lg" id="create-backup"><i class="glyphicon glyphicon-plus"></i> <?php echo $this->lang['create backup file']; ?></button>
+				<pre id="backup-log" class="hidden"></pre>
 
 				<h2><?php echo $this->lang['available backups']; ?></h2>
 				<div id="backup-files-list"></div>
@@ -295,6 +303,8 @@
 						$j('#create-backup').click(function(){
 							if(!confirm(confirm_backup)) return;
 
+							$j('#backup-log').html('').addClass('hidden');
+
 							var btn = $j(this);
 							btn.addClass('btn-warning').prop('disabled', true).html('<i class="glyphicon glyphicon-hourglass"></i> ' + please_wait);
 							$j.ajax({
@@ -304,12 +314,13 @@
 									btn.removeClass('btn-warning btn-primary').addClass('btn-success').html('<i class="glyphicon glyphicon-ok"></i> ' + finished);
 								},
 								error: function(){
-									btn.addClass('btn-danger').html('<i class="glyphicon glyphicon-remove"></i> ' + error);
+									btn.removeClass('btn-warning btn-primary').addClass('btn-danger').html('<i class="glyphicon glyphicon-remove"></i> ' + error);
 								},
-								complete: function(){
+								complete: function(jx){
+									if(jx.responseText.length > 0) $j('#backup-log').html(jx.responseText).removeClass('hidden');
 									display_backups();
 									setTimeout(function(){
-										btn.removeClass('btn-primary btn-danger btn-warning').prop('disabled', false).html('<i class="glyphicon glyphicon-plus"></i> ' + create_backup);
+										btn.removeClass('btn-danger btn-warning').addClass('btn-primary').prop('disabled', false).html('<i class="glyphicon glyphicon-plus"></i> ' + create_backup);
 									}, 10000);
 								}
 							});
@@ -375,12 +386,14 @@
 		 */
 		public function create_backup(){
 			$config = array('dbServer' => '', 'dbUsername' => '', 'dbPassword' => '', 'dbDatabase' => '');
-			foreach($config as $k => $v) $config[$k] = config($k);
+			foreach($config as $k => $v) $config[$k] = escapeshellarg(config($k));
 
 			$dump_file = $this->curr_dir . '/backups/' . md5(microtime()) . '.sql';
-			$out = $ret = null;
+			$out = array(); $ret = 0;
 			maintenance_mode(true);
-			@exec("mysqldump -u{$config['dbUsername']} -p{$config['dbPassword']} -h{$config['dbServer']} {$config['dbDatabase']} > {$dump_file}", $out, $ret);
+			$pass_param = ($config['dbPassword'] ? "-p{$config['dbPassword']}" : '');
+			@exec("(mysqldump -u{$config['dbUsername']} {$pass_param} -h{$config['dbServer']} {$config['dbDatabase']} > {$dump_file}) 2>&1", $out, $ret);
+			$this->backup_log = implode("\n", $out);
 			maintenance_mode(false);
 
 			if($ret) return false;

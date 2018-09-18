@@ -149,7 +149,7 @@
 				/* function to update record info after 'change owner' dialog is gone */
 				var update_username = function(){
 					/* wait till any modals disappear */
-					if($j('.modal-dialog:visible').length) return setTimeout(update_username, 900);
+					if(AppGini.modalOpen()) return setTimeout(update_username, 900);
 
 					$j.ajax({
 						url: 'ajax_admin_tools.php',

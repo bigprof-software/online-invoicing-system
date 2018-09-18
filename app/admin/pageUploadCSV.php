@@ -1382,7 +1382,7 @@
 							if(progress.retries < 10){
 								progress.retries++;
 								update_progress((progress.failed + progress.imported) / progress.total * 100, '<?php echo html_attr(str_replace('<SECONDS>', '10', $this->lang['connection failed retrying'])); ?>', 'warning');
-								setTimeout(function(){ import_batch(progress, callbacks); }, 3000);
+								setTimeout(function(){ /* */ import_batch(progress, callbacks); }, 3000);
 								return;
 							}else{
 								/* fail and abort importing process */
@@ -1449,12 +1449,10 @@
 		 *  @return UTF8-encoded array/string
 		 */
 		protected function utf8ize($mixed) {
-			if(is_array($mixed)){
-				foreach($mixed as $key => $value){
-					$mixed[$key] = $this->utf8ize($value);
-				}
-			}elseif(is_string($mixed)){
-				return utf8_encode($mixed);
+			if(!is_array($mixed)) return to_utf8($mixed);
+
+			foreach($mixed as $key => $value){
+				$mixed[$key] = $this->utf8ize($value);
 			}
 			return $mixed;
 		}

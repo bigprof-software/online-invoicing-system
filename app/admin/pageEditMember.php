@@ -456,9 +456,9 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 		}
 
 		/* circumvent browser auto-filling of passwords */
-		setTimeout(function(){ $j('#password').val(''); }, 500);
+		setTimeout(function(){ /* */ $j('#password').val(''); }, 500);
 
-		$j('#username-available, #username-not-available').click(function(){ $j('#memberID').focus(); });
+		$j('#username-available, #username-not-available').click(function(){ /* */ $j('#memberID').focus(); });
 
 		$j('#memberID').on('keyup blur', check_user);
 
