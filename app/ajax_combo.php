@@ -41,7 +41,7 @@
 				'parent_from' => '`clients` ',
 				'filterers' => array(),
 				'custom_query' => 'SELECT `clients`.`id`, `clients`.`name` FROM `clients` ORDER BY 2',
-				'inherit_permissions' => false,
+				'inherit_permissions' => true,
 				'list_type' => 0,
 				'not_null' => false
 			),
@@ -122,7 +122,7 @@
 				'parent_from' => '`items` ',
 				'filterers' => array(),
 				'custom_query' => '',
-				'inherit_permissions' => false,
+				'inherit_permissions' => true,
 				'list_type' => 0,
 				'not_null' => false
 			)
@@ -135,7 +135,7 @@
 				'parent_from' => '`invoices` LEFT JOIN `clients` as clients1 ON `clients1`.`id`=`invoices`.`client` ',
 				'filterers' => array(),
 				'custom_query' => 'SELECT `invoices`.`id`, `invoices`.`code` FROM `invoices` LEFT JOIN `clients` as clients1 ON `clients1`.`id`=`invoices`.`client` ORDER BY 2',
-				'inherit_permissions' => false,
+				'inherit_permissions' => true,
 				'list_type' => 0,
 				'not_null' => false
 			),
@@ -146,7 +146,7 @@
 				'parent_from' => '`items` ',
 				'filterers' => array(),
 				'custom_query' => 'SELECT `items`.`id`, `items`.`item_description` FROM `items` ORDER BY 2',
-				'inherit_permissions' => false,
+				'inherit_permissions' => true,
 				'list_type' => 0,
 				'not_null' => false
 			)
