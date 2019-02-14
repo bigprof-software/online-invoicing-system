@@ -35,14 +35,14 @@
 	function isEmail($email){
 		if(preg_match('/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,45})$/i', $email)){
 			return $email;
-		}else{
-			return FALSE;
 		}
+
+		return false;
 	}
 
 	function setup_allowed_username($username){
 		$username = trim(strtolower($username));
-		if(!preg_match('/^[a-z0-9][a-z0-9 _.@]{3,19}$/', $username) || preg_match('/(@@|  |\.\.|___)/', $username)) return false;
+		if(!preg_match('/^[a-z0-9][a-z0-9 _.@]{3,100}$/', $username) || preg_match('/(@@|  |\.\.|___)/', $username)) return false;
 		return $username;
 	}
 
@@ -145,10 +145,11 @@
 			'dbUsername' => undo_magic_quotes($db_username),
 			'dbPassword' => undo_magic_quotes($db_password),
 			'dbDatabase' => undo_magic_quotes($db_name),
+			'appURI' => trim(dirname($_SERVER['SCRIPT_NAME']), '/'),
 
 			'adminConfig' => array(
 				'adminUsername' => $username,
-				'adminPassword' => md5($password),
+				'adminPassword' => password_hash($password, PASSWORD_DEFAULT),
 				'notifyAdminNewMembers' => false,
 				'defaultSignUp' => 1,
 				'anonymousGroup' => 'anonymous',
@@ -476,8 +477,8 @@
 	<?php }elseif($form){ ?>
 		$j(function() {
 			/* password strength feedback */
-			$('password').observe('keyup', function(){
-				ps = passwordStrength($F('password'), $F('username'));
+			$j('#password').on('keyup', function(){
+				var ps = passwordStrength($j('#password').val(), $j('#username').val());
 
 				if(ps == 'strong'){
 					$j('#password').parents('.form-group').removeClass('has-error has-warning').addClass('has-success');
@@ -492,8 +493,8 @@
 			});
 
 			/* inline feedback of confirm password */
-			$('confirmPassword').observe('keyup', function(){
-				if($F('confirmPassword') != $F('password') || !$F('confirmPassword').length){
+			$j('#confirmPassword').on('keyup', function() {
+				if($j('#confirmPassword').val() != $j('#password').val() || !$j('#confirmPassword').val().length) {
 					$j('#confirmPassword').parents('.form-group').removeClass('has-success').addClass('has-error');
 				}else{
 					$j('#confirmPassword').parents('.form-group').removeClass('has-error').addClass('has-success');
@@ -501,39 +502,35 @@
 			});
 
 			/* inline feedback of email */
-			$('email').observe('change', function(){
-				if(validateEmail($F('email'))){
+			$j('#email').on('change', function() {
+				if(validateEmail($j('#email').val())) {
 					$j('#email').parents('.form-group').removeClass('has-error').addClass('has-success');
 				}else{
 					$j('#email').parents('.form-group').removeClass('has-success').addClass('has-error');
 				}
 			});
 
-			$('login-form').appear({ duration: 2 });
-			setTimeout("$('db_name').focus();", 2006);
+			$j('#login-form').fadeIn(1000, function() { $j('#db_name').focus(); });
 
-			$('db_name').observe('change', function(){ /* */ db_test(); });
-			$('db_password').observe('change', function(){ /* */ db_test(); });
-			$('db_server').observe('change', function(){ /* */ db_test(); });
-			$('db_username').observe('change', function(){ /* */ db_test(); });
+			$j('#db_name, #db_password, #db_server, #db_username').on('change', db_test);
 		});
 
 		/* validate data before submitting */
-		function jsValidateSetup(){
-			var p1 = $F('password');
-			var p2 = $F('confirmPassword');
-			var user = $F('username');
-			var email = $F('email');
+		function jsValidateSetup() {
+			var p1 = $j('#password').val();
+			var p2 = $j('#confirmPassword').val();
+			var user = $j('#username').val();
+			var email = $j('#email').val();
 
 			/* passwords not matching? */
-			if(p1 != p2){
-				modal_window({ message: '<div class="alert alert-danger"><?php echo addslashes($Translation['password no match']); ?></div>', title: "<?php echo addslashes($Translation['error:']); ?>", close: function(){ /* */ jQuery('#confirmPassword').focus(); } });
+			if(p1 != p2) {
+				modal_window({ message: '<div class="alert alert-danger"><?php echo addslashes($Translation['password no match']); ?></div>', title: "<?php echo addslashes($Translation['error:']); ?>", close: function(){ jQuery('#confirmPassword').focus(); } });
 				return false;
 			}
 
 			/* user exists? */
 			if($('usernameNotAvailable').visible()){
-				modal_window({ message: '<div class="alert alert-danger"><?php echo addslashes($Translation['username invalid']); ?></div>', title: "<?php echo addslashes($Translation['error:']); ?>", close: function(){ /* */ jQuery('#username').focus(); } });
+				modal_window({ message: '<div class="alert alert-danger"><?php echo addslashes($Translation['username invalid']); ?></div>', title: "<?php echo addslashes($Translation['error:']); ?>", close: function(){ jQuery('#username').focus(); } });
 				return false;
 			}
 
@@ -545,7 +542,7 @@
 		function db_test(){
 			if(db_test_in_progress) return;
 
-			if($F('db_name').length && $F('db_username').length && $F('db_server').length && $$('#db_password:focus') == ''){
+			if($j('#db_name').val().length && $j('#db_username').val().length && $j('#db_server').val().length && !$j('#db_password:focus').length){
 				setTimeout(function(){
 					if(db_test_in_progress) return;
 
@@ -553,10 +550,10 @@
 						'<?php echo basename(__FILE__); ?>', {
 							method: 'post',
 							parameters: {
-								db_name: $F('db_name'),
-								db_server: $F('db_server'),
-								db_password: $F('db_password'),
-								db_username: $F('db_username'),
+								db_name: $j('#db_name').val(),
+								db_server: $j('#db_server').val(),
+								db_password: $j('#db_password').val(),
+								db_username: $j('#db_username').val(),
 								test: 1
 							},
 							onCreate: function() {
@@ -564,9 +561,9 @@
 							},
 							onSuccess: function(resp) {
 								if(resp.responseText == 'SUCCESS!'){
-									$('db_test').removeClassName('alert-danger').addClassName('alert-success').update('<?php echo addslashes($Translation['Database info is correct']); ?>').appear();
+									$j('#db_test').removeClass('alert-danger').addClass('alert-success').html('<?php echo addslashes($Translation['Database info is correct']); ?>').fadeIn();
 								}else if(resp.responseText.match(/^ERROR!/)){
-									$('db_test').removeClassName('alert-success').addClassName('alert-danger').update('<?php echo addslashes($Translation['Database connection error']); ?>').show();
+									$j('#db_test').removeClass('alert-success').addClass('alert-danger').html('<?php echo addslashes($Translation['Database connection error']); ?>').fadeIn();
 									Effect.Shake('db_test');
 								}
 							},

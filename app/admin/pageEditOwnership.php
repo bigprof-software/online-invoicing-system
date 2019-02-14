@@ -62,7 +62,7 @@
 		$groupID = $row['groupID'];
 	}else {
 		// no such record exists
-		die("<div class=\"alert alert-danger\">{$Translation["record not found error"]}</div>");
+		die("<div class=\"alert alert-danger\">{$Translation['record not found error']}</div>");
 	}
 ?>
 

@@ -28,7 +28,7 @@
 				exit;
 			}
 
-			sql("update membership_users set passMD5='" . md5($_POST['newPassword']) . "', pass_reset_expiry=NULL, pass_reset_key=NULL where lcase(memberID)='" . addslashes($row['memberID']) . "'", $eo);
+			sql("update membership_users set passMD5='" . password_hash($_POST['newPassword'], PASSWORD_DEFAULT) . "', pass_reset_expiry=NULL, pass_reset_key=NULL where lcase(memberID)='" . makeSafe($row['memberID'], false) . "'", $eo);
 			?>
 			<div class="row">
 				<div class="col-md-6 col-md-offset-3">

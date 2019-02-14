@@ -321,10 +321,10 @@ function post2(url, params, notify, disable, loading, redirectOnSuccess){
 			},
 			onSuccess: function(resp) {
 				/* show notification containing returned text */
-				if($(notify) != undefined) $(notify).removeClassName('Error').appear().update(resp.responseText);
+				if($(notify) != undefined) $(notify).removeClassName('alert-danger').appear().update(resp.responseText);
 
 				/* in case no errors returned, */
-				if(!resp.responseText.match(/<?php echo $Translation['error:']; ?>/)){
+				if(!resp.responseText.match(/<?php echo preg_quote($Translation['error:']); ?>/)){
 					/* redirect to provided url */
 					if(redirectOnSuccess != undefined){
 						window.location=redirectOnSuccess;
@@ -336,7 +336,7 @@ function post2(url, params, notify, disable, loading, redirectOnSuccess){
 
 				/* in case of error, apply error class */
 				}else{
-					$(notify).addClassName('Error');
+					$(notify).addClassName('alert-danger');
 				}
 			},
 			onComplete: function() {
@@ -657,7 +657,7 @@ function mass_change_owner(t, ids){
 		jQuery('[id=new_owner_for_selected_records]').select2({
 			width: '100%',
 			formatNoMatches: function(term){ /* */ return '<?php echo addslashes($Translation['No matches found!']); ?>'; },
-			minimumResultsForSearch: 10,
+			minimumResultsForSearch: 5,
 			loadMorePadding: 200,
 			escapeMarkup: function(m){ /* */ return m; },
 			ajax: {
@@ -754,27 +754,27 @@ function enforce_uniqueness(table, field){
 
 /* persist expanded/collapsed chidren in DVP */
 function persist_expanded_child(id){
-	var expand_these = Cookies.getJSON('online_inovicing_system.dvp_expand');
+	var expand_these = JSON.parse(localStorage.getItem('online_inovicing_system.dvp_expand'));
 	if(expand_these == undefined) expand_these = [];
 
 	if($j('[id=' + id + ']').hasClass('active')){
 		if(expand_these.indexOf(id) < 0){
 			// expanded button and not persisting in cookie? save it!
 			expand_these.push(id);
-			Cookies.set('online_inovicing_system.dvp_expand', expand_these, { expires: 30 });
+			localStorage.setItem('online_inovicing_system.dvp_expand', JSON.stringify(expand_these));
 		}
 	}else{
 		if(expand_these.indexOf(id) >= 0){
 			// collapsed button and persisting in cookie? remove it!
 			expand_these.splice(expand_these.indexOf(id), 1);
-			Cookies.set('online_inovicing_system.dvp_expand', expand_these, { expires: 30 });
+			localStorage.setItem('online_inovicing_system.dvp_expand', JSON.stringify(expand_these));
 		}
 	}
 }
 
 /* apply expanded/collapsed status to children in DVP */
 function apply_persisting_children(){
-	var expand_these = Cookies.getJSON('online_inovicing_system.dvp_expand');
+	var expand_these = JSON.parse(localStorage.getItem('online_inovicing_system.dvp_expand'));
 	if(expand_these == undefined) return;
 
 	expand_these.each(function(id){
@@ -1260,3 +1260,36 @@ AppGini.hideViewParentLinks = function() {
 		$j(this).parents('.form-group').find('.view_parent').hide();
 	});
 };
+
+AppGini.filterURIComponents = function(filterIndex, andOr, fieldIndex, operator, value) {
+	filterIndex = parseInt(filterIndex); if(isNaN(filterIndex)) return '';
+	if(filterIndex < 1 || filterIndex > 60) return '';
+
+	andOr = andOr.toLowerCase();
+	if(andOr != 'or') andOr = 'and';
+
+	fieldIndex = parseInt(fieldIndex); if(isNaN(fieldIndex)) return '';
+	if(fieldIndex < 1 || fieldIndex > 1000) return '';
+
+	if(![
+		'equal-to',
+		'not-equal-to',
+		'greater-than',
+		'greater-than-or-equal-to',
+		'less-than',
+		'less-than-or-equal-to',
+		'like',
+		'not-like',
+		'is-empty',
+		'is-not-empty'
+	].indexOf(operator)) operator = 'like';
+
+	if(undefined == value) value = '';
+
+	return '' +
+		encodeURIComponent('FilterAnd[' + filterIndex + ']') + '=' + andOr + '&' +
+		encodeURIComponent('FilterField[' + filterIndex + ']') + '=' + fieldIndex + '&' +
+		encodeURIComponent('FilterOperator[' + filterIndex + ']') + '=' + operator + '&' +
+		encodeURIComponent('FilterValue[' + filterIndex + ']') + '=' + encodeURIComponent(value);
+}
+

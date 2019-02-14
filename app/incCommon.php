@@ -8,7 +8,7 @@
 		logInMember() -- checks POST login. If not valid, redirects to index.php, else returns TRUE
 		getTablePermissions($tn) -- returns an array of permissions allowed for logged member to given table (allowAccess, allowInsert, allowView, allowEdit, allowDelete) -- allowAccess is set to true if any access level is allowed
 		get_sql_fields($tn) -- returns the SELECT part of the table view query
-		get_sql_from($tn[, true]) -- returns the FROM part of the table view query, with full joins, optionally skipping permissions if true passed as 2nd param.
+		get_sql_from($tn[, true, [, false]]) -- returns the FROM part of the table view query, with full joins (unless third paramaeter is set to true), optionally skipping permissions if true passed as 2nd param.
 		get_joined_record($table, $id[, true]) -- returns assoc array of record values for given PK value of given table, with full joins, optionally skipping permissions if true passed as 3rd param.
 		get_defaults($table) -- returns assoc array of table fields as array keys and default values (or empty), excluding automatic values as array values
 		htmlUserBar() -- returns html code for displaying user login status to be used on top of pages.
@@ -152,7 +152,7 @@
 
 	#########################################################
 
-	function get_sql_from($table_name, $skip_permissions = false){
+	function get_sql_from($table_name, $skip_permissions = false, $skip_joins = false) {
 		$sql_from = array(   
 			'invoices' => "`invoices` LEFT JOIN `clients` as clients1 ON `clients1`.`id`=`invoices`.`client` ",
 			'clients' => "`clients` ",
@@ -169,24 +169,25 @@
 			'items' => 'id'
 		);
 
-		if(isset($sql_from[$table_name])){
-			if($skip_permissions) return $sql_from[$table_name];
+		if(!isset($sql_from[$table_name])) return false;
 
-			// mm: build the query based on current member's permissions
-			$perm = getTablePermissions($table_name);
-			if($perm[2] == 1){ // view owner only
-				$sql_from[$table_name] .= ", membership_userrecords WHERE `{$table_name}`.`{$pkey[$table_name]}`=membership_userrecords.pkValue and membership_userrecords.tableName='{$table_name}' and lcase(membership_userrecords.memberID)='" . getLoggedMemberID() . "'";
-			}elseif($perm[2] == 2){ // view group only
-				$sql_from[$table_name] .= ", membership_userrecords WHERE `{$table_name}`.`{$pkey[$table_name]}`=membership_userrecords.pkValue and membership_userrecords.tableName='{$table_name}' and membership_userrecords.groupID='" . getLoggedGroupID() . "'";
-			}elseif($perm[2] == 3){ // view all
-				$sql_from[$table_name] .= ' WHERE 1=1';
-			}else{ // view none
-				return false;
-			}
-			return $sql_from[$table_name];
+		$from = ($skip_joins ? "`{$table_name}`" : $sql_from[$table_name]);
+
+		if($skip_permissions) return $from . ' WHERE 1=1';
+
+		// mm: build the query based on current member's permissions
+		$perm = getTablePermissions($table_name);
+		if($perm[2] == 1){ // view owner only
+			$from .= ", membership_userrecords WHERE `{$table_name}`.`{$pkey[$table_name]}`=membership_userrecords.pkValue and membership_userrecords.tableName='{$table_name}' and lcase(membership_userrecords.memberID)='" . getLoggedMemberID() . "'";
+		}elseif($perm[2] == 2){ // view group only
+			$from .= ", membership_userrecords WHERE `{$table_name}`.`{$pkey[$table_name]}`=membership_userrecords.pkValue and membership_userrecords.tableName='{$table_name}' and membership_userrecords.groupID='" . getLoggedGroupID() . "'";
+		}elseif($perm[2] == 3){ // view all
+			$from .= ' WHERE 1=1';
+		}else{ // view none
+			return false;
 		}
 
-		return false;
+		return $from;
 	}
 
 	#########################################################
@@ -279,16 +280,21 @@
 		if($_POST['signIn'] != ''){
 			if($_POST['username'] != '' && $_POST['password'] != ''){
 				$username = makeSafe(strtolower($_POST['username']));
-				$password = md5($_POST['password']);
+				$hash = sqlValue("select passMD5 from membership_users where lcase(memberID)='{$username}' and isApproved=1 and isBanned=0");
+				$password = $_POST['password'];
 
-				if(sqlValue("select count(1) from membership_users where lcase(memberID)='$username' and passMD5='$password' and isApproved=1 and isBanned=0")==1){
-					$_SESSION['memberID']=$username;
-					$_SESSION['memberGroupID']=sqlValue("select groupID from membership_users where lcase(memberID)='$username'");
-					if($_POST['rememberMe']==1){
-						@setcookie('online_inovicing_system_rememberMe', md5($username.$password), time()+86400*30);
+				if(password_match($password, $hash)) {
+					$_SESSION['memberID'] = $username;
+					$_SESSION['memberGroupID'] = sqlValue("SELECT `groupID` FROM `membership_users` WHERE LCASE(`memberID`)='{$username}'");
+
+					if($_POST['rememberMe'] == 1){
+						RememberMe::login($username);
 					}else{
-						@setcookie('online_inovicing_system_rememberMe', '', time()-86400*30);
+						RememberMe::delete();
 					}
+
+					// harden user's password hash
+					password_harden($username, $password, $hash);
 
 					// hook: login_ok
 					if(function_exists('login_ok')){
@@ -316,12 +322,13 @@
 			if(!headers_sent()) header('HTTP/1.0 403 Forbidden');
 			redirect("index.php?loginFailed=1");
 			exit;
-		}elseif((!$_SESSION['memberID'] || $_SESSION['memberID']==$adminConfig['anonymousMember']) && $_COOKIE['online_inovicing_system_rememberMe']!=''){
-			$chk=makeSafe($_COOKIE['online_inovicing_system_rememberMe']);
-			if($username=sqlValue("select memberID from membership_users where convert(md5(concat(memberID, passMD5)), char)='$chk' and isBanned=0")){
-				$_SESSION['memberID']=$username;
-				$_SESSION['memberGroupID']=sqlValue("select groupID from membership_users where lcase(memberID)='$username'");
-			}
+		}
+
+		/* check if a rememberMe cookie exists and sign in user if so */
+		if(RememberMe::check()) {
+			$username = makeSafe(strtolower(RememberMe::user()));
+			$_SESSION['memberID'] = $username;
+			$_SESSION['memberGroupID'] = sqlValue("SELECT `groupID` FROM `membership_users` WHERE LCASE(`memberID`)='{$username}'");
 		}
 	}
 
@@ -1047,7 +1054,7 @@ EOT;
 
 		$css_links = <<<EOT
 
-			<link rel="stylesheet" href="{$prepend_path}resources/initializr/css/bootstrap.css">
+			<link rel="stylesheet" href="{$prepend_path}resources/initializr/css/sandstone.css">
 			<link rel="stylesheet" href="{$prepend_path}resources/lightbox/css/lightbox.css" media="screen">
 			<link rel="stylesheet" href="{$prepend_path}resources/select2/select2.css" media="screen">
 			<link rel="stylesheet" href="{$prepend_path}resources/timepicker/bootstrap-timepicker.min.css" media="screen">

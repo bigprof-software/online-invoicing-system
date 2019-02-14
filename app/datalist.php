@@ -108,11 +108,6 @@ class DataList{
 		}
 	}
 
-	function set_headers(){
-		@header('Content-Type: text/html; charset=' . datalist_db_encoding);
-		@header('X-Frame-Options: SAMEORIGIN'); // prevent iframing by other sites to prevent clickjacking
-	}
-
 	function Render(){
 	// get post and get variables
 		global $Translation;
@@ -433,7 +428,6 @@ class DataList{
 				$this->HTML .= '<input name="FirstRecord" type="hidden" value="1" />';
 
 				$this->ContentType='filters';
-			$this->set_headers();
 			return;
 		}
 
@@ -642,7 +636,7 @@ class DataList{
 			header("Content-Type: application/force-download");
 			header("Content-Length: " . (string)(strlen($this->HTML)));
 			header("Content-Transfer-Encoding: Binary");
-			header("Content-Disposition: attachment; filename=$this->TableName.csv");
+			header("Content-Disposition: attachment; filename={$this->TableName}.csv");
 
 		// send output and quit script
 			echo $this->HTML;
@@ -1143,12 +1137,12 @@ class DataList{
 			$this->HTML .= "</table></div>\n";
 
 			/* highlight quick search matches */
-			if($SearchString!='') $this->HTML .= '<script>$j(function(){ $j(".table-responsive td").mark("' . html_attr($SearchString) . '", { className: "text-warning bg-warning", diacritics: false }); })</script>';
+			if($SearchString!='') $this->HTML .= '<script>$j(function(){ $j(".table-responsive td").mark("' . html_attr($SearchString) . '", { className: "text-bold bg-warning", diacritics: false }); })</script>';
 
 			if($Print_x == '' && $i){ // TV
 				$this->HTML .= '<div class="row pagination-section">';
 					$this->HTML .= '<div class="col-xs-4 col-md-3 col-lg-2 vspacer-lg">';
-						$this->HTML .= '<button onClick="' . $resetSelection . ' document.myform.NoDV.value = 1; return true;" type="submit" name="Previous_x" id="Previous" value="1" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i> <span class="hidden-xs">' . $Translation['Previous'] . '</span></button>';
+						if($FirstRecord > 1) $this->HTML .= '<button onClick="' . $resetSelection . ' document.myform.NoDV.value = 1; return true;" type="submit" name="Previous_x" id="Previous" value="1" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i> <span class="hidden-xs">' . $Translation['Previous'] . '</span></button>';
 					$this->HTML .= '</div>';
 
 					$this->HTML .= '<div class="col-xs-4 col-md-4 col-lg-2 col-md-offset-1 col-lg-offset-3 text-center vspacer-lg">';
@@ -1156,7 +1150,7 @@ class DataList{
 					$this->HTML .= '</div>';
 
 					$this->HTML .= '<div class="col-xs-4 col-md-3 col-lg-2 col-md-offset-1 col-lg-offset-3 text-right vspacer-lg">';
-						$this->HTML .= '<button onClick="'.$resetSelection.' document.myform.NoDV.value=1; return true;" type="submit" name="Next_x" id="Next" value="1" class="btn btn-default btn-block"><span class="hidden-xs">' . $Translation['Next'] . '</span> <i class="glyphicon glyphicon-chevron-right"></i></button>';
+						if($i < $RecordCount) $this->HTML .= '<button onClick="'.$resetSelection.' document.myform.NoDV.value=1; return true;" type="submit" name="Next_x" id="Next" value="1" class="btn btn-default btn-block"><span class="hidden-xs">' . $Translation['Next'] . '</span> <i class="glyphicon glyphicon-chevron-right"></i></button>';
 					$this->HTML .= '</div>';
 				$this->HTML .= '</div>';
 			}
@@ -1265,7 +1259,6 @@ class DataList{
 			$this->HTML.="\n<script src=\"hooks/{$this->TableName}-dv.js\"></script>\n";
 		}
 
-		$this->set_headers();
 		return;
 	}
 
@@ -1386,22 +1379,21 @@ class DataList{
 					if(val !== undefined && val !== true && val !== false) val = true;
 
 					var cn = 'columns-' + location.pathname.split(/\//).pop().split(/\./).shift(); // cookie name
-					var op = { expires: 30, path: '' }; // cookie options
-					var c = Cookies.getJSON(cn) || {};
+					var c = JSON.parse(localStorage.getItem(cn)) || {};
 
 					/* if no cookie, create it and set it to val (or true if no val) */
-					if(c[col_class] === undefined){
+					if(c[col_class] === undefined) {
 						if(val === undefined) val = true;
 
 						c[col_class] = val;
-						Cookies.set(cn, c, op);
+						localStorage.setItem(cn, JSON.stringify(c));
 						return val;
 					}
 
 					/* if cookie found and val provided, set cookie to new val */
 					if(val !== undefined){
 						c[col_class] = val;
-						Cookies.set(cn, c, op);
+						localStorage.setItem(cn, JSON.stringify(c));
 						return val;
 					}
 
@@ -1410,7 +1402,7 @@ class DataList{
 				}
 
 				/**
-				 *  @brief shows/hides column given its class, and saves this into cookies
+				 *  @brief shows/hides column given its class, and saves this into localStorage
 				 *  
 				 *  @param [in] col_class class of column to show/hide
 				 *  @param [in] show boolean, optional. Set to false to hide. Default is true (to show).

@@ -61,7 +61,7 @@ if(isset($_POST['saveChanges'])){
 		foreach($customs as $i => $cust_value){
 			$customs_sql .= "custom{$i}='{$cust_value}', ";
 		}
-		sql("INSERT INTO `membership_users` set memberID='{$memberID}', passMD5='" . md5($password) . "', email='{$email}', signupDate='" . @date('Y-m-d') . "', groupID='{$groupID}', isBanned='{$isBanned}', isApproved='{$isApproved}', {$customs_sql} comments='{$comments}'", $eo);
+		sql("INSERT INTO `membership_users` set memberID='{$memberID}', passMD5='" . password_hash($password, PASSWORD_DEFAULT) . "', email='{$email}', signupDate='" . @date('Y-m-d') . "', groupID='{$groupID}', isBanned='{$isBanned}', isApproved='{$isApproved}', {$customs_sql} comments='{$comments}'", $eo);
 
 		if($isApproved){
 			notifyMemberApproval($memberID);
@@ -98,15 +98,15 @@ if(isset($_POST['saveChanges'])){
 
 		// update member info
 		$customs_sql = '';
-		$non_superadmin_sql = "passMD5=" . ($password != '' ? "'" . md5($password) . "'" : "passMD5") . ", email='{$email}', groupID='{$groupID}', isBanned='{$isBanned}', isApproved='{$isApproved}', ";
+		$non_superadmin_sql = "passMD5=" . ($password != '' ? "'" . password_hash($password, PASSWORD_DEFAULT) . "'" : "passMD5") . ", email='{$email}', groupID='{$groupID}', isBanned='{$isBanned}', isApproved='{$isApproved}', ";
 		foreach($customs as $i => $cust_value){
 			$customs_sql .= "custom{$i}='{$cust_value}', ";
 		}      
 
 		if($superadmin){
-			$admin_pass_md5 = makeSafe($adminConfig['adminPassword'], false);
+			$admin_pass_hash = makeSafe($adminConfig['adminPassword'], false);
 			$admin_email = makeSafe($adminConfig['senderEmail'], false);
-			$non_superadmin_sql = "passMD5='{$admin_pass_md5}', email='{$admin_email}', isBanned='0', isApproved='1', ";
+			$non_superadmin_sql = "passMD5='{$admin_pass_hash}', email='{$admin_email}', isBanned='0', isApproved='1', ";
 		}
 
 		$upQry = "UPDATE `membership_users` set memberID='{$memberID}', {$non_superadmin_sql} {$customs_sql} comments='{$comments}' WHERE lcase(memberID)='{$oldMemberID}'";

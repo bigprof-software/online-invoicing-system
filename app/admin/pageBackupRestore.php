@@ -413,11 +413,12 @@
 			if(!$bfile) return false;
 
 			$config = array('dbServer' => '', 'dbUsername' => '', 'dbPassword' => '', 'dbDatabase' => '');
-			foreach($config as $k => $v) $config[$k] = config($k);
+			foreach($config as $k => $v) $config[$k] = escapeshellarg(config($k));
 
 			$out = $ret = null;
 			maintenance_mode(true);
-			$cmd = "mysql -u{$config['dbUsername']} -p{$config['dbPassword']} -h{$config['dbServer']} {$config['dbDatabase']} < {$bfile}";
+			$pass_param = ($config['dbPassword'] ? "-p{$config['dbPassword']}" : '');
+			$cmd = "mysql -u{$config['dbUsername']} {$pass_param} -h{$config['dbServer']} {$config['dbDatabase']} < {$bfile}";
 			@exec($cmd, $out, $ret);
 			maintenance_mode(false);
 

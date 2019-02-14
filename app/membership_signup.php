@@ -50,7 +50,7 @@
 
 		// save member data
 		$needsApproval = sqlValue("select needsApproval from membership_groups where groupID='$groupID'");
-		sql("INSERT INTO `membership_users` set memberID='$memberID', passMD5='".md5($password)."', email='$email', signupDate='".@date('Y-m-d')."', groupID='$groupID', isBanned='0', isApproved='".($needsApproval==1 ? '0' : '1')."', custom1='$custom1', custom2='$custom2', custom3='$custom3', custom4='$custom4', comments='member signed up through the registration form.'", $eo);
+		sql("INSERT INTO `membership_users` set memberID='{$memberID}', passMD5='" . password_hash($password, PASSWORD_DEFAULT) . "', email='{$email}', signupDate='" . @date('Y-m-d') . "', groupID='{$groupID}', isBanned='0', isApproved='" . ($needsApproval == 1 ? '0' : '1') . "', custom1='{$custom1}', custom2='{$custom2}', custom3='{$custom3}', custom4='{$custom4}', comments='member signed up through the registration form.'", $eo);
 
 		// admin mail notification
 		/* ---- application name as provided in AppGini is used here ---- */

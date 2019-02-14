@@ -49,7 +49,12 @@
 				}, panelID, undefined, 'pc-loading');
 				break;
 			case 'new': /* new record */
-				var url = $j('#' + param.ChildTable + '_hclink').val() + '&addNew_x=1&Embedded=1' + (param.AutoClose ? '&AutoClose=1' : '');
+				var parentId = $j('[name=SelectedID]').val();
+				var url = param.ChildTable + '_view.php?' + 
+					'filterer_' + param.ChildLookupField + '=' + encodeURIComponent(parentId) +
+					'&addNew_x=1' + 
+					'&Embedded=1' + 
+					(param.AutoClose ? '&AutoClose=1' : '');
 				modal_window({
 					url: url,
 					close: function(){ /* */ <?php echo $current_table; ?>GetChildrenRecordsList({ Verb: 'reload' }); },

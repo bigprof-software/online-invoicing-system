@@ -1,8 +1,10 @@
-<?php if(!isset($Translation)){ @header('Location: index.php'); exit; } ?>
-<?php include_once("{$currDir}/header.php"); ?>
-<?php @include("{$currDir}/hooks/links-home.php"); ?>
+<?php 
+	if(!isset($Translation)) { @header('Location: index.php'); exit; } 
 
-<?php
+	$currDir = dirname(__FILE__);
+	include_once("{$currDir}/header.php");
+	@include("{$currDir}/hooks/links-home.php");
+
 	/*
 		Classes of first and other blocks
 		---------------------------------
@@ -39,9 +41,16 @@
 
 
 <?php
+	// get member info
+	$mi = getMemberInfo();
+
+	// get configured name of guest user
+	$admin_config = config('adminConfig');
+	$guest_username = $admin_config['anonymousMember'];
+
 	/* accessible tables */
 	$arrTables = get_tables_info();
-	if(is_array($arrTables) && count($arrTables)){
+	if(is_array($arrTables) && count($arrTables)) {
 		/* how many table groups do we have? */
 		$groups = get_table_groups();
 		$multiple_groups = (count($groups) > 1 ? true : false);
@@ -68,8 +77,8 @@
 
 			/* homepageShowCount for current table? */
 			$count_badge = '';
-			if($tc['homepageShowCount']){
-				$sql_from = get_sql_from($tn);
+			if($tc['homepageShowCount'] && ($tChkHL === false || $tChkHL === null)) {
+				$sql_from = get_sql_from($tn, false, true);
 				$count_records = ($sql_from ? sqlValue("select count(1) from " . $sql_from) : 0);
 				$count_badge = '<span class="badge hspacer-lg text-bold">' . number_format($count_records) . '</span>';
 			}
@@ -151,7 +160,10 @@
 			<?php
 			$i++;
 		}
-	}else{
+	} elseif($mi['username'] && $mi['username'] != $guest_username) {
+		// non-guest user but no tables to access
+		die(error_message($Translation['no table access'], false));
+	} else {
 		?><script>window.location='index.php?signIn=1';</script><?php
 	}
 ?>

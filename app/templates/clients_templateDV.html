@@ -106,7 +106,7 @@
 							<div class="col-md-8">
 								<a id="website-link" href="link.php?t=clients&f=website&i=<%%VALUE(id)%%>" target="_blank"><%%VALUE(website)%%></a>
 								<label for="website"><button type="button" id="website-edit-link" class="btn btn-default hspacer-lg vspacer-sm" data-toggle="collapse" data-target="#website" title="<%%TRANSLATION(Edit)%%>"><i class="glyphicon glyphicon-pencil"></i></button></label>
-							</div>
+							</div> <!-- /div.col-* -->
 							<script>jQuery(function(){ /* */ var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;' || e_website == 'blank.gif') jQuery('#website-link').hide(); });</script><input maxlength="200" type="text" class="form-control collapse" name="website" id="website" value="<%%VALUE(website)%%>">					</div>
 
 					</div>

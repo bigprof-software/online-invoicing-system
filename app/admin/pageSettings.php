@@ -41,7 +41,7 @@
 
 		$adminPassword = $post['adminPassword'];
 		if($adminPassword != '' && $adminPassword == $post['confirmPassword']){
-			$adminPassword = md5($adminPassword);
+			$adminPassword = password_hash($adminPassword, PASSWORD_DEFAULT);
 		}elseif($adminPassword != '' && $adminPassword != $post['confirmPassword']){
 			$errors[] = $Translation['admin password mismatch'];
 		}else{
@@ -68,6 +68,7 @@
 			'dbUsername' => config('dbUsername'),
 			'dbPassword' => config('dbPassword'),
 			'dbDatabase' => config('dbDatabase'),
+			'appURI' => preg_replace('/\/admin$/', '', trim(dirname($_SERVER['SCRIPT_NAME']), '/')),
 
 			'adminConfig' => array(
 				'adminUsername' => strtolower($post['adminUsername']),

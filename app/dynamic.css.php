@@ -199,3 +199,7 @@ img[src="blank.gif"] { max-height: 10px !important; }
 	font-size: 14px;
 }
 
+/* correct arrow directions in RTL pages */
+.theme-rtl #Previous .glyphicon, .theme-rtl #Next .glyphicon {
+	transform: rotate(180deg);
+}

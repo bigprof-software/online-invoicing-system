@@ -12,68 +12,72 @@
 	$schema = array(   
 		'invoices' => array(   
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'code' => array('appgini' => 'VARCHAR(20) unique '),
+			'code' => array('appgini' => 'VARCHAR(20) null unique '),
 			'status' => array('appgini' => 'VARCHAR(20) not null default \'Unpaid\' '),
-			'date_due' => array('appgini' => 'DATE '),
-			'client' => array('appgini' => 'INT unsigned '),
-			'client_contact' => array('appgini' => 'INT unsigned '),
-			'client_address' => array('appgini' => 'INT unsigned '),
-			'client_phone' => array('appgini' => 'INT unsigned '),
-			'client_email' => array('appgini' => 'INT unsigned '),
-			'client_website' => array('appgini' => 'INT unsigned '),
-			'client_comments' => array('appgini' => 'INT unsigned '),
-			'subtotal' => array('appgini' => 'DECIMAL(9,2) '),
-			'discount' => array('appgini' => 'DECIMAL(4,2) default \'0\' '),
-			'tax' => array('appgini' => 'DECIMAL(9,2) default \'0\' '),
-			'total' => array('appgini' => 'DECIMAL(9,2) default \'0\' '),
-			'comments' => array('appgini' => 'TEXT '),
-			'invoice_template' => array('appgini' => 'VARCHAR(100) '),
-			'created' => array('appgini' => 'VARCHAR(200) '),
-			'last_updated' => array('appgini' => 'VARCHAR(200) ')
+			'date_due' => array('appgini' => 'DATE null '),
+			'client' => array('appgini' => 'INT unsigned null '),
+			'client_contact' => array('appgini' => 'INT unsigned null '),
+			'client_address' => array('appgini' => 'INT unsigned null '),
+			'client_phone' => array('appgini' => 'INT unsigned null '),
+			'client_email' => array('appgini' => 'INT unsigned null '),
+			'client_website' => array('appgini' => 'INT unsigned null '),
+			'client_comments' => array('appgini' => 'INT unsigned null '),
+			'subtotal' => array('appgini' => 'DECIMAL(9,2) null '),
+			'discount' => array('appgini' => 'DECIMAL(4,2) null default \'0\' '),
+			'tax' => array('appgini' => 'DECIMAL(9,2) null default \'0\' '),
+			'total' => array('appgini' => 'DECIMAL(9,2) null default \'0\' '),
+			'comments' => array('appgini' => 'TEXT null '),
+			'invoice_template' => array('appgini' => 'VARCHAR(100) null '),
+			'created' => array('appgini' => 'VARCHAR(200) null '),
+			'last_updated' => array('appgini' => 'VARCHAR(200) null ')
 		),
 		'clients' => array(   
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'name' => array('appgini' => 'VARCHAR(200) unique '),
-			'contact' => array('appgini' => 'VARCHAR(255) '),
-			'title' => array('appgini' => 'VARCHAR(40) '),
-			'address' => array('appgini' => 'TEXT '),
-			'city' => array('appgini' => 'VARCHAR(40) '),
-			'country' => array('appgini' => 'VARCHAR(40) '),
-			'phone' => array('appgini' => 'VARCHAR(100) '),
-			'email' => array('appgini' => 'VARCHAR(80) '),
-			'website' => array('appgini' => 'VARCHAR(200) '),
-			'comments' => array('appgini' => 'TEXT ')
+			'name' => array('appgini' => 'VARCHAR(200) null unique '),
+			'contact' => array('appgini' => 'VARCHAR(255) null '),
+			'title' => array('appgini' => 'VARCHAR(40) null '),
+			'address' => array('appgini' => 'TEXT null '),
+			'city' => array('appgini' => 'VARCHAR(40) null '),
+			'country' => array('appgini' => 'VARCHAR(40) null '),
+			'phone' => array('appgini' => 'VARCHAR(100) null '),
+			'email' => array('appgini' => 'VARCHAR(80) null '),
+			'website' => array('appgini' => 'VARCHAR(200) null '),
+			'comments' => array('appgini' => 'TEXT null ')
 		),
 		'item_prices' => array(   
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'item' => array('appgini' => 'INT unsigned '),
-			'price' => array('appgini' => 'DECIMAL(10,2) default \'0.00\' '),
-			'date' => array('appgini' => 'DATE ')
+			'item' => array('appgini' => 'INT unsigned null '),
+			'price' => array('appgini' => 'DECIMAL(10,2) null default \'0.00\' '),
+			'date' => array('appgini' => 'DATE null ')
 		),
 		'invoice_items' => array(   
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'invoice' => array('appgini' => 'INT unsigned '),
-			'item' => array('appgini' => 'INT unsigned '),
-			'unit_price' => array('appgini' => 'DECIMAL(10,2) unsigned default \'0.00\' '),
-			'qty' => array('appgini' => 'DECIMAL(9,3) default \'1\' '),
-			'price' => array('appgini' => 'DECIMAL(9,2) ')
+			'invoice' => array('appgini' => 'INT unsigned null '),
+			'item' => array('appgini' => 'INT unsigned null '),
+			'unit_price' => array('appgini' => 'DECIMAL(10,2) unsigned null default \'0.00\' '),
+			'qty' => array('appgini' => 'DECIMAL(9,3) null default \'1\' '),
+			'price' => array('appgini' => 'DECIMAL(9,2) null ')
 		),
 		'items' => array(   
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'item_description' => array('appgini' => 'TEXT '),
-			'unit_price' => array('appgini' => 'DECIMAL(10,2) default \'0.00\' ')
+			'item_description' => array('appgini' => 'TEXT null '),
+			'unit_price' => array('appgini' => 'DECIMAL(10,2) null default \'0.00\' ')
 		)
 	);
 
 	$table_captions = getTableList();
 
 	/* function for preparing field definition for comparison */
-	function prepare_def($def){
-		$def = trim($def);
+	function prepare_def($def) {
 		$def = strtolower($def);
 
+		/* ignore 'null' */
+		$def = preg_replace('/\s+not\s+null\s*/', '%%NOT_NULL%%', $def);
+		$def = preg_replace('/\s+null\s*/', ' ', $def);
+		$def = str_replace('%%NOT_NULL%%', ' not null ', $def);
+
 		/* ignore length for int data types */
-		$def = preg_replace('/int\w*\([0-9]+\)/', 'int', $def);
+		$def = preg_replace('/int\s*\([0-9]+\)/', 'int', $def);
 
 		/* make sure there is always a space before mysql words */
 		$def = preg_replace('/(\S)(unsigned|not null|binary|zerofill|auto_increment|default)/', '$1 $2', $def);
@@ -85,16 +89,16 @@
 		$def = str_ireplace('unsigned zerofill', 'zerofill', $def);
 
 		/* ignore zero-padding for date data types */
-		$def = preg_replace("/date\s*default\s*'([0-9]{4})-0?([1-9])-0?([1-9])'/i", "date default '$1-$2-$3'", $def);
+		$def = preg_replace("/date\s*default\s*'([0-9]{4})-0?([1-9])-0?([1-9])'/", "date default '$1-$2-$3'", $def);
 
-		return $def;
+		return trim($def);
 	}
 
 	/**
 	 *  @brief creates/fixes given field according to given schema
 	 *  @return integer: 0 = error, 1 = field updated, 2 = field created
 	 */
-	function fix_field($fix_table, $fix_field, $schema, &$qry){
+	function fix_field($fix_table, $fix_field, $schema, &$qry) {
 		if(!isset($schema[$fix_table][$fix_field])) return 0;
 
 		$def = $schema[$fix_table][$fix_field];

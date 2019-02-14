@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<?php if(function_exists('set_headers')) { set_headers(); } ?><!DOCTYPE html>
 <?php if(!defined('PREPEND_PATH')) define('PREPEND_PATH', ''); ?>
 <?php if(!defined('datalist_db_encoding')) define('datalist_db_encoding', 'UTF-8'); ?>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -14,7 +14,7 @@
 		<title>Online Inovicing System | <?php echo (isset($x->TableTitle) ? $x->TableTitle : ''); ?></title>
 		<link id="browser_favicon" rel="shortcut icon" href="<?php echo PREPEND_PATH; ?>resources/images/appgini-icon.png">
 
-		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/initializr/css/bootstrap.css">
+		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/initializr/css/sandstone.css">
 		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/lightbox/css/lightbox.css" media="screen">
 		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/select2/select2.css" media="screen">
 		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/timepicker/bootstrap-timepicker.min.css" media="screen">
@@ -34,7 +34,6 @@
 		<script src="<?php echo PREPEND_PATH; ?>resources/lightbox/js/scriptaculous.js?load=effects"></script>
 		<script src="<?php echo PREPEND_PATH; ?>resources/select2/select2.min.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>resources/timepicker/bootstrap-timepicker.min.js"></script>
-		<script src="<?php echo PREPEND_PATH; ?>resources/jscookie/js.cookie.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>resources/datepicker/js/datepicker.packed.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>resources/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>common.js.php"></script>
@@ -44,7 +43,7 @@
 
 	</head>
 	<body>
-		<div class="container theme-bootstrap theme-compact">
+		<div class="container theme-sandstone theme-compact">
 			<?php if(function_exists('handle_maintenance')) echo handle_maintenance(true); ?>
 
 			<?php if(!$_REQUEST['Embedded']){ ?>

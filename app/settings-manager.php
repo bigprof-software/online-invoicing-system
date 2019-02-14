@@ -14,6 +14,7 @@
 			exit;
 		}
 
+		if($redirect_to_setup) update_config_app_uri();
 		return $config_exists;
 	}
 
@@ -34,6 +35,8 @@
 			'adminConfig' => $adminConfig
 		);
 
+		if(isset($appURI)) $config_array['appURI'] = $appURI;
+
 		if(save_config($config_array)){
 			@rename($curr_dir . '/admin/incConfig.php', $curr_dir . '/admin/incConfig.bak.php');
 			@unlink($curr_dir . '/admin/incConfig.php');
@@ -49,7 +52,7 @@
 
 		$new_admin_config = '';
 		foreach($config_array['adminConfig'] as $admin_var => $admin_val){
-			$new_admin_config .= "\t\t'" . addslashes($admin_var) . "' => \"" . str_replace(array("\n", "\r", '"'), array('\n', '\r', '\"'), $admin_val) . "\",\n";
+			$new_admin_config .= "\t\t'" . addslashes($admin_var) . "' => \"" . str_replace(array("\n", "\r", '"', '$'), array('\n', '\r', '\"', '\$'), $admin_val) . "\",\n";
 		}
 		$new_admin_config = substr($new_admin_config, 0, -2) . "\n";
 
@@ -58,6 +61,8 @@
 			"\t\$dbUsername = '" . addslashes($config_array['dbUsername']) . "';\n" .
 			"\t\$dbPassword = '" . addslashes($config_array['dbPassword']) . "';\n" .
 			"\t\$dbDatabase = '" . addslashes($config_array['dbDatabase']) . "';\n" .
+
+			(isset($config_array['appURI']) ? "\t\$appURI = '" . addslashes($config_array['appURI']) . "';\n" : '') .
 
 			"\n\t\$adminConfig = array(\n" . 
 				$new_admin_config .
@@ -87,6 +92,7 @@
 			'dbUsername' => '',
 			'dbPassword' => '',
 			'dbDatabase' => '',
+			'appURI' => '',
 
 			'adminConfig' => array(
 				'adminUsername' => '',
@@ -127,9 +133,88 @@
 			$config['dbDatabase'] = $dbDatabase;
 			$config['dbPassword'] = $dbPassword;
 			$config['dbUsername'] = $dbUsername;
+			$config['appURI'] = $appURI;
 			$config['adminConfig'] = $adminConfig;
 		}
 
 		return (isset($config[$var]) && $config[$var] ? $config[$var] : $default_config[$var]);
+	}
+
+	/* 
+		handling password hashing in old PHP versions
+			to hash a password, store the return val of 
+				password_hash($pass, PASSWORD_DEFAULT) 
+
+			to verify:
+				if(!password_match($pass, $hash)) { no_match_code_here }
+
+			to migrate old hashes:
+				password_harden($user, $pass, $hash);
+	*/
+	if(!defined('PASSWORD_DEFAULT')) {
+		define('PASSWORD_DEFAULT', 1);
+	}
+
+	if (!function_exists('password_hash')) {
+		function password_hash($password, $algo, $options = array()) {
+			return md5($password);
+		}
+	}
+
+	if (!function_exists('password_verify')) {
+		function password_verify($password, $hash) {
+			return (md5($password) == $hash);
+		}
+	}
+
+	/**
+	 *  @brief check if given password matches given hash, preserving backward compatibility with MD5
+	 *  
+	 *  @param [in] $password Description for $password
+	 *  @param [in] $hash Description for $hash
+	 *  @return Boolean indicating match or no match
+	 */
+	function password_match($password, $hash) {
+		if(strlen($hash) == 32) return (md5($password) == $hash);
+		return password_verify($password, $hash);
+	}
+
+	/**
+	 *  @brief Migrate MD5 pass hashes to BCrypt if supported
+	 *  
+	 *  @param [in] $user username to migrate
+	 *  @param [in] $pass current password
+	 *  @param [in] $hash stored hash of password
+	 */
+	function password_harden($user, $pass, $hash) {
+		/* continue only if PHP 5.5+ and hash is 32 chars (md5) */
+		if(version_compare(PHP_VERSION, '5.5.0') == -1 || strlen($hash) > 32) return;
+
+		$new_hash = password_hash($pass, PASSWORD_DEFAULT);
+		$suser = makeSafe($user, false);
+		sql("update `membership_users` set `passMD5`='{$new_hash}' where `memberID`='{$suser}'", $eo);
+	}
+
+	function update_config_app_uri() {
+		// update only if we're on homepage
+		if(!defined('HOMEPAGE')) return;
+		if(!preg_match('/index\.php$/', $_SERVER['SCRIPT_NAME'])) return;
+
+		// config exists?
+		@include(dirname(__FILE__) . '/config.php');
+		if(!isset($dbServer)) return;
+
+		// check if appURI defined
+		if(isset($appURI)) return;
+
+		// now set appURI, knowing that we're on homepage
+		save_config(array(
+			'dbServer' => $dbServer,
+			'dbUsername' => $dbUsername,
+			'dbPassword' => $dbPassword,
+			'dbDatabase' => $dbDatabase,
+			'appURI' => trim(dirname($_SERVER['SCRIPT_NAME']), '/'),
+			'adminConfig' => $adminConfig
+		));
 	}
 
