@@ -9,7 +9,7 @@ $anonMemberID = strtolower($adminConfig['anonymousMember']);
 $anonGroup = $adminConfig['anonymousGroup'];
 
 /* no editing of guest user */
-if(strtolower($_REQUEST['memberID']) == $anonMemberID || strtolower($_REQUEST['oldMemberID']) == $anonMemberID){
+if(strtolower($_REQUEST['memberID']) == $anonMemberID || strtolower($_REQUEST['oldMemberID']) == $anonMemberID) {
 	redirect('admin/pageViewMembers.php');
 	exit;
 }
@@ -18,9 +18,9 @@ include("{$currDir}/incHeader.php");
 
 $memberID = '';
 // request to save changes?
-if(isset($_POST['saveChanges'])){
+if(isset($_POST['saveChanges'])) {
 	// csrf check
-	if(!csrf_token(true)){
+	if(!csrf_token(true)) {
 		echo Notification::show(array(
 			'message' => $Translation['invalid security token'],
 			'class' => 'danger',
@@ -37,17 +37,17 @@ if(isset($_POST['saveChanges'])){
 	$isApproved = ($_POST['isApproved'] == 1 ? 1 : 0);
 	$isBanned = ($_POST['isBanned'] == 1 ? 1 : 0);
 	$customs = array();
-	for($cust = 1; $cust <= 4; $cust++){
+	for($cust = 1; $cust <= 4; $cust++) {
 		$customs[$cust] = makeSafe($_POST["custom{$cust}"]);
 	}
 	$comments = makeSafe($_POST['comments']);
 
 	###############################
 	// new member or old?
-	if(!$oldMemberID){ // new member
+	if(!$oldMemberID) { // new member
 		// make sure member name is unique
 		$memberID = is_allowed_username($_POST['memberID']);
-		if(!$memberID){
+		if(!$memberID) {
 			echo Notification::show(array(
 				'message' => $Translation['username error'],
 				'class' => 'danger',
@@ -58,12 +58,12 @@ if(isset($_POST['saveChanges'])){
 
 		// add member
 		$customs_sql = '';
-		foreach($customs as $i => $cust_value){
+		foreach($customs as $i => $cust_value) {
 			$customs_sql .= "custom{$i}='{$cust_value}', ";
 		}
 		sql("INSERT INTO `membership_users` set memberID='{$memberID}', passMD5='" . password_hash($password, PASSWORD_DEFAULT) . "', email='{$email}', signupDate='" . @date('Y-m-d') . "', groupID='{$groupID}', isBanned='{$isBanned}', isApproved='{$isApproved}', {$customs_sql} comments='{$comments}'", $eo);
 
-		if($isApproved){
+		if($isApproved) {
 			notifyMemberApproval($memberID);
 		}
 
@@ -81,7 +81,7 @@ if(isset($_POST['saveChanges'])){
 		if($oldMemberID != $memberID)
 			$memberID = is_allowed_username($_POST['memberID']);
 
-		if(!$memberID){
+		if(!$memberID) {
 			echo Notification::show(array(
 				'message' => $Translation['username error'],
 				'class' => 'danger',
@@ -99,11 +99,11 @@ if(isset($_POST['saveChanges'])){
 		// update member info
 		$customs_sql = '';
 		$non_superadmin_sql = "passMD5=" . ($password != '' ? "'" . password_hash($password, PASSWORD_DEFAULT) . "'" : "passMD5") . ", email='{$email}', groupID='{$groupID}', isBanned='{$isBanned}', isApproved='{$isApproved}', ";
-		foreach($customs as $i => $cust_value){
+		foreach($customs as $i => $cust_value) {
 			$customs_sql .= "custom{$i}='{$cust_value}', ";
 		}      
 
-		if($superadmin){
+		if($superadmin) {
 			$admin_pass_hash = makeSafe($adminConfig['adminPassword'], false);
 			$admin_email = makeSafe($adminConfig['senderEmail'], false);
 			$non_superadmin_sql = "passMD5='{$admin_pass_hash}', email='{$admin_email}', isBanned='0', isApproved='1', ";
@@ -113,17 +113,17 @@ if(isset($_POST['saveChanges'])){
 		sql($upQry, $eo);
 
 		// if memberID was changed, update membership_userrecords
-		if($oldMemberID != $memberID){
+		if($oldMemberID != $memberID) {
 			sql("update membership_userrecords set memberID='{$memberID}' where lcase(memberID)='{$oldMemberID}'", $eo);
 		}
 
 		// if groupID was changed, update membership_userrecords
-		if($oldGroupID != $groupID && !$superadmin){
+		if($oldGroupID != $groupID && !$superadmin) {
 			sql("update membership_userrecords set groupID='{$groupID}' where lcase(memberID)='{$oldMemberID}'", $eo);
 		}
 
 		// if member was approved, notify him
-		if($isApproved && !$oldIsApproved){
+		if($isApproved && !$oldIsApproved) {
 			notifyMemberApproval($memberID);
 		}
 
@@ -131,11 +131,11 @@ if(isset($_POST['saveChanges'])){
 		redirect("admin/pageEditMember.php?saved=1&memberID=" . urlencode($memberID));
 		exit;
 	}
-}elseif($_GET['memberID'] != ''){
+}elseif($_GET['memberID'] != '') {
 	// we have an edit request for a member
 	$memberID = makeSafe(strtolower($_GET['memberID']));
 	$superadmin = (strtolower($adminConfig['adminUsername']) == $memberID);
-}elseif($_GET['groupID'] != ''){
+}elseif($_GET['groupID'] != '') {
 	// show the form for adding a new member, and pre-select the provided group
 	$groupID = intval($_GET['groupID']);
 	$group_name = sqlValue("select name from membership_groups where groupID='$groupID'");
@@ -143,10 +143,10 @@ if(isset($_POST['saveChanges'])){
 		$addend = " to '{$group_name}'";
 }
 
-if($memberID != ''){
+if($memberID != '') {
 	// fetch group data to fill in the form below
 	$res = sql("select * from membership_users where lcase(memberID)='{$memberID}'", $eo);
-	if(!($row = db_fetch_assoc($res))){
+	if(!($row = db_fetch_assoc($res))) {
 		// no such member exists
 		echo Notification::show(array(
 			'message' => $Translation['member not found'],
@@ -162,19 +162,19 @@ if($memberID != ''){
 	$isApproved = $row['isApproved'];
 	$isBanned = $row['isBanned'];
 	$customs = array();
-	for($cust = 1; $cust <= 4; $cust++){
+	for($cust = 1; $cust <= 4; $cust++) {
 		$customs[$cust] = html_attr($row["custom{$cust}"]);
 	}
 	$comments = html_attr($row['comments']);
 
 	//display dismissible alert for new members and successful saves
-	if(isset($_GET['new_member'])){
+	if(isset($_GET['new_member'])) {
 		echo Notification::show(array(
 			'message' => str_replace('<USERNAME>', "<b><i>{$memberID}</i></b>", $Translation['member added']),
 			'class' => 'success',
 			'dismiss_seconds' => 20
 		));
-	}elseif(isset($_GET['saved'])){
+	}elseif(isset($_GET['saved'])) {
 		echo Notification::show(array(
 			'message' => str_replace('<USERNAME>', "<b><i>{$memberID}</i></b>", $Translation['member updated']),
 			'class' => 'success',
@@ -184,10 +184,10 @@ if($memberID != ''){
 }
 
 $userPermissionsNote = '';
-if($memberID != '' && $groupID != sqlValue("select groupID from membership_groups where name='Admins'")){
+if($memberID != '' && $groupID != sqlValue("select groupID from membership_groups where name='Admins'")) {
 	$userPermissionsNote = '<span class="help-block">' . str_replace('<GROUPID>', $groupID, $Translation["user has group permissions"]) . '</span>';
 
-	if(sqlValue("select count(1) from membership_userpermissions where memberID='$memberID'") > 0){
+	if(sqlValue("select count(1) from membership_userpermissions where memberID='$memberID'") > 0) {
 		$userPermissionsNote = '<span class="help-block">' . $Translation["user has special permissions"] . '</span>';
 	}
 
@@ -201,7 +201,7 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 		<div class="pull-right">
 			<div class="btn-group">
 				<a href="pageViewMembers.php" class="btn btn-default btn-lg"><i class="glyphicon glyphicon-arrow-left"></i> <span class="hidden-xs hidden-sm"><?php echo $Translation['back to members']; ?></span></a>
-				<?php if($memberID){ ?>
+				<?php if($memberID) { ?>
 					<a href="pageViewRecords.php?memberID=<?php echo urlencode($memberID); ?>" class="btn btn-default btn-lg"><i class="glyphicon glyphicon-th"></i> <span class="hidden-xs hidden-sm"><?php echo $Translation['View member records']; ?></span></a>
 					<a href="pageMail.php?memberID=<?php echo urlencode($memberID); ?>" class="btn btn-default btn-lg"><i class="glyphicon glyphicon-envelope"></i> <span class="hidden-xs hidden-sm"><?php echo $Translation['send message to member']; ?></span></a>
 				<?php } ?>
@@ -214,7 +214,7 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 
 <div style="height: 3em;"></div>
 
-<?php if($superadmin){ ?>
+<?php if($superadmin) { ?>
 	<div class="alert alert-warning"><?php echo $Translation["admin member"]; ?></div>
 <?php } ?>
 
@@ -222,7 +222,7 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 	<?php echo csrf_token(); ?>
 	<input type="hidden" name="oldMemberID" value="<?php echo ($memberID ? html_attr($memberID) : ""); ?>">
 
-	<?php if(!$superadmin){ /* non-admin user fields */ ?>
+	<?php if(!$superadmin) { /* non-admin user fields */ ?>
 		<div class="form-group ">
 			<label for="memberID" class="col-sm-4 col-md-3 col-lg-2 col-lg-offset-2 control-label"><?php echo $Translation["member username"]; ?></label>
 			<div class="col-sm-8 col-md-9 col-lg-6">
@@ -290,8 +290,8 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 		</div>
 	<?php } /* end of non-admin user fields */ ?>
 
-	<?php for($cust = 1; $cust <= 4; $cust++){ ?>
-		<?php if($adminConfig["custom{$cust}"] != ''){ ?>
+	<?php for($cust = 1; $cust <= 4; $cust++) { ?>
+		<?php if($adminConfig["custom{$cust}"] != '') { ?>
 			<div class="form-group">
 				<label for="custom<?php echo $cust; ?>" class="col-sm-4 col-md-3 col-lg-2 col-lg-offset-2 control-label"><?php echo $adminConfig["custom{$cust}"]; ?></label>
 				<div class="col-sm-8 col-md-9 col-lg-6">
@@ -312,7 +312,7 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 		<label class="col-sm-4 col-md-3 col-lg-2 col-lg-offset-2 control-label"></label>
 		<div class="col-sm-8 col-md-9 col-lg-6">
 			<button type="button" id="saveChanges" class="btn btn-primary btn-lg"><i class="glyphicon glyphicon-ok"></i> <?php echo $Translation["save changes"]; ?></button>
-			<?php if($memberID != ''){ /* for existing members, cancel reloads the member */ ?>
+			<?php if($memberID != '') { /* for existing members, cancel reloads the member */ ?>
 				<a href="pageEditMember.php?memberID=<?php echo urlencode($memberID); ?>" class="btn btn-warning btn-lg hspacer-md"><i class="glyphicon glyphicon-remove"></i> <?php echo $Translation['cancel']; ?></a>
 				<a href="pageViewMembers.php" class="btn btn-default btn-lg hspacer-md"><i class="glyphicon glyphicon-arrow-left"></i> <?php echo $Translation['back to members']; ?></a>
 			<?php }else{ /* for new members, cancel goes to list of members */ ?>
@@ -328,11 +328,11 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 
 
 <script>
-	$j(function(){
+	$j(function() {
 		var new_member = !$j('[name=oldMemberID]').val().length;
 
 		var uaro; // user availability request object
-		var check_user = function(){
+		var check_user = function() {
 			// abort previous request, if any
 			if(uaro != undefined) uaro.abort();
 
@@ -342,7 +342,7 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 			var memberID = $j('#memberID').val();
 
 			/* no username change, so no need to check it */
-			if(currentUser.length && currentUser == memberID){
+			if(currentUser.length && currentUser == memberID) {
 				$j('#username-available, #username-not-available')
 					.addClass('hidden')
 					.parents('.form-group').removeClass('has-error has-success');
@@ -350,7 +350,7 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 			}
 
 			/* username is empty so highlight the error and return without further checks */
-			if(!memberID.length){
+			if(!memberID.length) {
 				$j('#username-not-available')
 					.removeClass('hidden')
 					.parents('.form-group').addClass('has-error');
@@ -364,13 +364,13 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 						memberID: memberID,
 						currentUser: currentUser
 					},
-					beforeSend: function(){
+					beforeSend: function() {
 						$j('#username-available, #username-not-available')
 							.addClass('hidden')
 							.parents('.form-group').removeClass('has-error has-success');
 					},
-					success: function(resp){
-						if(resp.match(/\<!-- AVAILABLE --\>/)){
+					success: function(resp) {
+						if(resp.match(/\<!-- AVAILABLE --\>/)) {
 							$j('#username-available')
 								.removeClass('hidden')
 								.parents('.form-group').addClass('has-success');
@@ -384,7 +384,7 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 			);
 		}
 
-		var validate_password = function(){
+		var validate_password = function() {
 			if(!$j('#password').length) return true; // password field hidden
 
 			/* reset error highlights */
@@ -394,7 +394,7 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 			var p1 = $j('#password').val();
 			var p2 = $j('#confirmPassword').val();
 
-			if((p1 != '' && p1 != p2) || (p1 == '' && new_member)){
+			if((p1 != '' && p1 != p2) || (p1 == '' && new_member)) {
 				show_notification({
 					message: '<?php echo html_attr($Translation['password mismatch']); ?>',
 					'class': 'danger',
@@ -409,7 +409,7 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 			return true;
 		}
 
-		var validate_email = function(){
+		var validate_email = function() {
 			if(!$j('#email').length) return true; // email field hidden
 
 			/* reset error highlights */
@@ -418,7 +418,7 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 
 			/* source: https://stackoverflow.com/a/46181/1945185 */
 			var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-			if(!re.test($j('#email').val())){
+			if(!re.test($j('#email').val())) {
 				show_notification({
 					message: '<?php echo html_attr($Translation['email invalid']); ?>',
 					'class': 'danger',
@@ -433,14 +433,14 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 			return true;
 		}
 
-		var validate_group = function(){
+		var validate_group = function() {
 			if(!$j('#groupID').length) return true; // group field hidden
 
 			/* reset error highlights */
 			$j('#groupID').parents('.form-group').removeClass('has-error');
 			$j('#invalid-group-alert').remove();
 
-			if(!$j('#groupID').val()){
+			if(!$j('#groupID').val()) {
 				show_notification({
 					message: '<?php echo html_attr($Translation['group invalid']); ?>',
 					'class': 'danger',
@@ -456,22 +456,22 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 		}
 
 		/* circumvent browser auto-filling of passwords */
-		setTimeout(function(){ /* */ $j('#password').val(''); }, 500);
+		setTimeout(function() { /* */ $j('#password').val(''); }, 500);
 
-		$j('#username-available, #username-not-available').click(function(){ /* */ $j('#memberID').focus(); });
+		$j('#username-available, #username-not-available').click(function() { /* */ $j('#memberID').focus(); });
 
 		$j('#memberID').on('keyup blur', check_user);
 
 		/* disable submit button during ajax requests */
 		$j(document)
-			.ajaxStart(function(){
+			.ajaxStart(function() {
 				$j('#saveChanges').prop('disabled', true);
-			}).ajaxStop(function(){
+			}).ajaxStop(function() {
 				$j('#saveChanges').prop('disabled', false);
 			});
 
 		/* validate form before submitting */
-		$j('#saveChanges').click(function(){
+		$j('#saveChanges').click(function() {
 			/* don't submit form if any ajax requests are still active */
 			if($j.active) return false;
 
@@ -482,9 +482,9 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 			if(!validate_group()) return false;
 			check_user();
 
-			if($j('.form-group.has-error').length){
+			if($j('.form-group.has-error').length) {
 				/* show general error if no other error alerts displayed */
-				if(!$j('.notifcation-placeholder .alert:not(.invisible)').length){
+				if(!$j('.notifcation-placeholder .alert:not(.invisible)').length) {
 					show_notification({
 						message: '<?php echo html_attr($Translation['fix errors before submitting']); ?>',
 						'class': 'danger',
@@ -501,8 +501,8 @@ if($memberID != '' && $groupID != sqlValue("select groupID from membership_group
 		});
 
 		/* special permissions button */
-		$j('#special-permissions').click(function(){
-			if(confirm('<?php echo html_attr($Translation['sure continue']); ?>')){
+		$j('#special-permissions').click(function() {
+			if(confirm('<?php echo html_attr($Translation['sure continue']); ?>')) {
 				window.location = 'pageEditMemberPermissions.php?memberID=' + encodeURIComponent($j('[name=oldMemberID]').val());
 			}
 		});

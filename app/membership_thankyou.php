@@ -5,7 +5,7 @@
 	include("$currDir/lib.php");
 	include_once("$currDir/header.php");
 
-	if($_GET['redir']==1){
+	if($_GET['redir']==1) {
 		echo '<META HTTP-EQUIV="Refresh" CONTENT="5;url=index.php?signIn=1">';
 	}
 ?>

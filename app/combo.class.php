@@ -90,7 +90,14 @@ class Combo{
 			}
 			$this->HTML .= '</select>';
 			if($this->ApplySelect2){
-				$this->HTML .= '<script>jQuery(function(){ jQuery("#' . $this->SelectID . '").addClass(\'option_list\').select2({ minimumResultsForSearch: 5 }); })</script>';
+				$this->HTML .= '<script>jQuery(function(){ 
+					jQuery("#' . $this->SelectID . '")
+						.addClass(\'option_list\')
+						.select2({ 
+							minimumResultsForSearch: 5,
+							sortResults: AppGini.sortSelect2ByRelevence
+						}); 
+				})</script>';
 			}
 			if($this->ListType == 3 && strlen($this->MatchText)>0)   $this->MatchText=substr($this->MatchText, 0, -1 * strlen($this->MultipleSeparator));
 		}else{

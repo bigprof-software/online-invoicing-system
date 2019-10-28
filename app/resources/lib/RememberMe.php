@@ -13,7 +13,7 @@
 		/**
 		 *  Number of seconds for token to be considered 'fresh' and needs no renewal
 		 */
-		private static $_renewal_window = 5;
+		private static $_renewal_window = 1200;
 		
 		/**
 		 *  If logging is enabled, all method calls in this class will be logged to RememberMe.log

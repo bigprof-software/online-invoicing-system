@@ -71,13 +71,31 @@
 		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Website</label>
 			<div class="col-xs-9">
-				<div class="form-control-static"><a id="website-link" href="link.php?t=clients&f=website&i=<%%VALUE(id)%%>" target="_blank"><%%VALUE(website)%%></a><script>jQuery(function(){ /* */ var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;' || e_website == 'blank.gif') jQuery('#website-link').hide(); });</script></div>
+				<div class="form-control-static"><a id="website-link" href="link.php?t=clients&f=website&i=<%%VALUE(id)%%>" target="_blank"><%%VALUE(website)%%></a><script>jQuery(function() { /* */ var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;' || e_website == 'blank.gif') jQuery('#website-link').hide(); });</script></div>
 			</div>
 		</div>
 		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Comments</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(comments)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Unpaid sales</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(unpaid_sales)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Paid sales</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(paid_sales)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Total sales</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(total_sales)%%></div>
 			</div>
 		</div>
 	</fieldset>
@@ -88,7 +106,7 @@
 </div>
 
 <script>
-	$j(function(){
+	$j(function() {
 		/* prevent loading child records in multiple DVP */
 		if($j('[id=clients-children]').length > 1) return;
 
@@ -104,7 +122,7 @@
 			apply_persisting_children
 		);
 
-		$j('form').on('click', '#children-tabs button[data-target]', function(){
+		$j('form').on('click', '#children-tabs button[data-target]', function() {
 			$j(this).toggleClass('active');
 			persist_expanded_child($j(this).attr('id'));
 		});

@@ -23,19 +23,19 @@
 	$statuses = array();
 
 	// transfer operations
-	if($sourceGroupID && $sourceMemberID && $destinationGroupID && ($destinationMemberID || $moveMembers) && isset($_GET['beginTransfer'])){
+	if($sourceGroupID && $sourceMemberID && $destinationGroupID && ($destinationMemberID || $moveMembers) && isset($_GET['beginTransfer'])) {
 		/* validate everything:
 			1. Make sure sourceMemberID belongs to sourceGroupID
 			2. if moveMembers is false, make sure destinationMemberID belongs to destinationGroupID
 		*/
-		if(!sqlValue("select count(1) from membership_users where lcase(memberID)='$sourceMemberID' and groupID='$sourceGroupID'")){
-			if($sourceMemberID!=-1){
+		if(!sqlValue("select count(1) from membership_users where lcase(memberID)='$sourceMemberID' and groupID='$sourceGroupID'")) {
+			if($sourceMemberID!=-1) {
 				errorMsg($Translation['invalid source member']);
 				include("{$currDir}/incFooter.php");
 			}
 		}
-		if(!$moveMembers){
-			if(!sqlValue("select count(1) from membership_users where lcase(memberID)='$destinationMemberID' and groupID='$destinationGroupID'")){
+		if(!$moveMembers) {
+			if(!sqlValue("select count(1) from membership_users where lcase(memberID)='$destinationMemberID' and groupID='$destinationGroupID'")) {
 				errorMsg($Translation['invalid destination member']);
 				include("{$currDir}/incFooter.php");
 			}
@@ -46,7 +46,7 @@
 		$destinationGroup=sqlValue("select name from membership_groups where groupID='$destinationGroupID'");
 
 		// begin transfer
-		if($moveMembers && $sourceMemberID != -1){
+		if($moveMembers && $sourceMemberID != -1) {
 			$originalValues = array('<MEMBERID>', '<SOURCEGROUP>', '<DESTINATIONGROUP>');
 			$replaceValues = array($sourceMemberID, $sourceGroup, $destinationGroup);
 			$statuses[] = str_replace($originalValues, $replaceValues, $Translation['moving member']);
@@ -64,7 +64,7 @@
 			$replaceValues = array($sourceMemberID, $newGroup, $dataRecs);
 			$statuses[] = str_replace($originalValues, $replaceValues, $Translation['data records transferred']);
 
-		}elseif(!$moveMembers && $sourceMemberID != -1){
+		}elseif(!$moveMembers && $sourceMemberID != -1) {
 			$originalValues = array('<SOURCEMEMBER>', '<SOURCEGROUP>', '<DESTINATIONMEMBER>', '<DESTINATIONGROUP>');
 			$replaceValues = array($sourceMemberID, $sourceGroup, $destinationMemberID, $destinationGroup);
 			$statuses[] = str_replace($originalValues, $replaceValues, $Translation['moving data']);
@@ -80,7 +80,7 @@
 			$replaceValues = array($sourceMemberID, $sourceGroup, $srcDataRecsBef, $transferStatus ,$destinationMemberID, $destinationGroup);
 			$statuses[] = str_replace ($originalValues, $replaceValues, $Translation['member records status']);
 
-		}elseif($moveMembers){
+		}elseif($moveMembers) {
 			$originalValues =  array('<SOURCEGROUP>', '<DESTINATIONGROUP>');
 			$replaceValues = array(  $sourceGroup ,$destinationGroup);
 			$statuses[] = str_replace($originalValues, $replaceValues, $Translation['moving all group members']);
@@ -90,7 +90,7 @@
 			$srcGroupMembers=sqlValue("select count(1) from membership_users where groupID='$sourceGroupID'");
 
 			// change group of source member's data
-			if(!$srcGroupMembers){
+			if(!$srcGroupMembers) {
 				$dataRecsBef=sqlValue("select count(1) from membership_userrecords where groupID='$sourceGroupID'");
 				sql("update membership_userrecords set groupID='$destinationGroupID' where groupID='$sourceGroupID'", $eo);
 				$dataRecsAft=sqlValue("select count(1) from membership_userrecords where groupID='$sourceGroupID'");
@@ -99,12 +99,12 @@
 			// status
 			$originalValues =  array('<SOURCEGROUP>', '<DESTINATIONGROUP>');
 			$replaceValues = array($sourceGroup ,$destinationGroup);
-			if($srcGroupMembers){
+			if($srcGroupMembers) {
 				$statuses[] = str_replace($originalValues, $replaceValues, $Translation['failed transferring group members']);
 			}else{
 				$statuses[] = str_replace($originalValues, $replaceValues, $Translation['group members transferred']);
 
-				if($dataRecsAft){
+				if($dataRecsAft) {
 					$statuses[] = $Translation['failed transfer data records'];
 				}else{
 					$statuses[] = str_replace('<DATABEFORE>', $dataRecsBef, $Translation['data records were transferred']);
@@ -161,7 +161,7 @@
 		<div class="panel-heading">
 			<h3 class="panel-title">
 				<b><?php echo $Translation['step 1']; ?></b>
-				<?php if($sourceGroupID){ ?>
+				<?php if($sourceGroupID) { ?>
 					<span class="pull-right text-success">
 						<i class="glyphicon glyphicon-ok"></i> 
 						<?php echo $Translation['source group']; ?>:
@@ -176,7 +176,7 @@
 				<label for="sourceGroupID" class="control-label col-sm-2"><?php echo $Translation['source group']; ?></label>
 				<div class="col-sm-6 col-md-4">
 					<?php echo htmlSQLSelect("sourceGroupID", "select distinct g.groupID, g.name from membership_groups g, membership_users u where g.groupID=u.groupID order by g.name", $sourceGroupID); ?>
-					<?php if($sourceGroupID){ ?>
+					<?php if($sourceGroupID) { ?>
 						<span class="help-block text-info">
 							<i class="glyphicon glyphicon-info-sign"></i> 
 							<?php 
@@ -199,12 +199,12 @@
 		</div>
 	</div>
 
-	<?php if($sourceGroupID){ ?>
+	<?php if($sourceGroupID) { ?>
 		<div id="step-2" class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
 					<b><?php echo $Translation['step 2'] ; ?></b>
-					<?php if($sourceMemberID){ ?>
+					<?php if($sourceMemberID) { ?>
 						<span class="pull-right text-success">
 							<i class="glyphicon glyphicon-ok"></i> 
 							<?php echo $Translation['source member']; ?>:
@@ -223,15 +223,15 @@
 							$arrCap[] = '';
 							$arrVal[] = '-1';
 							$arrCap[] = str_replace ('<GROUPNAME>', html_attr(sqlValue("select name from membership_groups where groupID='$sourceGroupID'")), $Translation['all group members']);
-							if($res = sql("select lcase(memberID), lcase(memberID) from membership_users where groupID='$sourceGroupID' order by memberID", $eo)){
-								while($row = db_fetch_row($res)){
+							if($res = sql("select lcase(memberID), lcase(memberID) from membership_users where groupID='$sourceGroupID' order by memberID", $eo)) {
+								while($row = db_fetch_row($res)) {
 									$arrVal[] = $row[0];
 									$arrCap[] = $row[1];
 								}
 								echo htmlSelect("sourceMemberID", $arrVal, $arrCap, $sourceMemberID);
 							}
 						?>
-						<?php if($sourceMemberID){ ?>
+						<?php if($sourceMemberID) { ?>
 							<span class="help-block text-info">
 								<i class="glyphicon glyphicon-info-sign"></i> 
 								<?php
@@ -252,12 +252,12 @@
 		</div>
 	<?php } ?>
 
-	<?php if($sourceMemberID){ ?>
+	<?php if($sourceMemberID) { ?>
 		<div id="step-3" class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
 					<b><?php echo $Translation['step 3']; ?></b>
-					<?php if($destinationGroupID){ ?>
+					<?php if($destinationGroupID) { ?>
 						<span class="pull-right text-success">
 							<i class="glyphicon glyphicon-ok"></i> 
 							<?php echo $Translation['destination group']; ?>:
@@ -285,12 +285,12 @@
 		</div>
 	<?php } ?>
 
-	<?php if($destinationGroupID && $destinationGroupID == $sourceGroupID){ /* source group same as destination */ ?>
+	<?php if($destinationGroupID && $destinationGroupID == $sourceGroupID) { /* source group same as destination */ ?>
 		<div id="step-4" class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
 					<b><?php echo $Translation['step 4'] ; ?></b>
-					<?php if($destinationMemberID){ ?>
+					<?php if($destinationMemberID) { ?>
 						<span class="pull-right text-success">
 							<i class="glyphicon glyphicon-ok"></i> 
 							<?php echo $Translation['destination member']; ?>:
@@ -312,7 +312,7 @@
 			</div>
 		</div>
 
-	<?php }elseif($destinationGroupID){ /* source group not same as destination */ ?>
+	<?php }elseif($destinationGroupID) { /* source group not same as destination */ ?>
 		<div id="step-4" class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
@@ -326,13 +326,13 @@
 						$noMove = ($sourceGroupID == sqlValue("select groupID from membership_groups where name='{$anon_group_safe}'"));
 						$destinationHasMembers = sqlValue("select count(1) from membership_users where groupID='{$destinationGroupID}'");
 
-						if(!$noMove){
+						if(!$noMove) {
 							echo $Translation['move records'] ; 
 						}
 					?>
 				</div>
 
-				<?php if($destinationHasMembers){ ?>
+				<?php if($destinationHasMembers) { ?>
 					<div class="form-group">
 						<label class="col-xs-12 col-sm-8 col-md-6">
 							<input type="radio" name="moveMembers" id="dontMoveMembers" value="0" <?php echo ($moveMembers ? "" : "checked"); ?>>
@@ -344,7 +344,7 @@
 					</div>
 				<?php } ?>
 
-				<?php if(!$noMove){ ?>
+				<?php if(!$noMove) { ?>
 					<div class="form-group">
 						<label class="col-md-10">
 							<input type="radio" name="moveMembers" id="moveMembers" value="1" <?php echo ($moveMembers || !$destinationHasMembers ? "checked" : ""); ?>>
@@ -357,7 +357,7 @@
 		</div>
 	<?php } ?>
 
-	<?php if($destinationGroupID){ ?>
+	<?php if($destinationGroupID) { ?>
 		<div class="row">
 			<div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
 				<button type="submit" name="beginTransfer" value="1" class="btn btn-lg btn-success btn-block" onClick="return jsConfirmTransfer();">
@@ -375,11 +375,11 @@
 </style>
 
 <script>
-	$j(function(){
+	$j(function() {
 		$j('select').addClass('form-control').attr('style', 'width: 100% !important;');
 
 		/* when a select is changed, automatically apply the change */
-		$j('select').change(function(){
+		$j('select').change(function() {
 			$j(this).parent().next().children('.btn').click();
 		})
 	})

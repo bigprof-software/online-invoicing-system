@@ -1,11 +1,11 @@
 <?php
-	function detect_config($redirect_to_setup = true){
+	function detect_config($redirect_to_setup = true) {
 		$config_exists = is_readable(dirname(__FILE__) . '/config.php');
 
-		if(!$config_exists && $redirect_to_setup){
+		if(!$config_exists && $redirect_to_setup) {
 			$url = (request_outside_admin_folder() ? '' : '../') . 'setup.php';
 
-			if(!headers_sent()){
+			if(!headers_sent()) {
 				@header("Location: $url");
 			}else{
 				echo '<META HTTP-EQUIV="Refresh" CONTENT="0;url=' . $url . '">' .
@@ -18,9 +18,9 @@
 		return $config_exists;
 	}
 
-	function migrate_config(){
+	function migrate_config() {
 		$curr_dir = dirname(__FILE__);
-		if(!is_readable($curr_dir . '/admin/incConfig.php') || !detect_config(false)){
+		if(!is_readable($curr_dir . '/admin/incConfig.php') || !detect_config(false)) {
 			return false; // nothing to migrate
 		}
 
@@ -36,8 +36,12 @@
 		);
 
 		if(isset($appURI)) $config_array['appURI'] = $appURI;
+		if(isset($host))
+			$config_array['host'] = $host;
+		else
+			$config_array['host'] = (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] == '80' || $_SERVER['SERVER_PORT'] == '443' ? '' : ":{$_SERVER['SERVER_PORT']}"));
 
-		if(save_config($config_array)){
+		if(save_config($config_array)) {
 			@rename($curr_dir . '/admin/incConfig.php', $curr_dir . '/admin/incConfig.bak.php');
 			@unlink($curr_dir . '/admin/incConfig.php');
 			return true;
@@ -46,12 +50,12 @@
 		return false;
 	}
 
-	function save_config($config_array = array()){
+	function save_config($config_array = array()) {
 		$curr_dir = dirname(__FILE__);
 		if(!count($config_array) || !count($config_array['adminConfig'])) return array('error' => 'Invalid config array');
 
 		$new_admin_config = '';
-		foreach($config_array['adminConfig'] as $admin_var => $admin_val){
+		foreach($config_array['adminConfig'] as $admin_var => $admin_val) {
 			$new_admin_config .= "\t\t'" . addslashes($admin_var) . "' => \"" . str_replace(array("\n", "\r", '"', '$'), array('\n', '\r', '\"', '\$'), $admin_val) . "\",\n";
 		}
 		$new_admin_config = substr($new_admin_config, 0, -2) . "\n";
@@ -63,12 +67,13 @@
 			"\t\$dbDatabase = '" . addslashes($config_array['dbDatabase']) . "';\n" .
 
 			(isset($config_array['appURI']) ? "\t\$appURI = '" . addslashes($config_array['appURI']) . "';\n" : '') .
+			(isset($config_array['host']) ? "\t\$host = '" . addslashes($config_array['host']) . "';\n" : '') .
 
 			"\n\t\$adminConfig = array(\n" . 
 				$new_admin_config .
 			"\t);";
 
-		if(detect_config(false)){
+		if(detect_config(false)) {
 			// attempt to back up config
 			@copy($curr_dir . '/config.php', $curr_dir . '/config.bak.php');
 		}
@@ -80,11 +85,11 @@
 		return true;
 	}
 
-	function request_outside_admin_folder(){
+	function request_outside_admin_folder() {
 		return (realpath(dirname(__FILE__)) == realpath(dirname($_SERVER['SCRIPT_FILENAME'])) ? true : false);
 	}
 
-	function config($var, $force_reload = false){
+	function config($var, $force_reload = false) {
 		static $config;
 
 		$default_config = array(
@@ -93,6 +98,7 @@
 			'dbPassword' => '',
 			'dbDatabase' => '',
 			'appURI' => '',
+			'host' => (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] == '80' || $_SERVER['SERVER_PORT'] == '443' ? '' : ":{$_SERVER['SERVER_PORT']}")),
 
 			'adminConfig' => array(
 				'adminUsername' => '',
@@ -126,7 +132,7 @@
 			)
 		);
 
-		if(!isset($config) || $force_reload){
+		if(!isset($config) || $force_reload) {
 			@include(dirname(__FILE__) . '/config.php');
 
 			$config['dbServer'] = $dbServer;
@@ -134,6 +140,7 @@
 			$config['dbPassword'] = $dbPassword;
 			$config['dbUsername'] = $dbUsername;
 			$config['appURI'] = $appURI;
+			$config['host'] = $host;
 			$config['adminConfig'] = $adminConfig;
 		}
 
@@ -204,8 +211,8 @@
 		@include(dirname(__FILE__) . '/config.php');
 		if(!isset($dbServer)) return;
 
-		// check if appURI defined
-		if(isset($appURI)) return;
+		// check if appURI and host defined
+		if(isset($appURI) && isset($host)) return;
 
 		// now set appURI, knowing that we're on homepage
 		save_config(array(
@@ -214,6 +221,7 @@
 			'dbPassword' => $dbPassword,
 			'dbDatabase' => $dbDatabase,
 			'appURI' => trim(dirname($_SERVER['SCRIPT_NAME']), '/'),
+			'host' => (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] == '80' || $_SERVER['SERVER_PORT'] == '443' ? '' : ":{$_SERVER['SERVER_PORT']}")),
 			'adminConfig' => $adminConfig
 		));
 	}

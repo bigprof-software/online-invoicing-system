@@ -5,7 +5,7 @@
 	$cleaner->charset = datalist_db_encoding;
 ?>
 <script>
-	<?php echo $current_table; ?>GetChildrenRecordsList = function(command){
+	<?php echo $current_table; ?>GetChildrenRecordsList = function(command) {
 		var param = {
 			ChildTable: "<?php echo $parameters['ChildTable']; ?>",
 			ChildLookupField: "<?php echo $parameters['ChildLookupField']; ?>",
@@ -18,10 +18,10 @@
 		var panelID = "panel_<?php echo "{$parameters['ChildTable']}-{$parameters['ChildLookupField']}"; ?>";
 		var mbWidth = window.innerWidth * 0.9;
 		var mbHeight = window.innerHeight * 0.8;
-		if(mbWidth > 1000){ mbWidth = 1000; }
-		if(mbHeight > 800){ mbHeight = 800; }
+		if(mbWidth > 1000) { mbWidth = 1000; }
+		if(mbHeight > 800) { mbHeight = 800; }
 
-		switch(command.Verb){
+		switch(command.Verb) {
 			case 'sort': /* order by given field index in 'SortBy' */
 				post("parent-children.php", {
 					ChildTable: param.ChildTable,
@@ -34,10 +34,10 @@
 				}, panelID, undefined, 'pc-loading');
 				break;
 			case 'page': /* next or previous page as provided by 'Page' */
-				if(command.Page.toLowerCase() == 'next'){ command.Page = param.Page + 1; }
-				else if(command.Page.toLowerCase() == 'previous'){ command.Page = param.Page - 1; }
+				if(command.Page.toLowerCase() == 'next') { command.Page = param.Page + 1; }
+				else if(command.Page.toLowerCase() == 'previous') { command.Page = param.Page - 1; }
 
-				if(command.Page < 1 || command.Page > <?php echo ceil($totalMatches / $config['records-per-page']); ?>){ return; }
+				if(command.Page < 1 || command.Page > <?php echo ceil($totalMatches / $config['records-per-page']); ?>) { return; }
 				post("parent-children.php", {
 					ChildTable: param.ChildTable,
 					ChildLookupField: param.ChildLookupField,
@@ -76,9 +76,9 @@
 			<table class="table table-striped table-hover table-condensed table-bordered">
 				<thead>
 					<tr>
-						<?php if(is_array($config['display-fields'])) foreach($config['display-fields'] as $fieldIndex => $fieldLabel){ ?>
+						<?php if(is_array($config['display-fields'])) foreach($config['display-fields'] as $fieldIndex => $fieldLabel) { ?>
 							<th 
-								<?php if($config['sortable-fields'][$fieldIndex]){ ?>
+								<?php if($config['sortable-fields'][$fieldIndex]) { ?>
 									onclick="<?php echo $current_table; ?>GetChildrenRecordsList({
 										Verb: 'sort', 
 										SortBy: <?php echo $fieldIndex; ?>, 
@@ -88,9 +88,9 @@
 								<?php } ?>
 								class="<?php echo "{$current_table}-{$config['display-field-names'][$fieldIndex]}"; ?>">
 								<?php echo $fieldLabel; ?>
-								<?php if($parameters['SortBy'] == $fieldIndex && $parameters['SortDirection'] == 'desc'){ ?>
+								<?php if($parameters['SortBy'] == $fieldIndex && $parameters['SortDirection'] == 'desc') { ?>
 									<i class="glyphicon glyphicon-sort-by-attributes-alt text-warning"></i>
-								<?php }elseif($parameters['SortBy'] == $fieldIndex && $parameters['SortDirection'] == 'asc'){ ?>
+								<?php }elseif($parameters['SortBy'] == $fieldIndex && $parameters['SortDirection'] == 'asc') { ?>
 									<i class="glyphicon glyphicon-sort-by-attributes text-warning"></i>
 								<?php } ?>
 							</th>
@@ -98,8 +98,8 @@
 					</tr>
 				</thead>
 				<tbody>
-					<?php if(is_array($records)) foreach($records as $pkValue => $record){ ?>
-					<tr>
+					<?php if(is_array($records)) foreach($records as $pkValue => $record) { ?>
+					<tr data-id="<?php echo html_attr($pkValue); ?>">
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][1]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][1]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php echo safe_html($record[1]); ?></td>
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][2]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][2]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php echo safe_html($record[2]); ?></td>
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][3]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][3]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php echo safe_html($record[3]); ?></td>
@@ -113,8 +113,8 @@
 				<tfoot>
 					<tr>
 						<td colspan="<?php echo count($config['display-fields']); ?>">
-							<?php if($totalMatches){ ?>
-								<?php if($config['show-page-progress']){ ?>
+							<?php if($totalMatches) { ?>
+								<?php if($config['show-page-progress']) { ?>
 									<span style="margin: 10px;">
 										<?php $firstRecord = ($parameters['Page'] - 1) * $config['records-per-page'] + 1; ?>
 										<?php echo str_replace(array('<FirstRecord>', '<LastRecord>', '<RecordCount>'), array($firstRecord, $firstRecord + count($records) - 1, $totalMatches), $Translation['records x to y of z']); ?>
@@ -128,7 +128,7 @@
 				</tfoot>
 			</table>
 		</div>
-		<?php if($totalMatches){ ?>
+		<?php if($totalMatches) { ?>
 			<div class="row hidden-print">
 				<div class="col-xs-12">
 					<button type="button" class="btn btn-default" onclick="<?php echo $current_table; ?>GetChildrenRecordsList({ Verb: 'page', Page: 'previous' });"><i class="glyphicon glyphicon-chevron-left"></i></button>
@@ -138,4 +138,4 @@
 		<?php } ?>
 	</div>
 </div>
-<script>$j(function(){ /* */ $j('img[src^="thumbnail.php?i=&"').parent().hide(); });</script>
+<script>$j(function() { /* */ $j('img[src^="thumbnail.php?i=&"').parent().hide(); });</script>

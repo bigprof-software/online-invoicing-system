@@ -1,6 +1,6 @@
 <?php
-	$appgini_version = '5.74.1055';
-	$generated_ts = '14/2/2019 8:54:15 PM';
+	$appgini_version = '5.81.1094';
+	$generated_ts = '28/10/2019 12:43:25 PM';
 
 	$currDir = dirname(__FILE__);
 	require("{$currDir}/incCommon.php");
@@ -79,7 +79,7 @@
 	// MySQL status
 	$db_status = array();
 	$res = sql("show status", $eo);
-	while($row = db_fetch_array($res)){
+	while($row = db_fetch_array($res)) {
 		$db_status[$row[0]] = $row[1];
 	}
 ?>

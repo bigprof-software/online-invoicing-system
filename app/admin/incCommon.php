@@ -33,52 +33,16 @@
 	if(count($_GET)) $_GET = array_trim($_GET);
 	if(count($_REQUEST)) $_REQUEST = array_trim($_REQUEST);
 
-	// check sessions config
-	$noPathCheck=True;
-	$arrPath=explode(';', ini_get('session.save_path'));
-	$save_path=$arrPath[count($arrPath)-1];
-	if(!$noPathCheck && !is_dir($save_path)){
-		?>
-		<link rel="stylesheet" href="adminStyles.css">
-		<center>
-		<div class="alert alert-danger">
-			Your site is not configured to support sessions correctly. Please edit your php.ini file and change the value of <i>session.save_path</i> to a valid path.
-			<br><br>
-			Current session.save_path value is '<?php echo $save_path; ?>'.
-			</div>
-			</center>
-		<?php
-		exit;
-	}
-	if(session_id()){ session_write_close(); }
-	$configured_save_handler = @ini_get('session.save_handler');
-	if($configured_save_handler != 'memcache' && $configured_save_handler != 'memcached')
-		@ini_set('session.save_handler', 'files');
-	@ini_set('session.serialize_handler', 'php');
-	@ini_set('session.use_cookies', '1');
-	@ini_set('session.use_only_cookies', '1');
-	@ini_set('session.cookie_httponly', '1');
-	@ini_set('session.use_strict_mode', '1');
-	@session_cache_expire(2);
-	@session_cache_limiter($_SERVER['REQUEST_METHOD'] == 'POST' ? 'private' : 'nocache');
-	@session_name('online_inovicing_system');
-	session_start();
-
+	initSession();
 
 	// check if membership system exists
 	setupMembership();
 
-
-	########################################################################
-
-	// do we have an admin log out request?
-	if(isset($_GET['signOut'])){
-		logOutUser();
-		redirect('../index.php?signIn=1');
-	}
+	/* do we have a JWT auth header? */
+	jwt_check_login();
 
 	// renew remember-me token, if applicable
-	$remember_check = RememberMe::check();
+	if(!getLoggedAdmin()) $remember_check = RememberMe::check();
 
 	// is there a logged admin user?
 	if(!($uname = getLoggedAdmin())) {

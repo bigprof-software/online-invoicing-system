@@ -43,6 +43,7 @@ class DataList{
 		$AllowSorting,
 		$AllowNavigation,
 		$AllowPrinting,
+		$AllowPrintingDV,
 		$HideTableView,
 		$AllowCSV,
 		$CSVSeparator,
@@ -68,6 +69,7 @@ class DataList{
 		// End of templates variables
 
 		$ContentType,    // set by DataList to 'tableview', 'detailview', 'tableview+detailview', 'print-tableview', 'print-detailview' or 'filters'
+		$HasCalculatedFields,
 		$HTML;           // generated html after calling Render()
 
 	function __construct(){  // PHP 7 compatibility
@@ -84,6 +86,7 @@ class DataList{
 		$this->AllowFilters = 1;
 		$this->AllowNavigation = 1;
 		$this->AllowPrinting = 1;
+		$this->AllowPrintingDV = 1;
 		$this->HideTableView = 0;
 		$this->QuickSearch = 0;
 		$this->AllowCSV = 0;
@@ -165,42 +168,23 @@ class DataList{
 			$SortDirection = '';
 		}
 
-		if(!$this->AllowDelete){
-			$delete_x = '';
-		}
-		if(!$this->AllowDeleteOfParents){
-			$SkipChecks = '';
-		}
-		if(!$this->AllowInsert){
-			$insert_x = '';
-			$addNew_x = '';
-		}
-		if(!$this->AllowUpdate){
-			$update_x = '';
-		}
-		if(!$this->AllowFilters){
-			$Filter_x = '';
-		}
-		if(!$this->AllowPrinting){
-			$Print_x = '';
-			$PrintTV = '';
-		}
-		if(!$this->QuickSearch){
-			$SearchString = '';
-		}
-		if(!$this->AllowCSV){
-			$CSV_x = '';
-		}
+		if(!$this->AllowDelete) $delete_x = '';
+		if(!$this->AllowDeleteOfParents) $SkipChecks = '';
+		if(!$this->AllowInsert) $insert_x = $addNew_x = '';
+		if(!$this->AllowUpdate) $update_x = '';
+		if(!$this->AllowFilters) $Filter_x = '';
+		if(!$this->AllowPrinting) $Print_x = $PrintTV = '';
+		if(!$this->AllowPrintingDV) $PrintDV = '';
+		if(!$this->QuickSearch) $SearchString = '';
+		if(!$this->AllowCSV) $CSV_x = '';
 
 	// enforce record selection if user has edit/delete permissions on the current table
-		$AllowPrintDV=1;
 		$this->Permissions=getTablePermissions($this->TableName);
 		if($this->Permissions[3] || $this->Permissions[4]){ // current user can edit or delete?
 			$this->AllowSelection = 1;
 		}elseif(!$this->AllowSelection){
-			$SelectedID='';
-			$AllowPrintDV=0;
-			$PrintDV='';
+			$SelectedID = '';
+			$PrintDV = '';
 		}
 
 		if(!$this->AllowSelection || !$SelectedID){ $dvprint_x=''; }
@@ -221,7 +205,7 @@ class DataList{
 			elseif($Filter_x != '') $current_view = 'Filters';
 		}
 
-		$this->HTML .= '<div class="row"><div class="col-xs-12">';
+		$this->HTML .= '<div class="row' . ($this->HasCalculatedFields ? ' has-calculated-fields' : '') . '"><div class="col-xs-12">';
 		$this->HTML .= '<form ' . (datalist_image_uploads_exist ? 'enctype="multipart/form-data" ' : '') . 'method="post" name="myform" action="' . $this->ScriptFileName . '">';
 		if($Embedded) $this->HTML .= '<input name="Embedded" value="1" type="hidden">';
 		if($AutoClose) $this->HTML .= '<input name="AutoClose" value="1" type="hidden">';
@@ -247,7 +231,7 @@ class DataList{
 		}
 
 		elseif($insert_x != ''){
-			$SelectedID = call_user_func($this->TableName.'_insert');
+			$SelectedID = call_user_func_array($this->TableName.'_insert', array());
 
 			// redirect to a safe url to avoid refreshing and thus
 			// insertion of duplicate records.
@@ -291,7 +275,7 @@ class DataList{
 		}
 
 		elseif($delete_x != ''){
-			$delete_res = call_user_func($this->TableName.'_delete', $SelectedID, $this->AllowDeleteOfParents, $SkipChecks);
+			$delete_res = call_user_func_array($this->TableName.'_delete', array($SelectedID, $this->AllowDeleteOfParents, $SkipChecks));
 			// handle ajax delete requests
 			if(is_ajax()){
 				die($delete_res ? $delete_res : 'OK');
@@ -315,7 +299,7 @@ class DataList{
 		}
 
 		elseif($update_x != ''){
-			$updated = call_user_func($this->TableName.'_update', $SelectedID);
+			$updated = call_user_func_array($this->TableName . '_update', array($SelectedID));
 
 			$update_status = 'record-updated-ok=' . rand();
 			if($updated === false) $update_status = 'record-updated-error=' . rand();
@@ -372,7 +356,7 @@ class DataList{
 					$this->HTML .= '<div class="panel-heading"><h3 class="panel-title">' . $Translation["saved filters title"] . "</h3></div>";
 					$this->HTML .= '<div class="panel-body">';
 						$this->HTML .= $Translation["saved filters instructions"];
-						$this->HTML .= '<textarea rows="4" class="form-control vspacer-lg" style="width: 100%;" onfocus="$j(this).select();">' . "&lt;a href=\"{$filter_link}\"&gt;Saved filter link&lt;a&gt;" . '</textarea>';
+						$this->HTML .= '<textarea rows="4" class="form-control vspacer-lg" style="width: 100%;" onfocus="$j(this).select();">' . "&lt;a href=\"{$filter_link}\"&gt;{$Translation['saved filter link']}&lt;/a&gt;" . '</textarea>';
 						$this->HTML .= "<div><a href=\"{$filter_link}\" title=\"" . html_attr($filter_link) . "\">{$Translation['permalink']}</a></div>";
 						$this->HTML .= '<button type="button" class="btn btn-default btn-block vspacer-lg" onclick="$j(\'#saved_filter_source_code\').remove();"><i class="glyphicon glyphicon-remove"></i> ' . $Translation['hide code'] . '</button>';
 					$this->HTML .= '</div>';
@@ -585,7 +569,6 @@ class DataList{
 		$TempQuery = 'SELECT count(1) from '.$this->QueryFrom.' '.$this->QueryWhere;
 		$RecordCount = sqlValue($TempQuery);
 		$FieldCountTV = count($this->QueryFieldsTV);
-		$FieldCountCSV = count($this->QueryFieldsCSV);
 		$FieldCountFilters = count($this->QueryFieldsFilters);
 		if(!$RecordCount){
 			$FirstRecord=1;
@@ -611,6 +594,7 @@ class DataList{
 			}
 
 			$result = sql($csvQuery, $eo);
+			$FieldCountCSV = db_num_fields($result);
 
 		// output CSV field names
 			for($i = 0; $i < $FieldCountCSV; $i++)
@@ -630,13 +614,14 @@ class DataList{
 			while(@ob_end_clean());
 
 		// output CSV HTTP headers ...
+			$csv_filename = $this->TableName . date('-Ymd-His') . '.csv';
 			header('HTTP/1.1 200 OK');
 			header('Date: ' . @date("D M j G:i:s T Y"));
 			header('Last-Modified: ' . @date("D M j G:i:s T Y"));
 			header("Content-Type: application/force-download");
 			header("Content-Length: " . (string)(strlen($this->HTML)));
 			header("Content-Transfer-Encoding: Binary");
-			header("Content-Disposition: attachment; filename={$this->TableName}.csv");
+			header("Content-Disposition: attachment; filename={$csv_filename}");
 
 		// send output and quit script
 			echo $this->HTML;
@@ -704,7 +689,7 @@ class DataList{
 			/* if user can print DV, add action to 'More' menu */
 			$selected_records_more = array();
 
-			if($AllowPrintDV){
+			if($this->AllowPrintingDV){
 				$selected_records_more[] = array(
 					'function' => ($this->SeparateDV ? 'print_multiple_dv_sdv' : 'print_multiple_dv_tvdv'),
 					'title' => $Translation['Print Preview Detail View'],
@@ -806,7 +791,7 @@ class DataList{
 					$this->HTML .= '<p></p>';
 				$this->HTML .= '</div>';
 
-				$this->HTML .= '<div class="row"><div class="table_view col-xs-12 ' . $this->TVClasses . '">';
+				$this->HTML .= '<div class="row"><div class="table-' . $this->TableName . ' table_view col-xs-12 ' . $this->TVClasses . '">';
 			}
 
 			if($Print_x != ''){
@@ -978,10 +963,10 @@ class DataList{
 					$js_id = addslashes($row[$FieldCountTV]); /* pk value suitable for inserting into js strings */
 
 					/* show record selector except in TVP */
-					if($Print_x != ''){ $this->HTML .= '<tr>'; }
-
-					if(!$Print_x){
-						$this->HTML .= ($SelectedID == $row[$FieldCountTV] ? '<tr class="active">' : '<tr>');
+					if($Print_x != '') {
+						$this->HTML .= "<tr data-id=\"{$attr_id}\">";
+					} else {
+						$this->HTML .= ($SelectedID == $row[$FieldCountTV] ? "<tr data-id=\"{$attr_id}\" class=\"active\">" : "<tr data-id=\"{$attr_id}\">");
 						$checked = (is_array($record_selector) && in_array($row[$FieldCountTV], $record_selector) ? ' checked' : '');
 						$this->HTML .= "<td class=\"text-center\"><input class=\"hidden-print record_selector\" type=\"checkbox\" id=\"record_selector_{$attr_id}\" name=\"record_selector[]\" value=\"{$attr_id}\"{$checked}></td>";
 					}
@@ -1197,13 +1182,27 @@ class DataList{
 	// display details form ...
 		if(($this->AllowSelection || $this->AllowInsert || $this->AllowUpdate || $this->AllowDelete) && $Print_x=='' && !$PrintDV){
 			if(($this->SeparateDV && $this->HideTableView) || !$this->SeparateDV){
-				$dvCode = call_user_func("{$this->TableName}_form", $SelectedID, $this->AllowUpdate, (($this->HideTableView && $SelectedID) ? 0 : $this->AllowInsert), $this->AllowDelete, $this->SeparateDV, $this->TemplateDV, $this->TemplateDVP);
+				$dvCode = call_user_func_array($this->TableName . '_form', array($SelectedID, $this->AllowUpdate, (($this->HideTableView && $SelectedID) ? 0 : $this->AllowInsert), $this->AllowDelete, $this->SeparateDV, $this->TemplateDV, $this->TemplateDVP));
 
-				$this->HTML .= "\n\t<div class=\"col-xs-12 detail_view {$this->DVClasses}\">{$tv_dv_separator}<div class=\"panel panel-default\">{$dvCode}</div></div>";
+				$this->HTML .= "\n\t<div class=\"col-xs-12 table-{$this->TableName} detail_view {$this->DVClasses}\">{$tv_dv_separator}<div class=\"panel panel-default\">{$dvCode}</div></div>";
 				$this->HTML .= ($this->SeparateDV ? '<input name="SearchString" value="' . html_attr($SearchString) . '" type="hidden">' : '');
 				if($dvCode){
 					$this->ContentType = 'detailview';
 					$dvShown = true;
+				}
+
+				// if we're in embedded mode and a new record has just been inserted,
+				// save its ID to localStorage in order to be used in child DV to
+				// auto-select the new parent
+				if(isset($_REQUEST['record-added-ok']) && $Embedded && $SelectedID) {
+					ob_start();
+					?><script>
+						localStorage.setItem(
+							'<?php echo $this->TableName; ?>_last_added_id', 
+							<?php echo json_encode($SelectedID); ?>
+						);
+					</script><?php
+					$this->HTML .= ob_get_clean();
 				}
 			}
 		}
@@ -1230,7 +1229,7 @@ class DataList{
 
 			if($selectedRecords && $selectedRecords <= datalist_max_records_dv_print){ // if records selected > {datalist_max_records_dv_print} don't show DV preview to avoid db performance issues.
 				foreach($record_selector as $id){
-					$dvCode .= call_user_func($this->TableName . '_form', $id, 0, 0, 0, 1, $this->TemplateDV, $this->TemplateDVP);
+					$dvCode .= call_user_func_array($this->TableName . '_form', array($id, 0, 0, 0, 1, $this->TemplateDV, $this->TemplateDVP));
 				}
 
 				if($dvCode!=''){
@@ -1248,10 +1247,10 @@ class DataList{
 
 		// $this->HTML .= '<font face="garamond">'.html_attr($tvQuery).'</font>';  // uncomment this line for debugging the table view query
 
-		if($dvShown && $tvShown) $this->ContentType='tableview+detailview';
-		if($dvprint_x!='') $this->ContentType='print-detailview';
-		if($Print_x!='') $this->ContentType='print-tableview';
-		if($PrintDV!='') $this->ContentType='print-detailview';
+		if($dvShown && $tvShown) $this->ContentType = 'tableview+detailview';
+		if($dvprint_x != '') $this->ContentType = 'print-detailview';
+		if($Print_x != '') $this->ContentType = 'print-tableview';
+		if($PrintDV != '') $this->ContentType = 'print-detailview';
 
 		// call detail view javascript hook file if found
 		$dvJSHooksFile=dirname(__FILE__).'/hooks/'.$this->TableName.'-dv.js';

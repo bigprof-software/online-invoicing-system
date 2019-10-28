@@ -1,3 +1,0 @@
-<FilesMatch "\.(sql)$">
-   Order allow,deny
-</FilesMatch>

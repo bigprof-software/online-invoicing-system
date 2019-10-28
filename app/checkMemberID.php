@@ -14,7 +14,7 @@
 </style>
 
 <div style="height: 1em;"></div>
-<?php if($username){ ?>
+<?php if($username) { ?>
 	<div class="alert alert-success">
 		<i class="glyphicon glyphicon-ok"></i>
 		<?php echo str_replace('<MemberID>', "<b>{$username}</b>", $Translation['user available']); ?>

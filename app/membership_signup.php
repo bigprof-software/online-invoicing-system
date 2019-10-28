@@ -8,13 +8,13 @@
 
 	$adminConfig = config('adminConfig');
 
-	if(!$cg = sqlValue("select count(1) from membership_groups where allowSignup=1")){
+	if(!$cg = sqlValue("select count(1) from membership_groups where allowSignup=1")) {
 		$noSignup = true;
 		echo error_message($Translation['sign up disabled']);
 		exit;
 	}
 
-	if($_POST['signUp'] != ''){
+	if($_POST['signUp'] != '') {
 		// receive data
 		$memberID = is_allowed_username($_POST['newUsername']);
 		$email = isEmail($_POST['email']);
@@ -27,23 +27,23 @@
 		$custom4 = makeSafe($_POST['custom4']);
 
 		// validate data
-		if(!$memberID){
+		if(!$memberID) {
 			echo error_message($Translation['username invalid']);
 			exit;
 		}
-		if(strlen($password) < 4 || trim($password) != $password){
+		if(strlen($password) < 4 || trim($password) != $password) {
 			echo error_message($Translation['password invalid']);
 			exit;
 		}
-		if($password != $confirmPassword){
+		if($password != $confirmPassword) {
 			echo error_message($Translation['password no match']);
 			exit;
 		}
-		if(!$email){
+		if(!$email) {
 			echo error_message($Translation['email invalid']);
 			exit;
 		}
-		if(!sqlValue("select count(1) from membership_groups where groupID='$groupID' and allowSignup=1")){
+		if(!sqlValue("select count(1) from membership_groups where groupID='$groupID' and allowSignup=1")) {
 			echo error_message($Translation['group invalid']);
 			exit;
 		}
@@ -67,13 +67,13 @@
 			($adminConfig['custom4'] ? "{$adminConfig['custom4']}: {$custom4}\n" : '')
 		);
 
-		if($adminConfig['notifyAdminNewMembers'] == 2 && !$needsApproval){
+		if($adminConfig['notifyAdminNewMembers'] == 2 && !$needsApproval) {
 			sendmail(array(
 				'to' => $adminConfig['senderEmail'],
 				'subject' => "[{$app_name}] New member signup",
 				'message' => $message
 			));
-		}elseif($adminConfig['notifyAdminNewMembers'] >= 1 && $needsApproval){
+		}elseif($adminConfig['notifyAdminNewMembers'] >= 1 && $needsApproval) {
 			sendmail(array(
 				'to' => $adminConfig['senderEmail'],
 				'subject' => "[{$app_name}] New member awaiting approval",
@@ -82,7 +82,7 @@
 		}
 
 		// hook: member_activity
-		if(function_exists('member_activity')){
+		if(function_exists('member_activity')) {
 			$args = array();
 			member_activity(getMemberInfo($memberID), ($needsApproval ? 'pending' : 'automatic'), $args);
 		}
@@ -99,7 +99,7 @@
 	$groupsDropDown = str_replace('<select ', '<select class="form-control" ', $groupsDropDown);
 ?>
 
-<?php if(!$noSignup){ ?>
+<?php if(!$noSignup) { ?>
 	<div class="row">
 		<div class="hidden-xs col-sm-4 col-md-6 col-lg-8" id="signup_splash">
 			<!-- customized splash content here -->
@@ -149,9 +149,9 @@
 						</div>
 
 						<?php
-							if(!$adminConfig['hide_custom_user_fields_during_signup']){
-								for($cf = 1; $cf <= 4; $cf++){
-									if($adminConfig['custom'.$cf] != ''){
+							if(!$adminConfig['hide_custom_user_fields_during_signup']) {
+								for($cf = 1; $cf <= 4; $cf++) {
+									if($adminConfig['custom'.$cf] != '') {
 										?>
 										<div class="row form-group">
 										   <div class="col-sm-3"><label class="control-label" for="custom<?php echo $cf; ?>"><?php echo $adminConfig['custom'.$cf]; ?></label></div>
@@ -179,17 +179,17 @@
 		$j(function() {
 			$j('#username').focus();
 
-			$j('#usernameAvailable, #usernameNotAvailable').click(function(){ /* */ $j('#username').focus(); });
+			$j('#usernameAvailable, #usernameNotAvailable').click(function() { /* */ $j('#username').focus(); });
 			$j('#username').on('keyup blur', checkUser);
 
 			/* password strength feedback */
-			$j('#password').on('keyup blur', function(){
+			$j('#password').on('keyup blur', function() {
 				var ps = passwordStrength($j('#password').val(), $j('#username').val());
 
-				if(ps == 'strong'){
+				if(ps == 'strong') {
 					$j('#password').parents('.form-group').removeClass('has-error has-warning').addClass('has-success');
 					$j('#password').attr('title', '<?php echo html_attr($Translation['Password strength: strong']); ?>');
-				}else if(ps == 'good'){
+				}else if(ps == 'good') {
 					$j('#password').parents('.form-group').removeClass('has-success has-error').addClass('has-warning');
 					$j('#password').attr('title', '<?php echo html_attr($Translation['Password strength: good']); ?>');
 				}else{
@@ -199,8 +199,8 @@
 			});
 
 			/* inline feedback of confirm password */
-			$j('#confirmPassword').on('keyup blur', function(){
-				if($j('#confirmPassword').val() != $j('#password').val() || !$j('#confirmPassword').val().length){
+			$j('#confirmPassword').on('keyup blur', function() {
+				if($j('#confirmPassword').val() != $j('#password').val() || !$j('#confirmPassword').val().length) {
 					$j('#confirmPassword').parents('.form-group').removeClass('has-success').addClass('has-error');
 				}else{
 					$j('#confirmPassword').parents('.form-group').removeClass('has-error').addClass('has-success');
@@ -208,8 +208,8 @@
 			});
 
 			/* inline feedback of email */
-			$j('#email').on('change', function(){
-				if(validateEmail($j('#email').val())){
+			$j('#email').on('change', function() {
+				if(validateEmail($j('#email').val())) {
 					$j('#email').parents('.form-group').removeClass('has-error').addClass('has-success');
 				}else{
 					$j('#email').parents('.form-group').removeClass('has-success').addClass('has-error');
@@ -217,11 +217,11 @@
 			});
 
 			/* validate form before submitting */
-			$j('#submit').click(function(e){ /* */ if(!jsValidateSignup()) e.preventDefault(); })
+			$j('#submit').click(function(e) { /* */ if(!jsValidateSignup()) e.preventDefault(); })
 		});
 
 		var uaro; // user availability request object
-		function checkUser(){
+		function checkUser() {
 			// abort previous request, if any
 			if(uaro != undefined) uaro.abort();
 
@@ -231,9 +231,9 @@
 					url: 'checkMemberID.php',
 					type: 'GET',
 					data: { 'memberID': $j('#username').val() },
-					success: function(resp){
+					success: function(resp) {
 						var ua=resp;
-						if(ua.match(/\<!-- AVAILABLE --\>/)){
+						if(ua.match(/\<!-- AVAILABLE --\>/)) {
 							reset_username_status('success');
 						}else{
 							reset_username_status('error');
@@ -242,20 +242,20 @@
 			});
 		}
 
-		function reset_username_status(status){
+		function reset_username_status(status) {
 			$j('#usernameNotAvailable, #usernameAvailable')
 				.addClass('hidden')
 				.parents('.form-group')
 				.removeClass('has-error has-success');
 
 			if(status == undefined) return;
-			if(status == 'success'){
+			if(status == 'success') {
 				$j('#usernameAvailable')
 					.removeClass('hidden')
 					.parents('.form-group')
 					.addClass('has-success');
 			}
-			if(status == 'error'){
+			if(status == 'error') {
 				$j('#usernameNotAvailable')
 					.removeClass('hidden')
 					.parents('.form-group')
@@ -264,25 +264,25 @@
 		}
 
 		/* validate data before submitting */
-		function jsValidateSignup(){
+		function jsValidateSignup() {
 			var p1 = $j('#password').val();
 			var p2 = $j('#confirmPassword').val();
 			var email = $j('#email').val();
 
 			/* user exists? */
-			if(!$j('#username').parents('.form-group').hasClass('has-success')){
-				modal_window({ message: '<div class="alert alert-danger"><?php echo html_attr($Translation['username invalid']); ?></div>', title: "<?php echo html_attr($Translation['error:']); ?>", close: function(){ /* */ $j('#username').focus(); } });
+			if(!$j('#username').parents('.form-group').hasClass('has-success')) {
+				modal_window({ message: '<div class="alert alert-danger"><?php echo html_attr($Translation['username invalid']); ?></div>', title: "<?php echo html_attr($Translation['error:']); ?>", close: function() { /* */ $j('#username').focus(); } });
 				return false;
 			}
 
 			/* passwords not matching? */
-			if(p1 != p2){
-				modal_window({ message: '<div class="alert alert-danger"><?php echo html_attr($Translation['password no match']); ?></div>', title: "<?php echo html_attr($Translation['error:']); ?>", close: function(){ /* */ $j('#confirmPassword').focus(); } });
+			if(p1 != p2) {
+				modal_window({ message: '<div class="alert alert-danger"><?php echo html_attr($Translation['password no match']); ?></div>', title: "<?php echo html_attr($Translation['error:']); ?>", close: function() { /* */ $j('#confirmPassword').focus(); } });
 				return false;
 			}
 
-			if(!validateEmail(email)){
-				modal_window({ message: '<div class="alert alert-danger"><?php echo html_attr($Translation['email invalid']); ?></div>', title: "<?php echo html_attr($Translation['error:']); ?>", close: function(){ /* */ $j('#email').focus(); } });
+			if(!validateEmail(email)) {
+				modal_window({ message: '<div class="alert alert-danger"><?php echo html_attr($Translation['email invalid']); ?></div>', title: "<?php echo html_attr($Translation['error:']); ?>", close: function() { /* */ $j('#email').focus(); } });
 				return false;
 			}
 

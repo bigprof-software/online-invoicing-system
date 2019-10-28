@@ -28,7 +28,7 @@
 	$value = new Request('value');
 
 	/* prevent conventional error output via a shutdown handler */
-	function cancel_all_buffers(){
+	function cancel_all_buffers() {
 		while(ob_get_level()) ob_end_clean();
 		echo $GLOBALS['result'];
 	}
@@ -47,7 +47,7 @@
 
 	/* check if value exists in records other than the current record */
 	$where = "`{$field->sql}`='{$value->sql}'";
-	if($id->raw){ // existing record to be excluded from search
+	if($id->raw) { // existing record to be excluded from search
 		$where .= " and `{$spk}`!='{$id->sql}'";
 	}
 	$chk_query = "select count(1) from `{$table->sql}` where {$where}";

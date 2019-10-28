@@ -3,7 +3,7 @@
 	$jdata = array_map('to_utf8', array_map('nl2br', array_map('html_attr_tags_ok', $jdata)));
 ?>
 <script>
-	$j(function(){
+	$j(function() {
 		var tn = 'invoices';
 
 		/* data for selected record, or defaults if none is selected */
@@ -23,7 +23,7 @@
 		var cache = AppGini.cache[tn];
 
 		/* saved value for client */
-		cache.addCheck(function(u, d){
+		cache.addCheck(function(u, d) {
 			if(u != 'ajax_combo.php') return false;
 			if(d.t == tn && d.f == 'client' && d.id == data.client.id)
 				return { results: [ data.client ], more: false, elapsed: 0.01 };
@@ -31,12 +31,12 @@
 		});
 
 		/* saved value for client autofills */
-		cache.addCheck(function(u, d){
+		cache.addCheck(function(u, d) {
 			if(u != tn + '_autofill.php') return false;
 
 			for(var rnd in d) if(rnd.match(/^rnd/)) break;
 
-			if(d.mfk == 'client' && d.id == data.client.id){
+			if(d.mfk == 'client' && d.id == data.client.id) {
 				$j('#client_contact' + d[rnd]).html(data.client_contact);
 				$j('#client_address' + d[rnd]).html(data.client_address);
 				$j('#client_phone' + d[rnd]).html(data.client_phone);

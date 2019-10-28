@@ -14,6 +14,9 @@
 		<td id="clients-phone-<%%VALUE(id)%%>" class="clients-phone"><%%VALUE(phone)%%></td>
 		<td id="clients-email-<%%VALUE(id)%%>" class="clients-email"><a href="mailto:<%%VALUE(email)%%>" title="<%%VALUE(email)%%>" class="btn btn-default"><i class="glyphicon glyphicon-envelope text-info"></i></a></td>
 		<td id="clients-website-<%%VALUE(id)%%>" class="clients-website"><a href="link.php?t=clients&f=website&i=<%%VALUE(id)%%>" target="_blank"><%%VALUE(website)%%></a></td>
+		<td id="clients-unpaid_sales-<%%VALUE(id)%%>" class="clients-unpaid_sales text-right"><%%VALUE(unpaid_sales)%%></td>
+		<td id="clients-paid_sales-<%%VALUE(id)%%>" class="clients-paid_sales text-right"><%%VALUE(paid_sales)%%></td>
+		<td id="clients-total_sales-<%%VALUE(id)%%>" class="clients-total_sales text-right"><%%VALUE(total_sales)%%></td>
 		<script>$j(function(){
 			var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;') $j(/*<*/ '#clients-website-<%%VALUE(id)%%>' /*>*/).html('');
 		});</script>

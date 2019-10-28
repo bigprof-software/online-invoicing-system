@@ -12,12 +12,12 @@
 #_______________________________________________________________________________
 # Step 4: Final step; change the password
 #_______________________________________________________________________________
-	if($_POST['changePassword'] && $_POST['key']){
+	if($_POST['changePassword'] && $_POST['key']) {
 		$expiry_limit = time() - $reset_expiry - 900; // give an extra tolerence of 15 minutes
 		$res = sql("select * from membership_users where pass_reset_key='" . makeSafe($_POST['key']) . "' and pass_reset_expiry>$expiry_limit limit 1", $eo);
 
-		if($row = db_fetch_assoc($res)){
-			if($_POST['newPassword'] != $_POST['confirmPassword'] || !$_POST['newPassword']){
+		if($row = db_fetch_assoc($res)) {
+			if($_POST['newPassword'] != $_POST['confirmPassword'] || !$_POST['newPassword']) {
 				?>
 				<div class="alert alert-danger">
 					<?php echo $Translation['password no match']; ?>
@@ -54,11 +54,11 @@
 # Step 3: This is the special link that came to the member by email. This is
 #         where the member enters his new password.
 #_______________________________________________________________________________
-	if($_GET['key'] != ''){
+	if($_GET['key'] != '') {
 		$expiry_limit = time() - $reset_expiry;
 		$res = sql("select * from membership_users where pass_reset_key='" . makeSafe($_GET['key']) . "' and pass_reset_expiry>$expiry_limit limit 1", $eo);
 
-		if($row = db_fetch_assoc($res)){
+		if($row = db_fetch_assoc($res)) {
 			?>
 			<div class="page-header"><h1><?php echo $Translation['password change']; ?></h1></div>
 
@@ -103,11 +103,11 @@
 #_______________________________________________________________________________
 # Step 2: Send email to member containing the reset link
 #_______________________________________________________________________________
-	if($_POST['reset']){
+	if($_POST['reset']) {
 		$username = makeSafe(strtolower(trim($_POST['username'])));
 		$email = isEmail(trim($_POST['email']));
 
-		if((!$username && !$email) || ($username==$adminConfig['adminUsername'])){
+		if((!$username && !$email) || ($username==$adminConfig['adminUsername'])) {
 			redirect("membership_passwordReset.php?emptyData=1");
 			exit;
 		}
@@ -115,13 +115,13 @@
 		?><div class="page-header"><h1><?php echo $Translation['password reset']; ?></h1></div><?php
 
 		$where = '';
-		if($username){
+		if($username) {
 			$where = "lcase(memberID)='{$username}'";
-		}elseif($email){
+		}elseif($email) {
 			$where = "email='{$email}'";
 		}
 		$res = sql("select * from membership_users where {$where} limit 1", $eo);
-		if(!$row=db_fetch_assoc($res)){
+		if(!$row=db_fetch_assoc($res)) {
 			?>
 			<div class="alert alert-danger">
 				<?php echo $Translation['password reset invalid']; ?>
@@ -129,7 +129,7 @@
 			<?php
 		}else{
 			// avoid admin password change
-			if($row['memberID']==$adminConfig['adminUsername']){
+			if($row['memberID']==$adminConfig['adminUsername']) {
 				?>
 				<div class="alert alert-danger">
 					<?php echo $Translation['password reset invalid']; ?>
@@ -201,7 +201,7 @@
 					</div>
 				</div>
 
-				<?php if(is_array(getTableList()) && count(getTableList())){ /* if anon. users can see any tables ... */ ?>
+				<?php if(is_array(getTableList()) && count(getTableList())) { /* if anon. users can see any tables ... */ ?>
 					<p style="margin-top: 1.5em;"><?php echo $Translation['browse as guest']; ?></p>
 				<?php } ?>
 			</form>
@@ -209,9 +209,9 @@
 	</div>
 
 	<script>
-		jQuery(function(){
+		jQuery(function() {
 			jQuery('#username').focus();
-			<?php  if($_GET['emptyData']){ ?>
+			<?php  if($_GET['emptyData']) { ?>
 				jQuery('#username, #email').parent().addClass('has-error');
 			<?php } ?>
 		});

@@ -1,7 +1,7 @@
 <?php header('Content-type: text/css'); ?>
 
-@media (min-width: 768px){ .container{ width: 90% !important; } }
-@media (max-width: 767px){ .detail_view{ padding: 0; } }
+@media (min-width: 768px) { .container{ width: 90% !important; } }
+@media (max-width: 767px) { .detail_view{ padding: 0; } }
 @media print{
 	a[href]:after{ content: "" !important; }
 	.container{ width: 98% !important; }
@@ -42,6 +42,9 @@ li.dropdown{ display: block !important; }
 
 div.datePicker{ font-size: 1.3em; }
 .always_shown{ display: inline !important; }
+.always-shown-block { display: block !important; }
+.always-shown-inline { display: inline !important; }
+.always-shown-inline-block { display: inline-block !important; }
 .text-bold{ font-weight: bold; }
 .text-italic{ font-style: italic; }
 
@@ -53,7 +56,7 @@ div.datePicker{ font-size: 1.3em; }
 .select2-container .select2-choice{ height: 2.4em; line-height: 2.2em; }
 .select2-container .select2-choice .select2-arrow b{ background-position: 0 -0.1em; }
 
-.navbar ul.dropdown-menu{ max-height: 400px; overflow-y: auto; }
+.navbar ul.dropdown-menu{ max-height: 90vh; overflow-y: auto; }
 
 .date_combo { padding-right: 0.5em; }
 /* .date_combo select { width: 100% !important; padding-left: 0; padding-right: 0; } */
@@ -203,3 +206,39 @@ img[src="blank.gif"] { max-height: 10px !important; }
 .theme-rtl #Previous .glyphicon, .theme-rtl #Next .glyphicon {
 	transform: rotate(180deg);
 }
+
+/* theme-specific compact adjustments */
+.theme-sandstone .theme-compact .btn {
+	padding: 2.5px 10px;
+}
+
+/* file upload box formatting */
+.upload-toolbox {
+	overflow-x: hidden;
+	max-width: 40rem;
+	font-size: 1.2rem;
+	text-align: left;
+	background-color: rgba(255, 255, 255, 0.15);
+}
+.theme-rtl .upload-toolbox {
+	text-align: right;
+}
+.upload-toolbox input[type="file"] {
+	display: inline-block;
+}
+.form-control-static.well {
+	margin-bottom: 0;
+}
+.file-type-error, .file-size-error {
+	margin-top: 1rem;
+}
+.clear-upload {
+	cursor: pointer;
+}
+
+/* auto-complete matches */
+.select2-result-selectable .select2-match, .select2-result-unselectable .select2-match {
+	font-weight: bold;
+	background-color: rgba(255, 255, 0, 0.5);
+}
+

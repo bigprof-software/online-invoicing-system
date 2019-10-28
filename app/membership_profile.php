@@ -8,13 +8,13 @@
 
 	/* no access for guests */
 	$mi = getMemberInfo();
-	if(!$mi['username'] || $mi['group'] == $adminConfig['anonymousGroup']){
+	if(!$mi['username'] || $mi['group'] == $adminConfig['anonymousGroup']) {
 		@header('Location: index.php'); exit;
 	}
 
 	/* save profile */
-	if($_POST['action'] == 'saveProfile'){
-		if(!csrf_token(true)){
+	if($_POST['action'] == 'saveProfile') {
+		if(!csrf_token(true)) {
 			echo $Translation['error:'];
 			exit;
 		}
@@ -27,7 +27,7 @@
 		$custom4=makeSafe($_POST['custom4']);
 
 		/* validate email */
-		if(!$email){
+		if(!$email) {
 			echo "{$Translation['error:']} {$Translation['email invalid']}";
 			echo "<script>$$('label[for=\"email\"]')[0].pulsate({ pulses: 10, duration: 4 }); $j('#email').focus();</script>";
 			exit;
@@ -38,7 +38,7 @@
 		sql("UPDATE `membership_users` set email='$email', custom1='$custom1', custom2='$custom2', custom3='$custom3', custom4='$custom4', comments=CONCAT_WS('\\n', comments, 'member updated his profile on $updateDT from IP address {$mi[IP]}') WHERE memberID='{$mi['username']}'", $eo);
 
 		// hook: member_activity
-		if(function_exists('member_activity')){
+		if(function_exists('member_activity')) {
 			$args=array();
 			member_activity($mi, 'profile', $args);
 		}
@@ -47,8 +47,8 @@
 	}
 
 	/* change password */
-	if($_POST['action'] == 'changePassword' && $mi['username'] != $adminConfig['adminUsername']){
-		if(!csrf_token(true)){
+	if($_POST['action'] == 'changePassword' && $mi['username'] != $adminConfig['adminUsername']) {
+		if(!csrf_token(true)) {
 			echo $Translation['error:'];
 			exit;
 		}
@@ -70,7 +70,7 @@
 			<?php
 			exit;
 		}
-		if(strlen($newPassword) < 4){
+		if(strlen($newPassword) < 4) {
 			echo "{$Translation['error:']} {$Translation['password invalid']}";
 			?>
 			<script>
@@ -88,7 +88,7 @@
 		sql("UPDATE `membership_users` set `passMD5`='" . password_hash($newPassword, PASSWORD_DEFAULT) . "', `comments`=CONCAT_WS('\\n', comments, 'member changed his password on $updateDT from IP address {$mi[IP]}') WHERE memberID='{$mi['username']}'", $eo);
 
 		// hook: member_activity
-		if(function_exists('member_activity')){
+		if(function_exists('member_activity')) {
 			$args=array();
 			member_activity($mi, 'password', $args);
 		}
@@ -105,7 +105,7 @@
 	*/
 	$permissions = array();
 	$userTables = getTableList();
-	if(is_array($userTables))  foreach($userTables as $tn => $tc){
+	if(is_array($userTables))  foreach($userTables as $tn => $tc) {
 		$permissions[$tn] = getTablePermissions($tn);
 	}
 
@@ -138,7 +138,7 @@
 							<input type="email" id="email" name="email" value="<?php echo $mi['email']; ?>" class="form-control">
 						</div>
 
-						<?php for($i=1; $i<5; $i++){ ?>
+						<?php for($i=1; $i<5; $i++) { ?>
 							<div class="form-group">
 								<label for="custom<?php echo $i; ?>"><?php echo $adminConfig['custom'.$i]; ?></label>
 								<input type="text" id="custom<?php echo $i; ?>" name="custom<?php echo $i; ?>" value="<?php echo $mi['custom'][$i-1]; ?>" class="form-control">
@@ -191,7 +191,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<?php foreach($permissions as $tn => $perm){ ?>
+								<?php foreach($permissions as $tn => $perm) { ?>
 									<tr>
 										<td><img src="<?php echo $userTables[$tn][2]; ?>"> <a href="<?php echo $tn; ?>_view.php"><?php echo $userTables[$tn][0]; ?></a></td>
 										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm[2]); ?>" /></td>
@@ -230,7 +230,7 @@
 				</div>
 			</div>
 
-			<?php if($mi['username'] != $adminConfig['adminUsername']){ ?>
+			<?php if($mi['username'] != $adminConfig['adminUsername']) { ?>
 				<!-- change password -->
 				<div class="panel panel-info">
 					<div class="panel-heading">
@@ -284,9 +284,9 @@
 				$notify = '';
 				if(isset($_GET['notify'])) $notify = addslashes(strip_tags($_GET['notify']));
 			?>
-			<?php if($notify){ ?> notify('<?php echo $notify; ?>'); <?php } ?>
+			<?php if($notify) { ?> notify('<?php echo $notify; ?>'); <?php } ?>
 
-			$j('#update-profile').on('click', function(){
+			$j('#update-profile').on('click', function() {
 				post2(
 					'<?php echo basename(__FILE__); ?>',
 					{ action: 'saveProfile', email: $j('#email').val(), custom1: $j('#custom1').val(), custom2: $j('#custom2').val(), custom3: $j('#custom3').val(), custom4: $j('#custom4').val(), csrf_token: $j('#csrf_token').val() },
@@ -295,10 +295,10 @@
 				);
 			});
 
-			<?php if($mi['username'] != $adminConfig['adminUsername']){ ?>
-				$('update-password').observe('click', function(){
+			<?php if($mi['username'] != $adminConfig['adminUsername']) { ?>
+				$('update-password').observe('click', function() {
 					/* make sure passwords match */
-					if($j('#new-password').val() != $j('#confirm-password').val()){
+					if($j('#new-password').val() != $j('#confirm-password').val()) {
 						$j('#notify').addClass('alert-danger');
 						notify('<?php echo "{$Translation['error:']} ".addslashes($Translation['password no match']); ?>');
 						$$('label[for="confirm-password"]')[0].pulsate({ pulses: 10, duration: 4 });
@@ -327,8 +327,8 @@
 				});
 
 				/* inline feedback of confirm password */
-				$j('#confirm-password').on('keyup', function(){
-					if($j('#confirm-password').val() != $j('#new-password').val() || !$j('#confirm-password').val().length){
+				$j('#confirm-password').on('keyup', function() {
+					if($j('#confirm-password').val() != $j('#new-password').val() || !$j('#confirm-password').val().length) {
 						$j('#confirm-status').html('<img align="top" src="Exit.gif"/>');
 					}else{
 						$j('#confirm-status').html('<img align="top" src="update.gif"/>');
@@ -337,16 +337,16 @@
 			<?php } ?>
 		});
 
-		function notify(msg){
+		function notify(msg) {
 			$j('#notify').html(msg).fadeIn();
-			window.setTimeout(function(){ /* */ $j('#notify').fadeOut(); }, 15000);
+			window.setTimeout(function() { /* */ $j('#notify').fadeOut(); }, 15000);
 		}
 	</script>
 
 	<?php
 		/* return icon file name based on given permission value */
-		function permIcon($perm){
-			switch($perm){
+		function permIcon($perm) {
+			switch($perm) {
 				case 1:
 					return 'member_icon.gif';
 				case 2:

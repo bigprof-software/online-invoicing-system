@@ -35,8 +35,8 @@
 	if(!createThumbnail($img, getThumbnailSpecs($t, $f, $v)))  getImage();
 	if(!getImage($thumb))  getImage();
 
-	function getImage($img = ''){
-		if(!$img){ // default image to return
+	function getImage($img = '') {
+		if(!$img) { // default image to return
 			$img = './photo.gif';
 			$exit = true;
 		}
@@ -46,7 +46,7 @@
 		$last_modified_gmt = gmdate('D, d M Y H:i:s', $last_modified) . ' GMT';
 		$expires_gmt = gmdate('D, d M Y H:i:s', $last_modified + 864000) . ' GMT';
 		$headers = (function_exists('getallheaders') ? getallheaders() : $_SERVER);
-		if(isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == $last_modified)){
+		if(isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == $last_modified)) {
 			@header("Last-Modified: {$last_modified_gmt}", true, 304);
 			@header("Cache-Control: private, max-age=864000", true);
 			@header("Expires: {$expires_gmt}");
@@ -55,7 +55,7 @@
 
 		$thumbInfo = @getimagesize($img);
 		$fp = @fopen($img, 'rb');
-		if($thumbInfo && $fp){
+		if($thumbInfo && $fp) {
 			$file_size = filesize($img);
 			@header("Last-Modified: {$last_modified_gmt}", true, 200);
 			@header("Pragma:");

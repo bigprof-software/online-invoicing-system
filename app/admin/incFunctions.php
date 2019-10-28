@@ -75,7 +75,7 @@
 		@header('X-Frame-Options: SAMEORIGIN'); // prevent iframing by other sites to prevent clickjacking
 	}
 	########################################################################
-	function get_tables_info($skip_authentication = false){
+	function get_tables_info($skip_authentication = false) {
 		static $all_tables = array(), $accessible_tables = array();
 
 		/* return cached results, if found */
@@ -123,12 +123,12 @@
 					'tableIcon' => 'resources/table_icons/installer_box.png',
 					'group' => $tg[0],
 					'homepageShowCount' => 1
-				)
+				),
 		);
 
 		if($skip_authentication || getLoggedAdmin()) return $all_tables;
 
-		foreach($all_tables as $tn => $ti){
+		foreach($all_tables as $tn => $ti) {
 			$arrPerm = getTablePermissions($tn);
 			if($arrPerm[0]) $accessible_tables[$tn] = $ti;
 		}
@@ -136,21 +136,21 @@
 		return $accessible_tables;
 	}
 	#########################################################
-	if(!function_exists('getTableList')){
-		function getTableList($skip_authentication = false){
-			$arrTables = array(   
+	if(!function_exists('getTableList')) {
+		function getTableList($skip_authentication = false) {
+			$arrTables = array(
 				'invoices' => 'Invoices',
 				'clients' => 'Clients',
 				'item_prices' => 'Prices History',
 				'invoice_items' => 'Invoice items',
-				'items' => 'Items'
+				'items' => 'Items',
 			);
 
 			return $arrTables;
 		}
 	}
 	########################################################################
-	function getThumbnailSpecs($tableName, $fieldName, $view){
+	function getThumbnailSpecs($tableName, $fieldName, $view) {
 		return FALSE;
 	}
 	########################################################################
@@ -284,11 +284,11 @@
 		return ($escaped ? $string : db_escape($string));
 	}
 	########################################################################
-	function checkPermissionVal($pvn){
+	function checkPermissionVal($pvn) {
 		// fn to make sure the value in the given POST variable is 0, 1, 2 or 3
 		// if the value is invalid, it default to 0
 		$pvn=intval($_POST[$pvn]);
-		if($pvn!=1 && $pvn!=2 && $pvn!=3){
+		if($pvn!=1 && $pvn!=2 && $pvn!=3) {
 			return 0;
 		}else{
 			return $pvn;
@@ -377,7 +377,7 @@
 					$errorNum = db_errno($db_link);
 					$errorMsg = htmlspecialchars(db_error($db_link));
 
-					if(getLoggedAdmin()) $errorMsg .= "<pre class=\"ltr\">{$Translation['query:']}\n" . htmlspecialchars($statment) . "</pre><i class=\"text-right\">{$Translation['admin-only info']}</i>";
+					if(getLoggedAdmin()) $errorMsg .= "<pre class=\"ltr\">{$Translation['query:']}\n" . htmlspecialchars($statment) . "</pre><p><i class=\"text-right\">{$Translation['admin-only info']}</i></p><p>{$Translation['rebuild fields']}</p>";
 
 					if($o['silentErrors']){ $o['error'] = $errorMsg; return false; }
 
@@ -400,7 +400,7 @@
 	}
 
 	########################################################################
-	function sqlValue($statment, &$error = NULL){
+	function sqlValue($statment, &$error = NULL) {
 		// executes a statment that retreives a single data value and returns the value retrieved
 		$eo = array('silentErrors' => true);
 		if(!$res = sql($statment, $eo)) { $error = $eo['error']; return false; }
@@ -414,25 +414,23 @@
 		// if logged, it returns the user id
 
 		$adminConfig = config('adminConfig');
-		if(!isset($_SESSION['memberID']) || empty($_SESSION['memberID'])) return false;
-		if($_SESSION['adminUsername'] == $_SESSION['memberID']) {
-			return $_SESSION['adminUsername'];
-		}elseif($_SESSION['memberID'] == $adminConfig['adminUsername']) {
+		if(empty($_SESSION['memberID'])) return false;
+		if($_SESSION['memberID'] == $adminConfig['adminUsername']) {
 			$_SESSION['adminUsername'] = $_SESSION['memberID'];
 			return $_SESSION['adminUsername'];
 		}
 
-		unset($_SESSTION['adminUsername']);
+		unset($_SESSION['adminUsername']);
 		return false;
 	}
 	########################################################################
-	function checkUser($username, $password){
+	function checkUser($username, $password) {
 		// checks given username and password for validity
 		// if valid, registers the username in a session and returns true
 		// else, returns false and destroys session
 
 		$adminConfig = config('adminConfig');
-		if($username != $adminConfig['adminUsername'] || !password_match($password, $adminConfig['adminPassword'])){
+		if($username != $adminConfig['adminUsername'] || !password_match($password, $adminConfig['adminPassword'])) {
 			return false;
 		}
 
@@ -442,20 +440,177 @@
 		return true;
 	}
 	########################################################################
-	function logOutUser(){
+	function initSession() {
+		// check sessions config
+		$noPathCheck = true; // set to false for debugging session issues
+		$arrPath = explode(';', ini_get('session.save_path'));
+		$save_path = $arrPath[count($arrPath) - 1];
+		if(!$noPathCheck && !is_dir($save_path)) {
+			die("Invalid session.save_path in php.ini");
+		}
+
+		if(session_id()) { session_write_close(); }
+
+		$configured_save_handler = @ini_get('session.save_handler');
+		if($configured_save_handler != 'memcache' && $configured_save_handler != 'memcached')
+			@ini_set('session.save_handler', 'files');
+
+		@ini_set('session.serialize_handler', 'php');
+		@ini_set('session.use_cookies', '1');
+		@ini_set('session.use_only_cookies', '1');
+		@ini_set('session.cookie_httponly', '1');
+		@ini_set('session.use_strict_mode', '1');
+		@session_cache_expire(2);
+		@session_cache_limiter($_SERVER['REQUEST_METHOD'] == 'POST' ? 'private' : 'nocache');
+		@session_name('online_inovicing_system');
+		session_start();
+	}
+	########################################################################
+	function jwt_key() {
+		$config_file = dirname(__FILE__) . '/../config.php';
+		if(!is_file($config_file)) return false;
+		return md5_file($config_file);
+	}
+	########################################################################
+	function jwt_token($user = false) {
+		if($user === false) $user = $_SESSION['memberID'];
+		$key = jwt_key();
+		if($key === false) return false;
+		return JWT::encode(array('user' => $user), $key);
+	}
+	########################################################################
+	function jwt_header() {
+		/* adapted from https://stackoverflow.com/a/40582472/1945185 */
+		$auth_header = null;
+		if(isset($_SERVER['Authorization'])) {
+			$auth_header = trim($_SERVER['Authorization']);
+		} elseif(isset($_SERVER['HTTP_AUTHORIZATION'])) { //Nginx or fast CGI
+			$auth_header = trim($_SERVER['HTTP_AUTHORIZATION']);
+		} elseif(isset($_SERVER['HTTP_X_AUTHORIZATION'])) { //hack if all else fails
+			$auth_header = trim($_SERVER['HTTP_X_AUTHORIZATION']);
+		} elseif(function_exists('apache_request_headers')) {
+			$rh = apache_request_headers();
+			// Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
+			$rh = array_combine(array_map('ucwords', array_keys($rh)), array_values($rh));
+			if(isset($rh['Authorization'])) {
+				$auth_header = trim($rh['Authorization']);
+			} elseif(isset($rh['X-Authorization'])) {
+				$auth_header = trim($rh['X-Authorization']);
+			}
+		}
+
+		if(!empty($auth_header)) {
+			if(preg_match('/Bearer\s(\S+)/', $auth_header, $matches)) return $matches[1];
+		}
+
+		return null;
+	}
+	########################################################################
+	function jwt_check_login() {
+		// do we have an Authorization Bearer header?
+		$token = jwt_header();
+		if(!$token) return false;
+
+		$key = jwt_key();
+		if($key === false) return false;
+
+		$error = '';
+		$payload = JWT::decode($token, $key, $error);
+		if(empty($payload['user'])) return false;
+
+		$_SESSION['memberID'] = $payload['user'];
+		$safe_user = makeSafe($payload['user']);
+		$_SESSION['memberGroupID'] = sqlValue(
+			"SELECT `groupID` FROM `membership_users` WHERE `memberID`='{$safe_user}'" 
+		);
+
+		// for API calls that just trigger an action and then close connection, 
+		// we need to continue running
+		@ignore_user_abort(true);
+		@set_time_limit(120);
+
+		return true;
+	}
+	########################################################################
+	function curl_insert_handler($table, $data) {
+		if(!function_exists('curl_init')) return false;
+		$ch = curl_init();
+
+		$payload = $data;
+		$payload['insert_x'] = 1;
+
+		$url = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . config('host') . '/' . application_uri("{$table}_view.php");
+		$token = jwt_token();
+		$options = array(
+			CURLOPT_URL => $url,
+			CURLOPT_POST => true,
+			CURLOPT_POSTFIELDS => http_build_query($payload),
+			CURLOPT_HTTPHEADER => array(
+				"User-Agent: {$_SERVER['HTTP_USER_AGENT']}",
+				"Accept: {$_SERVER['HTTP_ACCEPT']}",
+				"Authorization: Bearer " . $token,
+				"X-Authorization: Bearer " . $token,
+			),
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_RETURNTRANSFER => true,
+
+			/* this is a localhost request so need to verify SSL */
+			CURLOPT_SSL_VERIFYPEER => false,
+
+			// the following option allows sending request and then 
+			// closing the connection without waiting for response
+			// see https://stackoverflow.com/a/10895361/1945185
+			CURLOPT_TIMEOUT => 8,
+		);
+
+		if(defined('CURLOPT_TCP_FASTOPEN')) $options[CURLOPT_TCP_FASTOPEN] = true;
+		if(defined('CURLOPT_SAFE_UPLOAD'))
+			$options[CURLOPT_SAFE_UPLOAD] = function_exists('curl_file_create');
+
+		// this is safe to use as we're sending a local request
+		if(defined('CURLOPT_UNRESTRICTED_AUTH')) $options[CURLOPT_UNRESTRICTED_AUTH] = 1;
+
+		curl_setopt_array($ch, $options);
+
+		return $ch;
+	}
+########################################################################
+	function curl_batch($handlers) {
+		if(!function_exists('curl_init')) return false;
+		if(!is_array($handlers)) return false;
+		if(!count($handlers)) return false;
+
+		$mh = curl_multi_init();
+		if(function_exists('curl_multi_setopt')) {
+			curl_multi_setopt($mh, CURLMOPT_PIPELINING, 1);
+			curl_multi_setopt($mh, CURLMOPT_MAXCONNECTS, min(20, count($handlers)));
+		}
+
+		foreach($handlers as $ch) {
+			@curl_multi_add_handle($mh, $ch);
+		}
+
+		$active = false;
+		do {
+			@curl_multi_exec($mh, $active);
+			usleep(2000);
+		} while($active > 0);
+	}
+	########################################################################
+	function logOutUser() {
 		RememberMe::logout();
 	}
 	########################################################################
-	function getPKFieldName($tn){
+	function getPKFieldName($tn) {
 		// get pk field name of given table
 
 		$stn = makeSafe($tn, false);
-		if(!$res = sql("show fields from `$stn`", $eo)){
+		if(!$res = sql("show fields from `$stn`", $eo)) {
 			return false;
 		}
 
-		while($row = db_fetch_assoc($res)){
-			if($row['Key'] == 'PRI'){
+		while($row = db_fetch_assoc($res)) {
+			if($row['Key'] == 'PRI') {
 				return $row['Field'];
 			}
 		}
@@ -463,17 +618,17 @@
 		return false;
 	}
 	########################################################################
-	function getCSVData($tn, $pkValue, $stripTags=true){
+	function getCSVData($tn, $pkValue, $stripTags=true) {
 		// get pk field name for given table
-		if(!$pkField=getPKFieldName($tn)){
+		if(!$pkField=getPKFieldName($tn)) {
 			return "";
 		}
 
 		// get a concat string to produce a csv list of field values for given table record
-		if(!$res=sql("show fields from `$tn`", $eo)){
+		if(!$res=sql("show fields from `$tn`", $eo)) {
 			return "";
 		}
-		while($row=db_fetch_assoc($res)){
+		while($row=db_fetch_assoc($res)) {
 			$csvFieldList.="`{$row['Field']}`,";
 		}
 		$csvFieldList=substr($csvFieldList, 0, -1);
@@ -483,11 +638,11 @@
 		return ($stripTags ? strip_tags($csvData) : $csvData);
 	}
 	########################################################################
-	function errorMsg($msg){
+	function errorMsg($msg) {
 		echo "<div class=\"alert alert-danger\">{$msg}</div>";
 	}
 	########################################################################
-	function redirect($url, $absolute = false){
+	function redirect($url, $absolute = false) {
 		$fullURL = ($absolute ? $url : application_url($url));
 		if(!headers_sent()) header("Location: {$fullURL}");
 
@@ -496,7 +651,7 @@
 		exit;
 	}
 	########################################################################
-	function htmlRadioGroup($name, $arrValue, $arrCaption, $selectedValue, $selClass = "text-primary", $class = "", $separator = "<br>"){
+	function htmlRadioGroup($name, $arrValue, $arrCaption, $selectedValue, $selClass = 'text-primary', $class = '', $separator = '<br>') {
 		if(!is_array($arrValue)) return '';
 
 		ob_start();
@@ -509,7 +664,7 @@
 		ob_end_clean();
 
 		$out = '';
-		for($i = 0; $i < count($arrValue); $i++){
+		for($i = 0; $i < count($arrValue); $i++) {
 			$replacements = array(
 				'%%CLASS%%' => html_attr($arrValue[$i] == $selectedValue ? $selClass :$class),
 				'%%NAME%%' => html_attr($name),
@@ -524,27 +679,27 @@
 		return $out;
 	}
 	########################################################################
-	function htmlSelect($name, $arrValue, $arrCaption, $selectedValue, $class="", $selectedClass=""){
-		if($selectedClass==""){
+	function htmlSelect($name, $arrValue, $arrCaption, $selectedValue, $class = '', $selectedClass = '') {
+		if($selectedClass == '') {
 			$selectedClass=$class;
 		}
-		if(is_array($arrValue)){
+		if(is_array($arrValue)) {
 			$out="<select name=\"$name\" id=\"$name\">";
-			for($i=0; $i<count($arrValue); $i++){
-				$out.="<option value=\"".$arrValue[$i]."\"".($arrValue[$i]==$selectedValue ? " selected class=\"$class\"" : " class=\"$selectedClass\"").">".$arrCaption[$i]."</option>";
+			for($i = 0; $i < count($arrValue); $i++) {
+				$out .= '<option value="' . $arrValue[$i] . '"' . ($arrValue[$i] == $selectedValue ? " selected class=\"$class\"" : " class=\"$selectedClass\"") . '>' . $arrCaption[$i] . '</option>';
 			}
-			$out.="</select>";
+			$out .= '</select>';
 		}
 		return $out;
 	}
 	########################################################################
-	function htmlSQLSelect($name, $sql, $selectedValue, $class="", $selectedClass=""){
-		$arrVal[]='';
-		$arrCap[]='';
-		if($res=sql($sql, $eo)){
-			while($row=db_fetch_row($res)){
-				$arrVal[]=$row[0];
-				$arrCap[]=$row[1];
+	function htmlSQLSelect($name, $sql, $selectedValue, $class = '', $selectedClass = '') {
+		$arrVal[] = '';
+		$arrCap[] = '';
+		if($res = sql($sql, $eo)) {
+			while($row = db_fetch_row($res)) {
+				$arrVal[] = $row[0];
+				$arrCap[] = $row[1];
 			}
 			return htmlSelect($name, $arrVal, $arrCap, $selectedValue, $class, $selectedClass);
 		}else{
@@ -552,12 +707,12 @@
 		}
 	}
 	########################################################################
-	function bootstrapSelect($name, $arrValue, $arrCaption, $selectedValue, $class = '', $selectedClass = ''){
+	function bootstrapSelect($name, $arrValue, $arrCaption, $selectedValue, $class = '', $selectedClass = '') {
 		if($selectedClass == '') $selectedClass = $class;
 
 		$out = "<select class=\"form-control\" name=\"{$name}\" id=\"{$name}\">";
-		if(is_array($arrValue)){
-			for($i = 0; $i < count($arrValue); $i++){
+		if(is_array($arrValue)) {
+			for($i = 0; $i < count($arrValue); $i++) {
 				$selected = "class=\"{$class}\"";
 				if($arrValue[$i] == $selectedValue) $selected = "selected class=\"{$selectedClass}\"";
 				$out .= "<option value=\"{$arrValue[$i]}\" {$selected}>{$arrCaption[$i]}</option>";
@@ -568,11 +723,11 @@
 		return $out;
 	}
 	########################################################################
-	function bootstrapSQLSelect($name, $sql, $selectedValue, $class = '', $selectedClass = ''){
+	function bootstrapSQLSelect($name, $sql, $selectedValue, $class = '', $selectedClass = '') {
 		$arrVal[] = '';
 		$arrCap[] = '';
-		if($res = sql($sql, $eo)){
-			while($row = db_fetch_row($res)){
+		if($res = sql($sql, $eo)) {
+			while($row = db_fetch_row($res)) {
 				$arrVal[] = $row[0];
 				$arrCap[] = $row[1];
 			}
@@ -583,14 +738,14 @@
 	}
 	########################################################################
 	function isEmail($email) {
-		if(preg_match('/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,45})$/i', $email)){
+		if(preg_match('/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,45})$/i', $email)) {
 			return $email;
 		}
 
 		return false;
 	}
 	########################################################################
-	function notifyMemberApproval($memberID){
+	function notifyMemberApproval($memberID) {
 		$adminConfig = config('adminConfig');
 		$memberID = strtolower($memberID);
 
@@ -886,37 +1041,37 @@
 		$eo);
 	}
 	########################################################################
-	function thisOr($this_val, $or = '&nbsp;'){
+	function thisOr($this_val, $or = '&nbsp;') {
 		return ($this_val != '' ? $this_val : $or);
 	}
 	########################################################################
-	function getUploadedFile($FieldName, $MaxSize=0, $FileTypes='csv|txt', $NoRename=false, $dir=''){
+	function getUploadedFile($FieldName, $MaxSize=0, $FileTypes='csv|txt', $NoRename=false, $dir='') {
 		$currDir=dirname(__FILE__);
-		if(is_array($_FILES)){
+		if(is_array($_FILES)) {
 			$f = $_FILES[$FieldName];
 		}else{
 			return 'Your php settings don\'t allow file uploads.';
 		}
 
-		if(!$MaxSize){
+		if(!$MaxSize) {
 			$MaxSize=toBytes(ini_get('upload_max_filesize'));
 		}
 
-		if(!is_dir("$currDir/csv")){
+		if(!is_dir("$currDir/csv")) {
 			@mkdir("$currDir/csv");
 		}
 
 		$dir=(is_dir($dir) && is_writable($dir) ? $dir : "$currDir/csv/");
 
-		if($f['error']!=4 && $f['name']!=''){
-			if($f['size']>$MaxSize || $f['error']){
+		if($f['error']!=4 && $f['name']!='') {
+			if($f['size']>$MaxSize || $f['error']) {
 				return 'File size exceeds maximum allowed of '.intval($MaxSize / 1024).'KB';
 			}
-			if(!preg_match('/\.('.$FileTypes.')$/i', $f['name'], $ft)){
+			if(!preg_match('/\.('.$FileTypes.')$/i', $f['name'], $ft)) {
 				return 'File type not allowed. Only these file types are allowed: '.str_replace('|', ', ', $FileTypes);
 			}
 
-			if($NoRename){
+			if($NoRename) {
 				$n  = str_replace(' ', '_', $f['name']);
 			}else{
 				$n  = microtime();
@@ -925,7 +1080,7 @@
 				$n .= $ft[0];
 			}
 
-			if(!@move_uploaded_file($f['tmp_name'], $dir . $n)){
+			if(!@move_uploaded_file($f['tmp_name'], $dir . $n)) {
 				return 'Couldn\'t save the uploaded file. Try chmoding the upload folder "'.$dir.'" to 777.';
 			}else{
 				@chmod($dir.$n, 0666);
@@ -935,10 +1090,10 @@
 		return 'An error occured while uploading the file. Please try again.';
 	}
 	########################################################################
-	function toBytes($val){
+	function toBytes($val) {
 		$val = trim($val);
 		$last = strtolower($val{strlen($val)-1});
-		switch($last){
+		switch($last) {
 			 // The 'G' modifier is available since PHP 5.1.0
 			 case 'g':
 					$val *= 1024;
@@ -951,21 +1106,21 @@
 		return $val;
 	}
 	########################################################################
-	function convertLegacyOptions($CSVList){
+	function convertLegacyOptions($CSVList) {
 		$CSVList=str_replace(';;;', ';||', $CSVList);
 		$CSVList=str_replace(';;', '||', $CSVList);
 		return $CSVList;
 	}
 	########################################################################
-	function getValueGivenCaption($query, $caption){
-		if(!preg_match('/select\s+(.*?)\s*,\s*(.*?)\s+from\s+(.*?)\s+order by.*/i', $query, $m)){
-			if(!preg_match('/select\s+(.*?)\s*,\s*(.*?)\s+from\s+(.*)/i', $query, $m)){
+	function getValueGivenCaption($query, $caption) {
+		if(!preg_match('/select\s+(.*?)\s*,\s*(.*?)\s+from\s+(.*?)\s+order by.*/i', $query, $m)) {
+			if(!preg_match('/select\s+(.*?)\s*,\s*(.*?)\s+from\s+(.*)/i', $query, $m)) {
 				return '';
 			}
 		}
 
 		// get where clause if present
-		if(preg_match('/\s+from\s+(.*?)\s+where\s+(.*?)\s+order by.*/i', $query, $mw)){
+		if(preg_match('/\s+from\s+(.*?)\s+where\s+(.*?)\s+order by.*/i', $query, $mw)) {
 			$where="where ($mw[2]) AND";
 			$m[3]=$mw[1];
 		}else{
@@ -976,17 +1131,17 @@
 		return sqlValue("SELECT $m[1] FROM $m[3] $where $m[2]='$caption'");
 	}
 	########################################################################
-	function undo_magic_quotes($str){
+	function undo_magic_quotes($str) {
 		return (get_magic_quotes_gpc() ? stripslashes($str) : $str);
 	}
 	########################################################################
-	function time24($t = false){
+	function time24($t = false) {
 		if($t === false) $t = date('Y-m-d H:i:s'); // time now if $t not passed
 		elseif(!$t) return ''; // empty string if $t empty
 		return date('H:i:s', strtotime($t));
 	}
 	########################################################################
-	function time12($t = false){
+	function time12($t = false) {
 		if($t === false) $t = date('Y-m-d H:i:s'); // time now if $t not passed
 		elseif(!$t) return ''; // empty string if $t empty
 		return date('h:i:s A', strtotime($t));
@@ -1011,11 +1166,12 @@
 	########################################################################
 	function application_url($page = '', $s = false) {
 		if($s === false) $s = $_SERVER;
-		$ssl = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on');
+		$ssl = (!empty($s['HTTPS']) && strtolower($s['HTTPS']) != 'off');
 		$http = ($ssl ? 'https:' : 'http:');
 		$port = $s['SERVER_PORT'];
-		$port = ((!$ssl && $port == '80') || ($ssl && $port == '443') || !$port) ? '' : ':' . $port;
-		$host = (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : $s['SERVER_NAME']) . $port;
+		$port = ($port == '80' || $port == '443' || !$port) ? '' : ':' . $port;
+		// HTTP_HOST already includes server port if not standard, but SERVER_NAME doesn't
+		$host = (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : $s['SERVER_NAME'] . $port);
 
 		$uri = config('appURI');
 		if(!$uri) $uri = '/';
@@ -1032,16 +1188,16 @@
 		return trim(parse_url($url, PHP_URL_PATH), '/');
 	}
 	########################################################################
-	function is_ajax(){
+	function is_ajax() {
 		return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
 	}
 	########################################################################
-	function array_trim($arr){
+	function array_trim($arr) {
 		if(!is_array($arr)) return trim($arr);
 		return array_map('array_trim', $arr);
 	}
 	########################################################################
-	function is_allowed_username($username, $exception = false){
+	function is_allowed_username($username, $exception = false) {
 		$username = trim(strtolower($username));
 		if(!preg_match('/^[a-z0-9][a-z0-9 _.@]{3,100}$/', $username) || preg_match('/(@@|  |\.\.|___)/', $username)) return false;
 
@@ -1062,17 +1218,17 @@
 			1. in a new form that needs csrf proofing: echo csrf_token();
 			   >> in case of ajax requests and similar, retrieve token directly
 			      by calling csrf_token(false, true);
-			2. when validating a submitted form: if(!csrf_token(true)){ reject_submission_somehow(); }
+			2. when validating a submitted form: if(!csrf_token(true)) { reject_submission_somehow(); }
 	*/
-	function csrf_token($validate = false, $token_only = false){
+	function csrf_token($validate = false, $token_only = false) {
 		$token_age = 60 * 60;
 		/* retrieve token from session */
 		$csrf_token = (isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : false);
 		$csrf_token_expiry = (isset($_SESSION['csrf_token_expiry']) ? $_SESSION['csrf_token_expiry'] : false);
 
-		if(!$validate){
+		if(!$validate) {
 			/* create a new token if necessary */
-			if($csrf_token_expiry < time() || !$csrf_token){
+			if($csrf_token_expiry < time() || !$csrf_token) {
 				$csrf_token = md5(uniqid(rand(), true));
 				$csrf_token_expiry = time() + $token_age;
 				$_SESSION['csrf_token'] = $csrf_token;
@@ -1085,21 +1241,21 @@
 
 		/* validate submitted token */
 		$user_token = (isset($_REQUEST['csrf_token']) ? $_REQUEST['csrf_token'] : false);
-		if($csrf_token_expiry < time() || !$user_token || $user_token != $csrf_token){
+		if($csrf_token_expiry < time() || !$user_token || $user_token != $csrf_token) {
 			return false;
 		}
 
 		return true;
 	}
 	########################################################################
-	function get_plugins(){
+	function get_plugins() {
 		$plugins = array();
 		$plugins_path = dirname(__FILE__) . '/../plugins/';
 
 		if(!is_dir($plugins_path)) return $plugins;
 
 		$pd = dir($plugins_path);
-		while(false !== ($plugin = $pd->read())){
+		while(false !== ($plugin = $pd->read())) {
 			if(!is_dir($plugins_path . $plugin) || in_array($plugin, array('projects', 'plugins-resources', '.', '..'))) continue;
 
 			$info_file = "{$plugins_path}{$plugin}/plugin-info.json";
@@ -1113,13 +1269,13 @@
 		return $plugins;
 	}
 	########################################################################
-	function maintenance_mode($new_status = ''){
+	function maintenance_mode($new_status = '') {
 		$maintenance_file = dirname(__FILE__) . '/.maintenance';
 
-		if($new_status === true){
+		if($new_status === true) {
 			/* turn on maintenance mode */
 			@touch($maintenance_file);
-		}elseif($new_status === false){
+		}elseif($new_status === false) {
 			/* turn off maintenance mode */
 			@unlink($maintenance_file);
 		}
@@ -1128,14 +1284,14 @@
 		return is_file($maintenance_file);
 	}
 	########################################################################
-	function handle_maintenance($echo = false){
+	function handle_maintenance($echo = false) {
 		if(!maintenance_mode()) return;
 
 		global $Translation;
 		$adminConfig = config('adminConfig');
 
 		$admin = getLoggedAdmin();
-		if($admin){
+		if($admin) {
 			return ($echo ? '<div class="alert alert-danger" style="margin: 5em auto -5em;"><b>' . $Translation['maintenance mode admin notification'] . '</b></div>' : '');
 		}
 
@@ -1144,12 +1300,12 @@
 		exit('<div class="alert alert-danger" style="margin-top: 5em; font-size: 2em;"><i class="glyphicon glyphicon-exclamation-sign"></i> ' . $adminConfig['maintenance_mode_message'] . '</div>');
 	}
 	#########################################################
-	function html_attr($str){
+	function html_attr($str) {
 		if(version_compare(PHP_VERSION, '5.2.3') >= 0) return htmlspecialchars($str, ENT_QUOTES, datalist_db_encoding, false);
 		return htmlspecialchars($str, ENT_QUOTES, datalist_db_encoding);
 	}
 	#########################################################
-	function html_attr_tags_ok($str){
+	function html_attr_tags_ok($str) {
 		// use this instead of html_attr() if you don't want html tags to be escaped
 		$new_str = html_attr($str);
 		return str_replace(array('&lt;', '&gt;'), array('<', '>'), $new_str);
@@ -1158,16 +1314,16 @@
 	class Request{
 		var $sql, $url, $attr, $html, $raw;
 
-		function __construct($var, $filter = false){
+		function __construct($var, $filter = false) {
 			$this->Request($var, $filter);
 		}
 
-		function Request($var, $filter = false){
+		function Request($var, $filter = false) {
 			$unsafe = (isset($_REQUEST[$var]) ? $_REQUEST[$var] : '');
 			if(get_magic_quotes_gpc()) $unsafe = stripslashes($unsafe);
 
-			if($filter){
-				$unsafe = call_user_func($filter, $unsafe);
+			if($filter) {
+				$unsafe = call_user_func_array($filter, array($unsafe));
 			}
 
 			$this->sql = makeSafe($unsafe, false);
@@ -1195,9 +1351,9 @@
 		*/
 		protected static $placeholder_id; /* to force a single notifcation placeholder */
 
-		protected function __construct(){} /* to prevent initialization */
+		protected function __construct() {} /* to prevent initialization */
 
-		public static function placeholder(){
+		public static function placeholder() {
 			if(self::$placeholder_id) return ''; // output placeholder code only once
 
 			self::$placeholder_id = 'notifcation-placeholder-' . rand(10000000, 99999999);
@@ -1207,17 +1363,17 @@
 
 			<div class="notifcation-placeholder" id="<?php echo self::$placeholder_id; ?>"></div>
 			<script>
-				$j(function(){
+				$j(function() {
 					if(window.show_notification != undefined) return;
 
-					window.show_notification = function(options){
+					window.show_notification = function(options) {
 						var dismiss_class = '';
 						var dismiss_icon = '';
 						var cookie_name = 'hide_notification_' + options.id;
 						var notif_id = 'notifcation-' + Math.ceil(Math.random() * 1000000);
 
 						/* apply provided notficiation id if unique in page */
-						if(options.id != undefined){
+						if(options.id != undefined) {
 							if(!$j('#' + options.id).length) notif_id = options.id;
 						}
 
@@ -1225,7 +1381,7 @@
 						if(localStorage.getItem(cookie_name) != undefined) return;
 
 						/* notification should be dismissable? */
-						if(options.dismiss_seconds > 0 || options.dismiss_days > 0){
+						if(options.dismiss_seconds > 0 || options.dismiss_days > 0) {
 							dismiss_class = ' alert-dismissible';
 							dismiss_icon = '<button type="button" class="close" data-dismiss="alert">&times;</button>';
 						}
@@ -1244,14 +1400,14 @@
 						var this_notif = $j('#' + notif_id);
 
 						/* dismiss after x seconds if requested */
-						if(options.dismiss_seconds > 0){
-							setTimeout(function(){ /* */ this_notif.addClass('invisible'); }, options.dismiss_seconds * 1000);
+						if(options.dismiss_seconds > 0) {
+							setTimeout(function() { /* */ this_notif.addClass('invisible'); }, options.dismiss_seconds * 1000);
 						}
 
 						/* dismiss for x days if requested and user dismisses it */
-						if(options.dismiss_days > 0){
+						if(options.dismiss_days > 0) {
 							var ex_days = options.dismiss_days;
-							this_notif.on('closed.bs.alert', function(){
+							this_notif.on('closed.bs.alert', function() {
 								/* set a cookie not to show this alert for ex_days */
 								localStorage.setItem(cookie_name, '1');
 							});
@@ -1267,7 +1423,7 @@
 			return $html;            
 		}
 
-		protected static function default_options(&$options){
+		protected static function default_options(&$options) {
 			if(!isset($options['message'])) $options['message'] = 'Notification::show() called without a message!';
 
 			if(!isset($options['class'])) $options['class'] = 'default';
@@ -1275,7 +1431,7 @@
 			if(!isset($options['dismiss_seconds']) || isset($options['dismiss_days'])) $options['dismiss_seconds'] = 0;
 
 			if(!isset($options['dismiss_days'])) $options['dismiss_days'] = 0;
-			if(!isset($options['id'])){
+			if(!isset($options['id'])) {
 				$options['id'] = 0;
 				$options['dismiss_days'] = 0;
 			}
@@ -1288,13 +1444,13 @@
 		 *  
 		 *  @return html code for displaying the notifcation
 		 */
-		public static function show($options = array()){
+		public static function show($options = array()) {
 			self::default_options($options);
 
 			ob_start();
 			?>
 			<script>
-				$j(function(){
+				$j(function() {
 					show_notification(<?php echo json_encode($options); ?>);
 				})
 			</script>
@@ -1306,7 +1462,7 @@
 		}
 	}
 	#########################################################
-	function sendmail($mail){
+	function sendmail($mail) {
 		if(!isset($mail['to'])) return 'No recipient defined';
 		if(!isEmail($mail['to'])) return 'Invalid recipient email';
 
@@ -1318,7 +1474,7 @@
 		$cfg = config('adminConfig');
 		$smtp = ($cfg['mail_function'] == 'smtp');
 
-		if(!class_exists('PHPMailer')){
+		if(!class_exists('PHPMailer', false)) {
 			$curr_dir = dirname(__FILE__);
 			include("{$curr_dir}/../resources/PHPMailer/class.phpmailer.php");
 			if($smtp) include("{$curr_dir}/../resources/PHPMailer/class.smtp.php");
@@ -1327,7 +1483,7 @@
 		$pm = new PHPMailer;
 		$pm->CharSet = datalist_db_encoding;
 
-		if($smtp){
+		if($smtp) {
 			$pm->isSMTP();
 			$pm->SMTPDebug = $mail['debug'];
 			$pm->Debugoutput = 'html';
@@ -1357,7 +1513,7 @@
 		return true;
 	}
 	#########################################################
-	function safe_html($str){
+	function safe_html($str) {
 		/* if $str has no HTML tags, apply nl2br */
 		if($str == strip_tags($str)) return nl2br($str);
 
@@ -1367,8 +1523,8 @@
 		return $hc->xss_clean($str);
 	}
 	#########################################################
-	function getLoggedGroupID(){
-		if($_SESSION['memberGroupID']!=''){
+	function getLoggedGroupID() {
+		if($_SESSION['memberGroupID'] != '') {
 			return $_SESSION['memberGroupID'];
 		}else{
 			if(!setAnonymousAccess()) return false;
@@ -1376,8 +1532,8 @@
 		}
 	}
 	#########################################################
-	function getLoggedMemberID(){
-		if($_SESSION['memberID']!=''){
+	function getLoggedMemberID() {
+		if($_SESSION['memberID']!='') {
 			return strtolower($_SESSION['memberID']);
 		}else{
 			if(!setAnonymousAccess()) return false;
@@ -1385,7 +1541,7 @@
 		}
 	}
 	#########################################################
-	function setAnonymousAccess(){
+	function setAnonymousAccess() {
 		$adminConfig = config('adminConfig');
 		$anon_group_safe = addslashes($adminConfig['anonymousGroup']);
 		$anon_user_safe = strtolower(addslashes($adminConfig['anonymousMember']));
@@ -1393,13 +1549,13 @@
 		$eo = array('silentErrors' => true);
 
 		$res = sql("select groupID from membership_groups where name='{$anon_group_safe}'", $eo);
-		if(!$res){ return false; }
+		if(!$res) { return false; }
 		$row = db_fetch_array($res); $anonGroupID = $row[0];
 
 		$_SESSION['memberGroupID'] = ($anonGroupID ? $anonGroupID : 0);
 
 		$res = sql("select lcase(memberID) from membership_users where lcase(memberID)='{$anon_user_safe}' and groupID='{$anonGroupID}'", $eo);
-		if(!$res){ return false; }
+		if(!$res) { return false; }
 		$row = db_fetch_array($res); $anonMemberID = $row[0];
 
 		$_SESSION['memberID'] = ($anonMemberID ? $anonMemberID : 0);
@@ -1407,10 +1563,10 @@
 		return true;
 	}
 	#########################################################
-	function getMemberInfo($memberID = ''){
+	function getMemberInfo($memberID = '') {
 		static $member_info = array();
 
-		if(!$memberID){
+		if(!$memberID) {
 			$memberID = getLoggedMemberID();
 		}
 
@@ -1420,9 +1576,9 @@
 		$adminConfig = config('adminConfig');
 		$mi = array();
 
-		if($memberID){
+		if($memberID) {
 			$res = sql("select * from membership_users where memberID='" . makeSafe($memberID) . "'", $eo);
-			if($row = db_fetch_assoc($res)){
+			if($row = db_fetch_assoc($res)) {
 				$mi = array(
 					'username' => $memberID,
 					'groupID' => $row['groupID'],
@@ -1450,7 +1606,7 @@
 		return $mi;
 	}
 	#########################################################
-	function get_group_id($user = ''){
+	function get_group_id($user = '') {
 		$mi = getMemberInfo($user);
 		return $mi['groupID'];
 	}
@@ -1462,10 +1618,10 @@
 	 *  @param [in] $glue optional glue. Set to ' AND ' or ' OR ' if preparing a WHERE clause
 	 *  @return SET string
 	 */
-	function prepare_sql_set($set_array, $glue = ', '){
+	function prepare_sql_set($set_array, $glue = ', ') {
 		$fnvs = array();
-		foreach($set_array as $fn => $fv){
-			if($fv === null){ $fnvs[] = "{$fn}=NULL"; continue; }
+		foreach($set_array as $fn => $fv) {
+			if($fv === null) { $fnvs[] = "{$fn}=NULL"; continue; }
 
 			$sfv = makeSafe($fv);
 			$fnvs[] = "{$fn}='{$sfv}'";
@@ -1483,7 +1639,7 @@
 	 */
 	function insert($tn, $set_array, &$error = '') {
 		$set = prepare_sql_set($set_array);
-		if(!count($set)) return false;
+		if(!$set) return false;
 
 		$eo = array('silentErrors' => true);
 		$res = sql("INSERT INTO `{$tn}` SET {$set}", $eo);
@@ -1501,9 +1657,9 @@
 	 *  @param [in] $where_array Assoc array of field names => values used to build the WHERE clause
 	 *  @return boolean indicating success/failure
 	 */
-	function update($tn, $set_array, $where_array){
+	function update($tn, $set_array, $where_array) {
 		$set = prepare_sql_set($set_array);
-		if(!count($set)) return false;
+		if(!$set) return false;
 
 		$where = prepare_sql_set($where_array, ' AND ');
 		if(!$where) $where = '1=1';
@@ -1519,7 +1675,7 @@
 	 *  @param [in] $user username to set as owner
 	 *  @return boolean indicating success/failure
 	 */
-	function set_record_owner($tn, $pk, $user){
+	function set_record_owner($tn, $pk, $user) {
 		$fields = array(
 			'memberID' => strtolower($user),
 			'dateUpdated' => time(),
@@ -1531,18 +1687,24 @@
 		if(!$where) return false;
 
 		/* do we have an ownership record? */
-		$existing_owner = sqlValue("select LCASE(memberID) from membership_userrecords where {$where}");
+		$ownership_exists = false;
+		$res = sql("SELECT * FROM `membership_userrecords` WHERE {$where}", $eo);
+		if($row = db_fetch_assoc($res)) {
+			$existing_owner = $row['memberID'];
+			$ownership_exists = true;
+		}
+
 		if($existing_owner == $user) return true; // owner already set to $user
 
 		/* update owner */
-		if($existing_owner){
-			$res = update('membership_userrecords', $fields, $where_array);
+		if($ownership_exists) {
+			$res = update('membership_userrecords', backtick_keys_once($fields), $where_array);
 			return ($res ? true : false);
 		}
 
 		/* add new ownership record */
 		$fields = array_merge($fields, $where_array, array('dateAdded' => time()));
-		$res = insert('membership_userrecords', $fields);
+		$res = insert('membership_userrecords', backtick_keys_once($fields));
 		return ($res ? true : false);
 	}
 	#########################################################
@@ -1701,7 +1863,7 @@
 	 *  
 	 *  @details works for formatting date, time and datetime, based on 2nd param
 	 */  
-	function app_datetime($mysql_datetime, $datetime = 'd'){
+	function app_datetime($mysql_datetime, $datetime = 'd') {
 		$pyear = $myear = substr($mysql_datetime, 0, 4);
 
 		// strtotime handles dates between 1902 and 2037 only
@@ -1742,4 +1904,38 @@
 		if(!defined('datalist_db_encoding')) return $str;
 		if(datalist_db_encoding == 'UTF-8') return $str;
 		return iconv('UTF-8', datalist_db_encoding, $str);
+	}
+	#########################################################
+	function get_parent_tables($table) {
+		/* parents array:
+		 * 'child table' => [parents], ...
+		 *         where parents array:
+		 *             'parent table' => [main lookup fields in child]
+		 */
+		$parents = array(
+			'invoices' => array(
+				'clients' => array('client'),
+			),
+			'item_prices' => array(
+				'items' => array('item'),
+			),
+			'invoice_items' => array(
+				'invoices' => array('invoice'),
+				'items' => array('item'),
+			),
+		);
+
+		return isset($parents[$table]) ? $parents[$table] : array();
+	}
+	#########################################################
+	function backtick_keys_once($arr_data) {
+		return array_combine(
+			/* add backticks to keys */
+			array_map(
+				function($e) { return '`' . trim($e, '`') . '`'; }, 
+				array_keys($arr_data)
+			), 
+			/* and combine with values */
+			array_values($arr_data)
+		);
 	}
