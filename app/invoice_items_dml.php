@@ -19,6 +19,11 @@ function invoice_items_insert() {
 		if($data['unit_price'] == empty_lookup_value) { $data['unit_price'] = ''; }
 	$data['qty'] = $_REQUEST['qty'];
 		if($data['qty'] == empty_lookup_value) { $data['qty'] = ''; }
+	if($data['unit_price']== '') {
+		echo StyleSheet() . "\n\n<div class=\"alert alert-danger\">" . $Translation['error:'] . " 'Unit price': " . $Translation['field not null'] . '<br><br>';
+		echo '<a href="" onclick="history.go(-1); return false;">'.$Translation['< back'].'</a></div>';
+		exit;
+	}
 	if($data['qty'] == '') $data['qty'] = "1";
 
 	// hook: invoice_items_before_insert
@@ -123,6 +128,11 @@ function invoice_items_update($selected_id) {
 		if($data['item'] == empty_lookup_value) { $data['item'] = ''; }
 	$data['unit_price'] = makeSafe($_REQUEST['unit_price']);
 		if($data['unit_price'] == empty_lookup_value) { $data['unit_price'] = ''; }
+	if($data['unit_price']=='') {
+		echo StyleSheet() . "\n\n<div class=\"alert alert-danger\">{$Translation['error:']} 'Unit price': {$Translation['field not null']}<br><br>";
+		echo '<a href="" onclick="history.go(-1); return false;">'.$Translation['< back'].'</a></div>';
+		exit;
+	}
 	$data['qty'] = makeSafe($_REQUEST['qty']);
 		if($data['qty'] == empty_lookup_value) { $data['qty'] = ''; }
 	$data['selectedID'] = makeSafe($selected_id);

@@ -322,6 +322,8 @@ function item_prices_validateData() {
 }
 function invoice_items_validateData() {
 	$j('.has-error').removeClass('has-error');
+	/* Field unit_price can't be empty */
+	if($j('#unit_price').val() == ''){ modal_window({ message: '<div class="alert alert-danger"><?php echo addslashes($Translation['field not null']); ?></div>', title: "<?php echo addslashes($Translation['error:']); ?> Unit price", close: function() { /* */ $j('[name=unit_price]').eq(0).focus().parents('.form-group').addClass('has-error'); }, footer: [{ label: '<?php echo addslashes($Translation['ok']); ?>' }] }); return false; };
 	return true;
 }
 function items_validateData() {

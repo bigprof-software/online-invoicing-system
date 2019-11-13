@@ -53,11 +53,11 @@
 
 				<div class="form-group">
 					<hr class="hidden-md hidden-lg">
-					<label for="unit_price" class="control-label col-lg-3">Unit price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#unit_price-description"></i></label>
+					<label for="unit_price" class="control-label col-lg-3">Unit price<span class="text-danger"><%%TRANSLATION(*)%%></span> <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#unit_price-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="unit_price-description"><div class="alert alert-info">You can either use the catalog price or change to a different price</div></span>
+						<span class="help-block collapse" id="unit_price-description"><div class="alert alert-info">You can either use the catalog price or change to a different price.</div></span>
 
-						<input maxlength="13" type="text" class="form-control" name="unit_price" id="unit_price" value="<%%VALUE(unit_price)%%>">
+						<input maxlength="13" type="text" class="form-control" name="unit_price" id="unit_price" value="<%%VALUE(unit_price)%%>" required>
 					</div>
 				</div>
 

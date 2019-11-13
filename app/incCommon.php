@@ -895,7 +895,7 @@
 			if(!$max_height) $max_height = 360;
 			if(!$max_width) $max_width = 480;
 
-			$api_key = 'AIzaSyBDpBFLiElihDfmBALNUZO4DYNS_LrpRYI';
+			$api_key = '';
 			$embed_url = "https://www.google.com/maps/embed/v1/view?key={$api_key}&center={$lat},{$long}&zoom={$zoom}&maptype=roadmap";
 			$thumbnail_url = "https://maps.googleapis.com/maps/api/staticmap?key={$api_key}&center={$lat},{$long}&zoom={$zoom}&maptype=roadmap&size={$max_width}x{$max_height}";
 

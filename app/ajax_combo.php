@@ -40,7 +40,7 @@
 				'parent_caption' => '`clients`.`name`',
 				'parent_from' => '`clients` ',
 				'filterers' => array(),
-				'custom_query' => 'SELECT `clients`.`id`, `clients`.`name` FROM `clients` ORDER BY 2',
+				'custom_query' => '',
 				'inherit_permissions' => true,
 				'list_type' => 0,
 				'not_null' => false
@@ -51,7 +51,7 @@
 				'parent_caption' => '`clients`.`contact`',
 				'parent_from' => '`clients` ',
 				'filterers' => array(),
-				'custom_query' => 'SELECT `clients`.`id`, `clients`.`contact` FROM `clients` ORDER BY 2',
+				'custom_query' => '',
 				'inherit_permissions' => false,
 				'list_type' => 0,
 				'not_null' => false
@@ -62,7 +62,7 @@
 				'parent_caption' => '`clients`.`address`',
 				'parent_from' => '`clients` ',
 				'filterers' => array(),
-				'custom_query' => 'SELECT `clients`.`id`, `clients`.`address` FROM `clients` ORDER BY 2',
+				'custom_query' => '',
 				'inherit_permissions' => false,
 				'list_type' => 0,
 				'not_null' => false
@@ -73,7 +73,7 @@
 				'parent_caption' => '`clients`.`phone`',
 				'parent_from' => '`clients` ',
 				'filterers' => array(),
-				'custom_query' => 'SELECT `clients`.`id`, `clients`.`phone` FROM `clients` ORDER BY 2',
+				'custom_query' => '',
 				'inherit_permissions' => false,
 				'list_type' => 0,
 				'not_null' => false
@@ -84,7 +84,7 @@
 				'parent_caption' => '`clients`.`email`',
 				'parent_from' => '`clients` ',
 				'filterers' => array(),
-				'custom_query' => 'SELECT `clients`.`id`, `clients`.`email` FROM `clients` ORDER BY 2',
+				'custom_query' => '',
 				'inherit_permissions' => false,
 				'list_type' => 0,
 				'not_null' => false
@@ -95,7 +95,7 @@
 				'parent_caption' => '`clients`.`website`',
 				'parent_from' => '`clients` ',
 				'filterers' => array(),
-				'custom_query' => 'SELECT `clients`.`id`, `clients`.`website` FROM `clients` ORDER BY 2',
+				'custom_query' => '',
 				'inherit_permissions' => false,
 				'list_type' => 0,
 				'not_null' => false
@@ -106,7 +106,7 @@
 				'parent_caption' => '`clients`.`comments`',
 				'parent_from' => '`clients` ',
 				'filterers' => array(),
-				'custom_query' => 'SELECT `clients`.`id`, `clients`.`comments` FROM `clients` ORDER BY 2',
+				'custom_query' => '',
 				'inherit_permissions' => false,
 				'list_type' => 0,
 				'not_null' => false
@@ -134,7 +134,7 @@
 				'parent_caption' => '`invoices`.`code`',
 				'parent_from' => '`invoices` LEFT JOIN `clients` as clients1 ON `clients1`.`id`=`invoices`.`client` ',
 				'filterers' => array(),
-				'custom_query' => 'SELECT `invoices`.`id`, `invoices`.`code` FROM `invoices` LEFT JOIN `clients` as clients1 ON `clients1`.`id`=`invoices`.`client` ORDER BY 2',
+				'custom_query' => '',
 				'inherit_permissions' => true,
 				'list_type' => 0,
 				'not_null' => false
