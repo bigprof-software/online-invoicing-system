@@ -106,10 +106,10 @@
 	$x->DefaultSortField = '1';
 	$x->DefaultSortDirection = 'asc';
 
-	$x->ColWidth   = array(  350, 80, 80, 60, 80);
-	$x->ColCaption = array("Item", "Catalog price", "Unit price", "Qty", "Price");
-	$x->ColFieldName = array('item', 'catalog_price', 'unit_price', 'qty', 'price');
-	$x->ColNumber  = array(3, 4, 5, 6, 7);
+	$x->ColWidth   = array(  350, 80, 60, 80);
+	$x->ColCaption = array("Item", "Unit price", "Qty", "Price");
+	$x->ColFieldName = array('item', 'unit_price', 'qty', 'price');
+	$x->ColNumber  = array(3, 5, 6, 7);
 
 	// template paths below are based on the app main directory
 	$x->Template = 'templates/invoice_items_templateTV.html';
@@ -172,7 +172,6 @@
 			$sumRow = '<tr class="success">';
 			if(!isset($_REQUEST['Print_x'])) $sumRow .= '<td class="text-center"><strong>&sum;</strong></td>';
 			$sumRow .= '<td class="invoice_items-item"></td>';
-			$sumRow .= '<td class="invoice_items-catalog_price"></td>';
 			$sumRow .= '<td class="invoice_items-unit_price"></td>';
 			$sumRow .= '<td class="invoice_items-qty"></td>';
 			$sumRow .= "<td class=\"invoice_items-price text-right\">{$row[0]}</td>";
