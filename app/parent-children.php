@@ -72,9 +72,9 @@
 					'display-refresh' => true,
 					'display-add-new' => true,
 					'forced-where' => '',
-					'display-fields' => array(2 => 'Item', 4 => 'Unit price', 5 => 'Qty', 6 => 'Price'),
-					'display-field-names' => array(2 => 'item', 4 => 'unit_price', 5 => 'qty', 6 => 'price'),
-					'sortable-fields' => array(0 => '`invoice_items`.`id`', 1 => '`invoices1`.`code`', 2 => '`items1`.`item_description`', 3 => '`invoice_items`.`catalog_price`', 4 => '`invoice_items`.`unit_price`', 5 => '`invoice_items`.`qty`', 6 => '`invoice_items`.`price`'),
+					'display-fields' => array(2 => 'Item', 5 => 'Unit price', 6 => 'Qty', 7 => 'Price'),
+					'display-field-names' => array(2 => 'item', 5 => 'unit_price', 6 => 'qty', 7 => 'price'),
+					'sortable-fields' => array(0 => '`invoice_items`.`id`', 1 => '`invoices1`.`code`', 2 => '`items1`.`item_description`', 3 => '`items1`.`unit_price`', 4 => '`invoice_items`.`catalog_price`', 5 => '`invoice_items`.`unit_price`', 6 => '`invoice_items`.`qty`', 7 => '`invoice_items`.`price`'),
 					'records-per-page' => 10,
 					'default-sort-by' => 0,
 					'default-sort-direction' => 'asc',
@@ -83,7 +83,7 @@
 					'show-page-progress' => true,
 					'template' => 'children-invoice_items',
 					'template-printable' => 'children-invoice_items-printable',
-					'query' => "SELECT `invoice_items`.`id` as 'id', IF(    CHAR_LENGTH(`invoices1`.`code`), CONCAT_WS('',   `invoices1`.`code`), '') as 'invoice', IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') as 'item', `invoice_items`.`catalog_price` as 'catalog_price', FORMAT(`invoice_items`.`unit_price`, 2) as 'unit_price', FORMAT(`invoice_items`.`qty`, 3) as 'qty', `invoice_items`.`price` as 'price' FROM `invoice_items` LEFT JOIN `invoices` as invoices1 ON `invoices1`.`id`=`invoice_items`.`invoice` LEFT JOIN `items` as items1 ON `items1`.`id`=`invoice_items`.`item` "
+					'query' => "SELECT `invoice_items`.`id` as 'id', IF(    CHAR_LENGTH(`invoices1`.`code`), CONCAT_WS('',   `invoices1`.`code`), '') as 'invoice', IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') as 'item', IF(    CHAR_LENGTH(`items1`.`unit_price`), CONCAT_WS('',   `items1`.`unit_price`), '') as 'current_price', `invoice_items`.`catalog_price` as 'catalog_price', FORMAT(`invoice_items`.`unit_price`, 2) as 'unit_price', FORMAT(`invoice_items`.`qty`, 3) as 'qty', `invoice_items`.`price` as 'price' FROM `invoice_items` LEFT JOIN `invoices` as invoices1 ON `invoices1`.`id`=`invoice_items`.`invoice` LEFT JOIN `items` as items1 ON `items1`.`id`=`invoice_items`.`item` "
 				),
 				'item' => array(
 					'parent-table' => 'items',
@@ -96,9 +96,9 @@
 					'display-refresh' => true,
 					'display-add-new' => true,
 					'forced-where' => '',
-					'display-fields' => array(2 => 'Item', 4 => 'Unit price', 5 => 'Qty', 6 => 'Price'),
-					'display-field-names' => array(2 => 'item', 4 => 'unit_price', 5 => 'qty', 6 => 'price'),
-					'sortable-fields' => array(0 => '`invoice_items`.`id`', 1 => '`invoices1`.`code`', 2 => '`items1`.`item_description`', 3 => '`invoice_items`.`catalog_price`', 4 => '`invoice_items`.`unit_price`', 5 => '`invoice_items`.`qty`', 6 => '`invoice_items`.`price`'),
+					'display-fields' => array(2 => 'Item', 5 => 'Unit price', 6 => 'Qty', 7 => 'Price'),
+					'display-field-names' => array(2 => 'item', 5 => 'unit_price', 6 => 'qty', 7 => 'price'),
+					'sortable-fields' => array(0 => '`invoice_items`.`id`', 1 => '`invoices1`.`code`', 2 => '`items1`.`item_description`', 3 => '`items1`.`unit_price`', 4 => '`invoice_items`.`catalog_price`', 5 => '`invoice_items`.`unit_price`', 6 => '`invoice_items`.`qty`', 7 => '`invoice_items`.`price`'),
 					'records-per-page' => 10,
 					'default-sort-by' => 0,
 					'default-sort-direction' => 'asc',
@@ -107,7 +107,7 @@
 					'show-page-progress' => true,
 					'template' => 'children-invoice_items',
 					'template-printable' => 'children-invoice_items-printable',
-					'query' => "SELECT `invoice_items`.`id` as 'id', IF(    CHAR_LENGTH(`invoices1`.`code`), CONCAT_WS('',   `invoices1`.`code`), '') as 'invoice', IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') as 'item', `invoice_items`.`catalog_price` as 'catalog_price', FORMAT(`invoice_items`.`unit_price`, 2) as 'unit_price', FORMAT(`invoice_items`.`qty`, 3) as 'qty', `invoice_items`.`price` as 'price' FROM `invoice_items` LEFT JOIN `invoices` as invoices1 ON `invoices1`.`id`=`invoice_items`.`invoice` LEFT JOIN `items` as items1 ON `items1`.`id`=`invoice_items`.`item` "
+					'query' => "SELECT `invoice_items`.`id` as 'id', IF(    CHAR_LENGTH(`invoices1`.`code`), CONCAT_WS('',   `invoices1`.`code`), '') as 'invoice', IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') as 'item', IF(    CHAR_LENGTH(`items1`.`unit_price`), CONCAT_WS('',   `items1`.`unit_price`), '') as 'current_price', `invoice_items`.`catalog_price` as 'catalog_price', FORMAT(`invoice_items`.`unit_price`, 2) as 'unit_price', FORMAT(`invoice_items`.`qty`, 3) as 'qty', `invoice_items`.`price` as 'price' FROM `invoice_items` LEFT JOIN `invoices` as invoices1 ON `invoices1`.`id`=`invoice_items`.`invoice` LEFT JOIN `items` as items1 ON `items1`.`id`=`invoice_items`.`item` "
 				),
 			),
 			'items' => array(

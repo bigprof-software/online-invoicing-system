@@ -24,6 +24,20 @@
 
 	switch($mfk) {
 
+		case 'item':
+			if(!$id) {
+				?>
+				$j('#current_price<?php echo $rnd1; ?>').html('&nbsp;');
+				<?php
+				break;
+			}
+			$res = sql("SELECT `items`.`id` as 'id', `items`.`item_description` as 'item_description', `items`.`unit_price` as 'unit_price' FROM `items`  WHERE `items`.`id`='{$id}' limit 1", $eo);
+			$row = db_fetch_assoc($res);
+			?>
+			$j('#current_price<?php echo $rnd1; ?>').html('<?php echo addslashes(str_replace(array("\r", "\n"), '', nl2br($row['unit_price']))); ?>&nbsp;');
+			<?php
+			break;
+
 
 	}
 

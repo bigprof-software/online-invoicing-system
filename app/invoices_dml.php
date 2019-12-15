@@ -100,6 +100,7 @@ function invoices_copy_children($destination_id, $source_id) {
 			'SelectedID' => $row['id'],
 			'filterer_invoice' => $destination_id,
 			'item' => $row['item'],
+			'current_price' => $row['current_price'],
 			'unit_price' => $row['unit_price'],
 			'qty' => $row['qty'],
 		);

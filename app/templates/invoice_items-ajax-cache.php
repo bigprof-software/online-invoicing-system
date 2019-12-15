@@ -9,7 +9,8 @@
 		/* data for selected record, or defaults if none is selected */
 		var data = {
 			invoice: <?php echo json_encode(array('id' => $rdata['invoice'], 'value' => $rdata['invoice'], 'text' => $jdata['invoice'])); ?>,
-			item: <?php echo json_encode(array('id' => $rdata['item'], 'value' => $rdata['item'], 'text' => $jdata['item'])); ?>
+			item: <?php echo json_encode(array('id' => $rdata['item'], 'value' => $rdata['item'], 'text' => $jdata['item'])); ?>,
+			current_price: <?php echo json_encode($jdata['current_price']); ?>
 		};
 
 		/* initialize or continue using AppGini.cache for the current table */
@@ -30,6 +31,20 @@
 			if(u != 'ajax_combo.php') return false;
 			if(d.t == tn && d.f == 'item' && d.id == data.item.id)
 				return { results: [ data.item ], more: false, elapsed: 0.01 };
+			return false;
+		});
+
+		/* saved value for item autofills */
+		cache.addCheck(function(u, d) {
+			if(u != tn + '_autofill.php') return false;
+
+			for(var rnd in d) if(rnd.match(/^rnd/)) break;
+
+			if(d.mfk == 'item' && d.id == data.item.id) {
+				$j('#current_price' + d[rnd]).html(data.current_price);
+				return true;
+			}
+
 			return false;
 		});
 

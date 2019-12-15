@@ -15,6 +15,8 @@ function invoice_items_insert() {
 	$data = array();
 	$data['item'] = $_REQUEST['item'];
 		if($data['item'] == empty_lookup_value) { $data['item'] = ''; }
+	$data['current_price'] = $_REQUEST['item'];
+		if($data['current_price'] == empty_lookup_value) { $data['current_price'] = ''; }
 	$data['unit_price'] = $_REQUEST['unit_price'];
 		if($data['unit_price'] == empty_lookup_value) { $data['unit_price'] = ''; }
 	$data['qty'] = $_REQUEST['qty'];
@@ -126,6 +128,8 @@ function invoice_items_update($selected_id) {
 
 	$data['item'] = makeSafe($_REQUEST['item']);
 		if($data['item'] == empty_lookup_value) { $data['item'] = ''; }
+	$data['current_price'] = makeSafe($_REQUEST['item']);
+		if($data['current_price'] == empty_lookup_value) { $data['current_price'] = ''; }
 	$data['unit_price'] = makeSafe($_REQUEST['unit_price']);
 		if($data['unit_price'] == empty_lookup_value) { $data['unit_price'] = ''; }
 	if($data['unit_price']=='') {
@@ -144,7 +148,7 @@ function invoice_items_update($selected_id) {
 	}
 
 	$o = array('silentErrors' => true);
-	sql('update `invoice_items` set       `item`=' . (($data['item'] !== '' && $data['item'] !== NULL) ? "'{$data['item']}'" : 'NULL') . ', `unit_price`=' . (($data['unit_price'] !== '' && $data['unit_price'] !== NULL) ? "'{$data['unit_price']}'" : 'NULL') . ', `qty`=' . (($data['qty'] !== '' && $data['qty'] !== NULL) ? "'{$data['qty']}'" : 'NULL') . " where `id`='".makeSafe($selected_id)."'", $o);
+	sql('update `invoice_items` set       `item`=' . (($data['item'] !== '' && $data['item'] !== NULL) ? "'{$data['item']}'" : 'NULL') . ', `current_price`=' . (($data['current_price'] !== '' && $data['current_price'] !== NULL) ? "'{$data['current_price']}'" : 'NULL') . ', `unit_price`=' . (($data['unit_price'] !== '' && $data['unit_price'] !== NULL) ? "'{$data['unit_price']}'" : 'NULL') . ', `qty`=' . (($data['qty'] !== '' && $data['qty'] !== NULL) ? "'{$data['qty']}'" : 'NULL') . " where `id`='".makeSafe($selected_id)."'", $o);
 	if($o['error']!='') {
 		echo $o['error'];
 		echo '<a href="invoice_items_view.php?SelectedID='.urlencode($selected_id)."\">{$Translation['< back']}</a>";
@@ -575,6 +579,23 @@ function invoice_items_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 
 	// ajaxed auto-fill fields
 	$templateCode .= '<script>';
 	$templateCode .= '$j(function() {';
+
+	$templateCode .= "\titem_update_autofills$rnd1 = function() {\n";
+	$templateCode .= "\t\t\$j.ajax({\n";
+	if($dvprint) {
+		$templateCode .= "\t\t\turl: 'invoice_items_autofill.php?rnd1=$rnd1&mfk=item&id=' + encodeURIComponent('".addslashes($row['item'])."'),\n";
+		$templateCode .= "\t\t\tcontentType: 'application/x-www-form-urlencoded; charset=" . datalist_db_encoding . "',\n";
+		$templateCode .= "\t\t\ttype: 'GET'\n";
+	} else {
+		$templateCode .= "\t\t\turl: 'invoice_items_autofill.php?rnd1=$rnd1&mfk=item&id=' + encodeURIComponent(AppGini.current_item{$rnd1}.value),\n";
+		$templateCode .= "\t\t\tcontentType: 'application/x-www-form-urlencoded; charset=" . datalist_db_encoding . "',\n";
+		$templateCode .= "\t\t\ttype: 'GET',\n";
+		$templateCode .= "\t\t\tbeforeSend: function() { \$j('#item$rnd1').prop('disabled', true); \$j('#itemLoading').html('<img src=loading.gif align=top>'); },\n";
+		$templateCode .= "\t\t\tcomplete: function() { " . (($arrPerm[1] || (($arrPerm[3] == 1 && $ownerMemberID == getLoggedMemberID()) || ($arrPerm[3] == 2 && $ownerGroupID == getLoggedGroupID()) || $arrPerm[3] == 3)) ? "\$j('#item$rnd1').prop('disabled', false); " : "\$j('#item$rnd1').prop('disabled', true); ")."\$j('#itemLoading').html(''); \$j(window).resize(); }\n";
+	}
+	$templateCode .= "\t\t});\n";
+	$templateCode .= "\t};\n";
+	if(!$dvprint) $templateCode .= "\tif(\$j('#item_caption').length) \$j('#item_caption').click(function() { /* */ item_update_autofills$rnd1(); });\n";
 
 
 	$templateCode.="});";

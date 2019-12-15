@@ -25,6 +25,7 @@
 		"`invoice_items`.`id`" => "id",
 		"IF(    CHAR_LENGTH(`invoices1`.`code`), CONCAT_WS('',   `invoices1`.`code`), '') /* Invoice */" => "invoice",
 		"IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') /* Item */" => "item",
+		"IF(    CHAR_LENGTH(`items1`.`unit_price`), CONCAT_WS('',   `items1`.`unit_price`), '') /* Current price */" => "current_price",
 		"`invoice_items`.`catalog_price`" => "catalog_price",
 		"FORMAT(`invoice_items`.`unit_price`, 2)" => "unit_price",
 		"FORMAT(`invoice_items`.`qty`, 3)" => "qty",
@@ -35,10 +36,11 @@
 		1 => '`invoice_items`.`id`',
 		2 => '`invoices1`.`code`',
 		3 => '`items1`.`item_description`',
-		4 => '`invoice_items`.`catalog_price`',
-		5 => '`invoice_items`.`unit_price`',
-		6 => '`invoice_items`.`qty`',
-		7 => '`invoice_items`.`price`',
+		4 => '`items1`.`unit_price`',
+		5 => '`invoice_items`.`catalog_price`',
+		6 => '`invoice_items`.`unit_price`',
+		7 => '`invoice_items`.`qty`',
+		8 => '`invoice_items`.`price`',
 	);
 
 	// Fields that can be displayed in the csv file
@@ -46,6 +48,7 @@
 		"`invoice_items`.`id`" => "id",
 		"IF(    CHAR_LENGTH(`invoices1`.`code`), CONCAT_WS('',   `invoices1`.`code`), '') /* Invoice */" => "invoice",
 		"IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') /* Item */" => "item",
+		"IF(    CHAR_LENGTH(`items1`.`unit_price`), CONCAT_WS('',   `items1`.`unit_price`), '') /* Current price */" => "current_price",
 		"`invoice_items`.`catalog_price`" => "catalog_price",
 		"FORMAT(`invoice_items`.`unit_price`, 2)" => "unit_price",
 		"FORMAT(`invoice_items`.`qty`, 3)" => "qty",
@@ -56,7 +59,8 @@
 		"`invoice_items`.`id`" => "ID",
 		"IF(    CHAR_LENGTH(`invoices1`.`code`), CONCAT_WS('',   `invoices1`.`code`), '') /* Invoice */" => "Invoice",
 		"IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') /* Item */" => "Item",
-		"`invoice_items`.`catalog_price`" => "Catalog price",
+		"IF(    CHAR_LENGTH(`items1`.`unit_price`), CONCAT_WS('',   `items1`.`unit_price`), '') /* Current price */" => "Current price",
+		"`invoice_items`.`catalog_price`" => "Catalog price at order date",
 		"`invoice_items`.`unit_price`" => "Unit price",
 		"`invoice_items`.`qty`" => "Qty",
 		"`invoice_items`.`price`" => "Price",
@@ -67,6 +71,7 @@
 		"`invoice_items`.`id`" => "id",
 		"IF(    CHAR_LENGTH(`invoices1`.`code`), CONCAT_WS('',   `invoices1`.`code`), '') /* Invoice */" => "invoice",
 		"IF(    CHAR_LENGTH(`items1`.`item_description`), CONCAT_WS('',   `items1`.`item_description`), '') /* Item */" => "item",
+		"IF(    CHAR_LENGTH(`items1`.`unit_price`), CONCAT_WS('',   `items1`.`unit_price`), '') /* Current price */" => "current_price",
 		"`invoice_items`.`catalog_price`" => "catalog_price",
 		"FORMAT(`invoice_items`.`unit_price`, 2)" => "unit_price",
 		"FORMAT(`invoice_items`.`qty`, 3)" => "qty",
@@ -109,7 +114,7 @@
 	$x->ColWidth   = array(  350, 80, 60, 80);
 	$x->ColCaption = array("Item", "Unit price", "Qty", "Price");
 	$x->ColFieldName = array('item', 'unit_price', 'qty', 'price');
-	$x->ColNumber  = array(3, 5, 6, 7);
+	$x->ColNumber  = array(3, 6, 7, 8);
 
 	// template paths below are based on the app main directory
 	$x->Template = 'templates/invoice_items_templateTV.html';

@@ -37,16 +37,24 @@
 					<hr class="hidden-md hidden-lg">
 					<label for="item" class="control-label col-lg-3" data-parent_link="view_parent_modal">Item</label>
 					<div class="col-lg-9">
-						<div class="form-control-static" style="white-space: nowrap; overflow-x: hidden;"><%%COMBO(item)%%><%%PLINK(item)%%><%%ADDNEW(items)%%></div>
+						<div class="form-control-static" style="white-space: nowrap; overflow-x: hidden;"><%%COMBO(item)%%><%%PLINK(item)%%><%%ADDNEW(items)%%><span id="itemLoading"></span></div>
 					</div>
 				</div>
 
 				<div class="form-group">
 					<hr class="hidden-md hidden-lg">
-					<label for="catalog_price" class="control-label col-lg-3">Catalog price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#catalog_price-description"></i></label>
+					<label for="current_price" class="control-label col-lg-3">Current price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#current_price-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="catalog_price-description"><div class="alert alert-info">This is the current catalog price of the selected item, as retrieved from <a href="item_prices_view.php">Prices History</a> table based on the invoice date.</div></span>
+						<span class="help-block collapse" id="current_price-description"><div class="alert alert-info">This is the current catalog price of the selected item.</div></span>
 
+						<div class="form-control-static" id="current_price"></div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<hr class="hidden-md hidden-lg">
+					<label for="catalog_price" class="control-label col-lg-3">Catalog price at order date</label>
+					<div class="col-lg-9">
 						<div class="form-control-static" id="catalog_price"><%%VALUE(catalog_price)%%></div>
 					</div>
 				</div>

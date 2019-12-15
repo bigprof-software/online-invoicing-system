@@ -150,6 +150,17 @@
 				'list_type' => 0,
 				'not_null' => false
 			),
+			'current_price' => array(
+				'parent_table' => 'items',
+				'parent_pk_field' => 'id',
+				'parent_caption' => '`items`.`unit_price`',
+				'parent_from' => '`items` ',
+				'filterers' => array(),
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false
+			),
 		),
 		'items' => array(
 		),

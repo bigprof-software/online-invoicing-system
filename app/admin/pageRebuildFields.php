@@ -57,6 +57,7 @@
 			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
 			'invoice' => array('appgini' => 'INT unsigned null '),
 			'item' => array('appgini' => 'INT unsigned null '),
+			'current_price' => array('appgini' => 'INT unsigned null '),
 			'catalog_price' => array('appgini' => 'DECIMAL(10,2) unsigned null '),
 			'unit_price' => array('appgini' => 'DECIMAL(10,2) unsigned not null '),
 			'qty' => array('appgini' => 'DECIMAL(9,3) null default \'1\' '),
