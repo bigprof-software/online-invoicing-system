@@ -5,6 +5,12 @@
 	include_once("{$currDir}/header.php");
 	@include("{$currDir}/hooks/links-home.php");
 
+	if(is_file("{$currDir}/hooks/home-custom.php")) {
+		include("{$currDir}/hooks/home-custom.php");
+		include_once("{$currDir}/footer.php");
+		exit;
+	}
+
 	/*
 		Classes of first and other blocks
 		---------------------------------

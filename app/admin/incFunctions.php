@@ -1939,3 +1939,51 @@
 			array_values($arr_data)
 		);
 	}
+	#########################################################
+	function calculated_fields() {
+		/*
+		 * calculated fields configuration array, $calc:
+		 *         table => [calculated fields], ..
+		 *         where calculated fields:
+		 *             field => query, ...
+		 */
+		return array(
+			'invoices' => array(
+				'subtotal' => 'SELECT IFNULL(ROUND(SUM(`invoice_items`.`unit_price` * `invoice_items`.`qty`), 2), 0.00) FROM `invoices` 
+LEFT JOIN `invoice_items` ON `invoice_items`.`invoice`=`invoices`.`id` 
+WHERE `invoices`.`id`=\'%ID%\'',
+				'total' => 'SELECT ROUND(`invoices`.`subtotal` * (1 - `invoices`.`discount` / 100) * (1 + `invoices`.`tax` / 100), 2)
+FROM `invoices`
+WHERE `invoices`.`id`=\'%ID%\'',
+			),
+			'clients' => array(
+				'unpaid_sales' => 'SELECT IFNULL(SUM(`invoices`.`total`), 0.00) FROM `clients` 
+LEFT JOIN `invoices` ON `invoices`.`client`=`clients`.`id` 
+WHERE `clients`.`id`=\'21\' AND `invoices`.`status`=\'Unpaid\'',
+				'paid_sales' => 'SELECT IFNULL(SUM(`invoices`.`total`), 0.00) FROM `clients` 
+LEFT JOIN `invoices` ON `invoices`.`client`=`clients`.`id` 
+WHERE `clients`.`id`=\'%ID%\' AND `invoices`.`status`=\'Paid\'',
+				'total_sales' => 'SELECT IFNULL(SUM(`invoices`.`total`), 0.00) FROM `clients` 
+LEFT JOIN `invoices` ON `invoices`.`client`=`clients`.`id` 
+WHERE `clients`.`id`=\'%ID%\' AND `invoices`.`status`!=\'Cancelled\'',
+			),
+			'item_prices' => array(
+			),
+			'invoice_items' => array(
+				'catalog_price' => 'SELECT `item_prices`.`price` FROM `invoice_items` 
+LEFT JOIN `items` ON `items`.`id`=`invoice_items`.`item`
+LEFT JOIN `invoices` ON `invoices`.`id`=`invoice_items`.`invoice` 
+LEFT JOIN `item_prices` ON `invoice_items`.`item`=`item_prices`.`item` 
+WHERE `invoice_items`.`id` = \'%ID%\' AND `item_prices`.`date` <= `invoices`.`date_due`
+ORDER BY `item_prices`.`date` DESC LIMIT 1',
+				'price' => 'SELECT ROUND(`invoice_items`.`unit_price` * `invoice_items`.`qty`, 2) FROM `invoice_items` 
+WHERE `invoice_items`.`id`=\'%ID%\'',
+			),
+			'items' => array(
+				'unit_price' => 'SELECT IFNULL(`price`, 0.00) FROM `item_prices` 
+WHERE `item` = \'%ID%\' AND `date` <= NOW()
+ORDER BY `date` DESC LIMIT 1',
+			),
+		);
+	}
+	#########################################################
