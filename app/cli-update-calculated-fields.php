@@ -53,10 +53,10 @@
 
 	// default exclude tables, as specified with -x: none
 	if(!isset($args['-x'])) $args['-x'] = array();
-	
+
 	if(!isset($args['-s'])) $args['-s'] = array();
 	if(!isset($args['-l'])) $args['-l'] = array();
-	
+
 	$mi = getMemberInfo($args['-u']);
 	if(!$mi) {
 		$conf = config('adminConfig');
@@ -66,7 +66,7 @@
 	$start = 0;
 	$length = pow(2, 45); // default length is a huge # to span the whole table (if your table really has more rows than 2^45, just increase this value!)
 	$eo = array('silentErrors' => true);
-	
+
 	// start updating specified tables
 	for($i = 0; $i < count($args['-t']); $i++) {
 		$tn = $args['-t'][$i];
