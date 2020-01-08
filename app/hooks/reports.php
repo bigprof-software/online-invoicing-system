@@ -69,11 +69,15 @@
                         <div class="form-group">
                             Search Customer Name :  <select name="search"  id="CategoryDropDown"> 
 								<?php
+
+								$hc = new CI_Input();
+								$hc->charset = datalist_db_encoding;
+
 								$customer_name = sql("select id ,name from clients ", $e0);
 								echo "<option value=' '> </option>";
                                 
 								while ($row = mysqli_fetch_assoc($customer_name)) {
-									echo  "<option value='" . $row ['id'] . "'>" . $row['name'] . "</option>";
+									echo  "<option value='" . $row ['id'] . "'>" . $hc->xss_clean($row['name']) . "</option>";
 								}
 								?>
                             </select>  <br><br>
