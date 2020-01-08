@@ -278,6 +278,20 @@ jQuery(function() {
 
 	// adjust DV page title link to go back if appropriate
 	AppGini.alterDVTitleLinkToBack();
+
+	// in table view, hide unnecessary page elements if no records are displayed
+	if($j('.table_view').length) {
+		setInterval(function() {
+			if($j('tfoot .alert-warning').length) {
+				$j('#Print, #CSV, #tv-tools, thead, tr.success').addClass('hidden');
+				$j('.tv-toggle').parent().addClass('hidden');
+				return;
+			}
+			
+			$j('#Print, #CSV, #tv-tools, thead, tr.success').removeClass('hidden');
+			$j('.tv-toggle').parent().removeClass('hidden');		
+		});
+	}
 });
 
 /* show/hide TV action buttons based on whether records are selected or not */
