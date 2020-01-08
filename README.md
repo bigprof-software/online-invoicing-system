@@ -2,7 +2,7 @@
 
 Easy and lean invoicing for small businesses, consultants and freelancers, created using [AppGini](https://bigprof.com/appgini/).
 
-### [⇩ Download the latest release](https://github.com/bigprof-software/online-invoicing-system/archive/2.6.zip)
+### [⇩ Download the latest release](https://github.com/bigprof-software/online-invoicing-system/releases/latest)
 
 ##### [_Changelog_](https://github.com/bigprof-software/online-invoicing-system/releases)
 
