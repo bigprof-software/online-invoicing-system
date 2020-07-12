@@ -20,75 +20,6 @@
 	include("{$currDir}/language.php");
 ?>
 var AppGini = AppGini || {};
-AppGini.ajaxCache = function() {
-	var _tests = [];
-
-	/*
-		An array of functions that receive a parameterless url and a parameters object,
-		makes a test,
-		and if test passes, executes something and/or
-		returns a non-false value if test passes,
-		or false if test failed (useful to tell if tests should continue or not)
-	*/
-	var addCheck = function(check) { /* */
-		if(typeof(check) == 'function') {
-			_tests.push(check);
-		}
-	};
-
-	var _jqAjaxData = function(opt) { /* */
-		var opt = opt || {};   
-		var url = opt.url || '';
-		var data = opt.data || {};
-
-		var params = url.match(/\?(.*)$/);
-		var param = (params !== null ? params[1] : '');
-
-		var sPageURL = decodeURIComponent(param),
-			sURLVariables = sPageURL.split('&'),
-			sParameter,
-			i;
-
-		for(i = 0; i < sURLVariables.length; i++) {
-			sParameter = sURLVariables[i].split('=');
-			if(sParameter[0] == '') continue;
-			data[sParameter[0]] = sParameter[1] || '';
-		}
-
-		return data;
-	};
-
-	var start = function() { /* */
-		if(!_tests.length) return; // no need to monitor ajax requests since no checks were defined
-		var reqTests = _tests;
-		$j.ajaxPrefilter(function(options, originalOptions, jqXHR) {
-			var success = originalOptions.success || $j.noop,
-				data = _jqAjaxData(originalOptions),
-				oUrl = originalOptions.url || '',
-				url = oUrl.match(/\?/) ? oUrl.match(/(.*)\?/)[1] : oUrl;
-
-			options.beforeSend = function() { /* */
-				var req, cached = false, resp;
-
-				for(var i = 0; i < reqTests.length; i++) {
-					resp = reqTests[i](url, data);
-					if(resp === false) continue;
-
-					success(resp);
-					return false;
-				}
-
-				return true;
-			}
-		});
-	};
-
-	return {
-		addCheck: addCheck,
-		start: start
-	};
-};
-
 /* initials and fixes */
 jQuery(function() {
 	AppGini.count_ajaxes_blocking_saving = 0;
@@ -287,9 +218,9 @@ jQuery(function() {
 				$j('.tv-toggle').parent().addClass('hidden');
 				return;
 			}
-			
+
 			$j('#Print, #CSV, #tv-tools, thead, tr.success').removeClass('hidden');
-			$j('.tv-toggle').parent().removeClass('hidden');		
+			$j('.tv-toggle').parent().removeClass('hidden');       
 		});
 	}
 });
@@ -319,6 +250,75 @@ function fix_table_responsive_width() {
 		}
 	}
 }
+
+AppGini.ajaxCache = function() {
+	var _tests = [];
+
+	/*
+		An array of functions that receive a parameterless url and a parameters object,
+		makes a test,
+		and if test passes, executes something and/or
+		returns a non-false value if test passes,
+		or false if test failed (useful to tell if tests should continue or not)
+	*/
+	var addCheck = function(check) { /* */
+		if(typeof(check) == 'function') {
+			_tests.push(check);
+		}
+	};
+
+	var _jqAjaxData = function(opt) { /* */
+		var opt = opt || {};   
+		var url = opt.url || '';
+		var data = opt.data || {};
+
+		var params = url.match(/\?(.*)$/);
+		var param = (params !== null ? params[1] : '');
+
+		var sPageURL = decodeURIComponent(param),
+			sURLVariables = sPageURL.split('&'),
+			sParameter,
+			i;
+
+		for(i = 0; i < sURLVariables.length; i++) {
+			sParameter = sURLVariables[i].split('=');
+			if(sParameter[0] == '') continue;
+			data[sParameter[0]] = sParameter[1] || '';
+		}
+
+		return data;
+	};
+
+	var start = function() { /* */
+		if(!_tests.length) return; // no need to monitor ajax requests since no checks were defined
+		var reqTests = _tests;
+		$j.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+			var success = originalOptions.success || $j.noop,
+				data = _jqAjaxData(originalOptions),
+				oUrl = originalOptions.url || '',
+				url = oUrl.match(/\?/) ? oUrl.match(/(.*)\?/)[1] : oUrl;
+
+			options.beforeSend = function() { /* */
+				var req, cached = false, resp;
+
+				for(var i = 0; i < reqTests.length; i++) {
+					resp = reqTests[i](url, data);
+					if(resp === false) continue;
+
+					success(resp);
+					return false;
+				}
+
+				return true;
+			}
+		});
+	};
+
+	return {
+		addCheck: addCheck,
+		start: start
+	};
+};
 
 function invoices_validateData() {
 	$j('.has-error').removeClass('has-error');

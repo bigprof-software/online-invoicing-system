@@ -161,7 +161,7 @@
 		</style>
 	</head>
 	<body>
-	<div class="container theme-bootstrap theme-compact">
+	<div class="admin-area container theme-bootstrap theme-compact">
 
 		<!-- top navbar -->
 		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">

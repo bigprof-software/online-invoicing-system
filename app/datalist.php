@@ -436,8 +436,6 @@ class DataList{
 			$this->hideTV();
 		}
 
-		$QueryHasCustomWhere = (strlen($this->QueryWhere) > 0);
-
 	// apply lookup filterers to the query
 		foreach($this->filterers as $filterer => $caption){
 			if($_REQUEST['filterer_' . $filterer] != ''){
@@ -539,7 +537,7 @@ class DataList{
 			}
 		}
 
-		if($WhereNeedsClosing && !$QueryHasCustomWhere)
+		if($WhereNeedsClosing)
 			$this->QueryWhere .= ")";
 
 	// set query sort

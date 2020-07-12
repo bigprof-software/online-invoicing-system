@@ -152,6 +152,9 @@
 			$j('#FilterOperator_' + filt_num + '_').select2('val', '');
 			$j('[name="FilterValue[' + filt_num + ']"]').val('');
 		});
+
+		// focus 1st select
+		$j('#FilterField_1_').select2('focus');
 	})
 </script>
 

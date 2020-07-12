@@ -50,7 +50,7 @@ div.datePicker{ font-size: 1.3em; }
 
 /* .form-control, .help-block .alert{ width: 90% !important; } */
 .input-group .form-control{ width: 100% !important; }
-.form-inline .form-control{ width: auto !important; }
+.admin-area .form-inline .form-control{ width: auto !important; }
 .panel .btn{ overflow: hidden; }
 
 .select2-container .select2-choice{ height: 2.4em; line-height: 2.2em; }
