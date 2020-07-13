@@ -263,7 +263,7 @@
 	function makeSafe($string, $is_gpc = true){
 		static $cached = []; /* str => escaped_str */
 
-		if(!db_link()) { sql("SELECT 1+1", $eo); }
+		if(!db_link()) sql("SELECT 1+1", $eo);
 
 		// if this is a previously escaped string, return from cached
 		// checking both keys and values

@@ -14,6 +14,9 @@
 		$moveMembers (=0 or 1)
 	*/
 
+	// csrf check
+	if(!csrf_token(true)) die($Translation['invalid security token']);
+
 	// validate input vars
 	$sourceGroupID = intval($_GET['sourceGroupID']);
 	$sourceMemberID = makeSafe(strtolower($_GET['sourceMemberID']));
@@ -156,6 +159,7 @@
 <div class="page-header"><h1><?php echo $Translation['ownership batch transfer']; ?></h1></div>
 
 <form method="get" action="pageTransferOwnership.php" class="form-horizontal">
+	<?php echo csrf_token(); ?>
 
 	<div id="step-1" class="panel panel-default">
 		<div class="panel-heading">

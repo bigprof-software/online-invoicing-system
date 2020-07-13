@@ -89,7 +89,7 @@
 			/* enable DV action buttons to float on scrolling down the form */
 			enable_dvab_floating();
 
-			setTimeout(AppGini.focusFirstFormElement, 1500);
+			setTimeout(AppGini.focusFirstFormElement, 100);
 
 			$j('form').eq(0).change(function() {
 				if($j(this).data('already_changed')) return;

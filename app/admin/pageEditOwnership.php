@@ -6,6 +6,9 @@
 
 	// request to save changes?
 	if(isset($_REQUEST['saveChanges'])) {
+		// csrf check
+		if(!csrf_token(true)) die($Translation['invalid security token']);
+
 		// validate data
 		$recID = intval($_REQUEST['recID']);
 		$memberID = makeSafe(strtolower($_REQUEST['memberID']));
@@ -75,6 +78,8 @@
 <div class="page-header"><h1><?php echo $Translation['edit Record Ownership']; ?></h1></div>
 
 <form method="post" action="pageEditOwnership.php" class="form-horizontal">
+	<?php echo csrf_token(); ?>
+
 	<input type="hidden" name="recID" value="<?php echo html_attr($recID); ?>">
 	<div style="height: 1em;"></div>
 

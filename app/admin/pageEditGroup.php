@@ -12,6 +12,9 @@ $perm = array();
 
 // request to save changes?
 if($_POST['saveChanges'] != '') {
+	// csrf check
+	if(!csrf_token(true)) die($Translation['invalid security token']);
+
 	// validate data
 	$name = makeSafe($_POST['name']);
 	$description = makeSafe($_POST['description']);
@@ -176,6 +179,8 @@ if($groupID != '') {
 </div>
 
 <form method="post" action="pageEditGroup.php" class="form-horizontal">
+	<?php echo csrf_token(); ?>
+
 	<input type="hidden" name="groupID" value="<?php echo $groupID; ?>">
 
 	<div class="form-group ">

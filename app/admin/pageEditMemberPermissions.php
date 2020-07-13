@@ -27,6 +27,9 @@
 
 	// request to save changes?
 	if(isset($_POST['saveChanges'])) {
+		// csrf check
+		if(!csrf_token(true)) die($Translation['invalid security token']);
+
 		// validate data
 		foreach ($tables as $t => $tc) {
 			eval(" 
@@ -122,6 +125,8 @@
 </div>
 
 <form method="post" action="pageEditMemberPermissions.php">
+	<?php echo csrf_token(); ?>
+
 	<input type="hidden" name="memberID" value="<?php echo $memberID->attr; ?>">
 
 	<div class="text-right" style="margin: 2em 0;">

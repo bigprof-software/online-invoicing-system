@@ -1,6 +1,6 @@
 <?php
-	$appgini_version = '5.81.1095';
-	$generated_ts = '20/1/2020 7:50:38 PM';
+	$appgini_version = '5.83.1106';
+	$generated_ts = '13/7/2020 5:05:20 PM';
 
 	$currDir = dirname(__FILE__);
 	require("{$currDir}/incCommon.php");
@@ -99,7 +99,7 @@
 		<span class="label label-info big-number"><?php echo number_format($uploads_size / 1024 / 1024, 2); ?> MB</span>
 
 		<h3><?php echo $Translation['db storage']; ?></h3>
-		<div class="db-status">
+		<div class="db-status scrollable">
 			<table class="table table-striped table-hover table-bordered">
 				<thead>
 					<tr>
@@ -128,7 +128,7 @@
 
 	<div class="col-lg-4">
 		<h3><?php echo $Translation['db status']; ?></h3>
-		<div class="db-status">
+		<div class="db-status scrollable">
 			<table class="table table-striped table-hover table-bordered">
 				<?php foreach($db_status as $var => $val) { ?>
 					<tr>
@@ -143,7 +143,7 @@
 
 	<div class="col-lg-4" id="phpinfo">
 		<h3><?php echo $Translation['php info']; ?></h3>
-		<div class="db-status">
+		<div class="db-status scrollable">
 			<?php echo $phpinfo[0]; ?>
 		</div>
 	</div>
@@ -164,7 +164,7 @@
 	#phpinfo table tr:nth-child(odd) {
 		background-color: #fff;
 	}
-	.db-status {
+	.db-status.scrollable {
 		max-height: 60vh;
 		overflow-y: auto;
 	}
@@ -173,7 +173,40 @@
 		line-height: 10rem;
 		margin: 0 1rem;
 	}
+	.cursor-pointer {
+		cursor: pointer;
+	}
+
 </style>
+
+<script>
+	$j(function() {
+		// apply a zoom-in button to each grid cell
+		$j('<i class="glyphicon glyphicon-zoom-in resizer text-primary hspacer-sm cursor-pointer"></i>').prependTo('.col-lg-4 > h3:first-child');
+
+		// and for every zoom-in button, add a class 'zoomable-cell' to its grid cell
+		$j('.resizer').parents('.col-lg-4').addClass('zoomable-cell');
+
+		// on clicking a zoom button, maximize/restore its parent grid cell
+		$j('.row').on('click', '.resizer', function() {
+			var toggler = $j(this),
+				cell = toggler.parents('.zoomable-cell'),
+				maximized = cell.hasClass('col-lg-12');
+
+			toggler.toggleClass('glyphicon-zoom-in glyphicon-zoom-out');
+			cell.toggleClass('col-lg-12 col-lg-4');
+			cell.children('.db-status').toggleClass('scrollable')
+
+			if(maximized) {
+				// restore default size
+				cell.parents('.row').children('.col-lg-4').removeClass('hidden');
+			} else {
+				// otherwise, maximize
+				cell.parents('.row').children('.col-lg-4').addClass('hidden');
+			}
+		})
+	})
+</script>
 
 <?php
 	include("{$currDir}/incFooter.php");
