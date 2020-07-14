@@ -209,6 +209,7 @@ class DataList{
 		$this->HTML .= '<form ' . (datalist_image_uploads_exist ? 'enctype="multipart/form-data" ' : '') . 'method="post" name="myform" action="' . $this->ScriptFileName . '">';
 		if($Embedded) $this->HTML .= '<input name="Embedded" value="1" type="hidden">';
 		if($AutoClose) $this->HTML .= '<input name="AutoClose" value="1" type="hidden">';
+		$this->HTML .= csrf_token();
 		$this->HTML .= '<script>';
 		$this->HTML .= 'function enterAction(){';
 		$this->HTML .= '   if($j("input[name=SearchString]:focus").length){ $j("#Search").click(); }';

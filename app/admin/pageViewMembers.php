@@ -162,10 +162,10 @@
 			<?php } ?>
 			<td class="text-left"><?php echo thisOr($row[1]); ?></td>
 			<td class="text-left"><?php echo thisOr($row[2]); ?></td>
-			<td class="text-left"><?php echo thisOr($row[3]); ?></td>
-			<td class="text-left"><?php echo thisOr($row[4]); ?></td>
-			<td class="text-left"><?php echo thisOr($row[5]); ?></td>
-			<td class="text-left"><?php echo thisOr($row[6]); ?></td>
+			<td class="text-left"><?php echo htmlspecialchars(thisOr($row[3])); ?></td>
+			<td class="text-left"><?php echo htmlspecialchars(thisOr($row[4])); ?></td>
+			<td class="text-left"><?php echo htmlspecialchars(thisOr($row[5])); ?></td>
+			<td class="text-left"><?php echo htmlspecialchars(thisOr($row[6])); ?></td>
 			<td class="text-left">
 				<?php echo (($row[7] && $row[8]) ? $Translation['Banned'] : ($row[8] ? $Translation['active'] : $Translation['waiting approval'] )); ?>
 			</td>
