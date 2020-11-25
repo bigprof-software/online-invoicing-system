@@ -55,13 +55,13 @@
 
 	<div class="vspacer-lg"></div>
 
-	<table class="table table-hover table-bordered table-striped">
+	<table class="table table-hover table-bordered">
 		<thead>
 			<tr>
 				<th class="text-left" style="width: 50%;">Description</th>
-				<th class="text-right">Unit price </th>
-				<th class="text-right">Quantity </th>
-				<th class="text-right">Price </th>
+				<th class="text-right">Unit price (<?php echo CURRENCY_SYMBOL; ?>)</th>
+				<th class="text-right">Quantity</th>
+				<th class="text-right">Price (<?php echo CURRENCY_SYMBOL; ?>)<span class="invisible">)</span></th>
 			</tr>
 		</thead>
 		
@@ -76,7 +76,7 @@
 			<?php } ?>
 			
 			<!-- subtotal -->
-			<?php if($results['totals']['discount'] != 0 && $results['totals']['tax'] != 0){ ?>
+			<?php if($results['totals']['discount'] != 0 || $results['totals']['tax'] != 0){ ?>
 				<tr class="active"><td colspan="4"></td></tr>
 				<tr>
 					<th colspan="3" class="text-right">Subtotal </th>
@@ -109,9 +109,9 @@
 			<tr class="active"><td colspan="4"></td></tr>
 
 			<!-- total -->
-			<tr class="active">
+			<tr>
 				<th colspan="3" class="text-right">Total</th>
-				<th class="text-right"><?php echo number_format($results['totals']['total'], 2); ?><span class="invisible">)</span></th>
+				<th class="text-right active"><?php echo number_format($results['totals']['total'], 2); ?><span class="invisible">)</span></th>
 			</tr>
 			<tr class="active">
 				<th colspan="4" class="text-right">Only <?php echo convertNumberToWord($results['totals']['total']) . ' ' . CURRENCY_TITLE; ?> Due.</th>
