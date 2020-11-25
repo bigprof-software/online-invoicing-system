@@ -7,6 +7,21 @@
 	*/
 
 	/**
+	 *
+	 * function to auto-detect and load templates from invoice templates folder
+	 * then store them in csv file as option list
+	 */
+	function load_invoice_templates(){
+		$templates = glob('hooks/invoice-templates/*.php');
+		$list = [];
+
+		if($templates) foreach ($templates as $template)
+			$list[] = ucwords(str_replace('.php', '', str_replace('_', ' ', basename($template))));
+
+		@file_put_contents('hooks/invoices.invoice_template.csv', implode(';;', $list));
+	}
+
+	/**
 	 * Called before rendering the page. This is a very powerful hook that allows you to control all aspects of how the page is rendered.
 	 * 
 	 * @param $options
@@ -26,6 +41,7 @@
 	*/
 
 	function invoices_init(&$options, $memberInfo, &$args) {
+		load_invoice_templates();
 
 		return TRUE;
 	}
@@ -306,7 +322,18 @@
 	*/
 
 	function invoices_dv($selectedID, $memberInfo, &$html, &$args) {
+		global $Translation;
+		
+		/* define all Translation strings needed by js code */
+		ob_start();
+		?>
+		<script>
+			window.Translation = window.Translation || {};
+			window.Translation['back'] = <?php echo json_encode($Translation['Back']); ?>;
+		</script>
+		<?php
 
+		$html .= ob_get_clean();
 	}
 
 	/**
