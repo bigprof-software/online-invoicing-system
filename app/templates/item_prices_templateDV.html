@@ -6,7 +6,7 @@
 <div class="panel-body" id="item_prices_dv_container">
 	<!-- child links -->
 	<div class="row vspacer-md">
-		<div class="col-xs-12">
+		<div class="col-xs-12 children-links">
 			<div class="clearfix"></div>
 		</div>
 	</div>
@@ -17,7 +17,8 @@
 		<div class="col-md-8 col-lg-10" id="item_prices_dv_form">
 			<fieldset class="form-horizontal">
 
-				<div class="form-group">
+				<!-- Field: ID -->
+				<div class="form-group item_prices-id">
 					<hr class="hidden-md hidden-lg">
 					<label for="id" class="control-label col-lg-3">ID</label>
 					<div class="col-lg-9">
@@ -25,7 +26,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Item -->
+				<div class="form-group item_prices-item">
 					<hr class="hidden-md hidden-lg">
 					<label for="item" class="control-label col-lg-3" data-parent_link="view_parent_modal">Item</label>
 					<div class="col-lg-9">
@@ -33,7 +35,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Price -->
+				<div class="form-group item_prices-price">
 					<hr class="hidden-md hidden-lg">
 					<label for="price" class="control-label col-lg-3">Price</label>
 					<div class="col-lg-9">
@@ -41,7 +44,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Date -->
+				<div class="form-group item_prices-date">
 					<hr class="hidden-md hidden-lg">
 					<label for="date" class="control-label col-lg-3">Date</label>
 					<div class="col-lg-9">
@@ -138,7 +142,7 @@
 				var pt = $j(this).attr('id').replace(/_view_parent$/, '');
 				if($j(this).prevAll('input:hidden').length) {
 					var parent_id = $j(this).prevAll('input:hidden').eq(0).val();
-				}else{
+				} else {
 					var parent_id = $j(this).prevAll().children('input:hidden').eq(0).val();
 				}
 

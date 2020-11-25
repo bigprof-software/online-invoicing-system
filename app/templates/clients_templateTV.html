@@ -17,6 +17,6 @@
 		<td id="clients-unpaid_sales-<%%VALUE(id)%%>" class="clients-unpaid_sales text-right"><%%SELECT%%><%%VALUE(unpaid_sales)%%><%%ENDSELECT%%></td>
 		<td id="clients-paid_sales-<%%VALUE(id)%%>" class="clients-paid_sales text-right"><%%SELECT%%><%%VALUE(paid_sales)%%><%%ENDSELECT%%></td>
 		<td id="clients-total_sales-<%%VALUE(id)%%>" class="clients-total_sales text-right"><%%SELECT%%><%%VALUE(total_sales)%%><%%ENDSELECT%%></td>
-		<script>$j(function(){
+		<script>$j(function() {
 			var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;') $j(/*<*/ '#clients-website-<%%VALUE(id)%%>' /*>*/).html('');
 		});</script>

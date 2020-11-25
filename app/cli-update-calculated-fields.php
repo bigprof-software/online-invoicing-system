@@ -1,6 +1,6 @@
 <?php
 	$app_dir = dirname(__FILE__);
-	include("{$app_dir}/lib.php");
+	include_once("{$app_dir}/lib.php");
 
 	// this script can run only in CLI mode
 	if(php_sapi_name() != "cli") die('this script can run only in CLI mode');
@@ -34,13 +34,13 @@
 	// if -h argument is provided, show the help message and quit
 	if(in_array('-h', $argv)) die($help);
 
-	$allowed_args = array('-t', '-s', '-l', '-x');
+	$allowed_args = ['-t', '-s', '-l', '-x'];
 
 	$tables = getTableList(true);
 
 	// prepare args in an array ['switch' => 'value', ...]
 	array_shift($argv);
-	$args = array();
+	$args = [];
 	for($i = 0; $i < count($argv); $i += 2) {
 		if(!in_array($argv[$i], $allowed_args)) continue;
 		$args[$argv[$i]] = array_map(trim, explode(',', $argv[$i + 1]));
@@ -52,10 +52,10 @@
 	if(!isset($args['-t'])) $args['-t'] = array_keys($calc);
 
 	// default exclude tables, as specified with -x: none
-	if(!isset($args['-x'])) $args['-x'] = array();
+	if(!isset($args['-x'])) $args['-x'] = [];
 
-	if(!isset($args['-s'])) $args['-s'] = array();
-	if(!isset($args['-l'])) $args['-l'] = array();
+	if(!isset($args['-s'])) $args['-s'] = [];
+	if(!isset($args['-l'])) $args['-l'] = [];
 
 	$mi = getMemberInfo($args['-u']);
 	if(!$mi) {
@@ -65,7 +65,7 @@
 
 	$start = 0;
 	$length = pow(2, 45); // default length is a huge # to span the whole table (if your table really has more rows than 2^45, just increase this value!)
-	$eo = array('silentErrors' => true);
+	$eo = ['silentErrors' => true];
 
 	// start updating specified tables
 	for($i = 0; $i < count($args['-t']); $i++) {
@@ -92,7 +92,7 @@
 		if(isset($args['-l'][$i]) && intval($args['-l'][$i]) > 1) $length = intval($args['-l'][$i]);
 
 		// retrieve PKs of specified range in given table
-		$ids = array();
+		$ids = [];
 		$pk = getPKFieldName($tn);
 		$res = sql("SELECT `{$pk}` FROM `{$tn}` LIMIT {$start}, {$length}", $eo);
 		while($row = db_fetch_row($res)) $ids[] = $row[0];

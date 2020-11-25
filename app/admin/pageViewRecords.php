@@ -127,7 +127,7 @@
 			<td class="<?php echo ($sort == 'dateAdded' ? 'warning' : '');?>"><?php echo @date($adminConfig['PHPDateTimeFormat'], $row[4]); ?></td>
 			<td class="<?php echo ($sort == 'dateUpdated' ? 'warning' : '');?>"><?php echo @date($adminConfig['PHPDateTimeFormat'], $row[5]); ?></td>
 			<td>
-				<a href="#" class="view-record" data-record-id="<?php echo $row[0]; ?>"><i class="glyphicon glyphicon-search hspacer-md"></i></a>
+				<a href="#" class="view-record" data-record_id="<?php echo $row[0]; ?>"><i class="glyphicon glyphicon-search hspacer-md"></i></a>
 				<?php echo substr(getCSVData($row[3], $row[6]), 0, 80) . " ... "; ?>
 			</td>
 		</tr>
@@ -184,7 +184,7 @@
 <script>
 	$j(function() {
 		$j('.view-record').click(function() {
-			var recID = $j(this).data('record-id');
+			var recID = $j(this).data('record_id');
 			$j('#view-record-iframe').attr('src', 'pagePrintRecord.php?recID=' + recID);
 			$j('#view-record-modal').modal('show');
 			$j('#view-record-modal .modal-body').height($j(window).height() * 0.7);

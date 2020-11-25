@@ -1,14 +1,12 @@
 <?php
-	$currDir=dirname(__FILE__);
-	include("$currDir/defaultLang.php");
-	include("$currDir/language.php");
-	include("$currDir/lib.php");
+	$currDir = dirname(__FILE__);
+	include_once("$currDir/lib.php");
 
 	handle_maintenance();
 
 	// image paths
-	$p=array(   
-	);
+	$p = [
+	];
 
 	if(!count($p)) exit;
 
@@ -25,8 +23,8 @@
 	if($v != 'tv' && $v != 'dv')   getImage();
 	if($i == 'blank.gif') getImage();
 
-	$img=$p[$t][$f].$i;
-	$thumb=str_replace(".$m[1]ffffgggg", "_$v.$m[1]", $img.'ffffgggg');
+	$img = $p[$t][$f] . $i;
+	$thumb = str_replace(".{$m[1]}ffffgggg", "_$v.{$m[1]}", $img . 'ffffgggg');
 
 	// if thumbnail exists and the user is not admin, output it without rebuilding the thumbnail
 	if(getImage($thumb) && !getLoggedAdmin())  exit;
@@ -42,15 +40,17 @@
 		}
 
 		/* force caching */
-		$last_modified = filemtime($img);
-		$last_modified_gmt = gmdate('D, d M Y H:i:s', $last_modified) . ' GMT';
-		$expires_gmt = gmdate('D, d M Y H:i:s', $last_modified + 864000) . ' GMT';
-		$headers = (function_exists('getallheaders') ? getallheaders() : $_SERVER);
-		if(isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == $last_modified)) {
-			@header("Last-Modified: {$last_modified_gmt}", true, 304);
-			@header("Cache-Control: private, max-age=864000", true);
-			@header("Expires: {$expires_gmt}");
-			exit;
+		$last_modified = @filemtime($img);
+		if($last_modified) {
+			$last_modified_gmt = gmdate('D, d M Y H:i:s', $last_modified) . ' GMT';
+			$expires_gmt = gmdate('D, d M Y H:i:s', $last_modified + 864000) . ' GMT';
+			$headers = (function_exists('getallheaders') ? getallheaders() : $_SERVER);
+			if(isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == $last_modified)) {
+				@header("Last-Modified: {$last_modified_gmt}", true, 304);
+				@header("Cache-Control: private, max-age=864000", true);
+				@header("Expires: {$expires_gmt}");
+				exit;
+			}
 		}
 
 		$thumbInfo = @getimagesize($img);

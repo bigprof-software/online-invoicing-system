@@ -60,12 +60,12 @@
 		}
 
 		// create a recipients array
-		$to = array();
+		$to = [];
 		if($sendToAll) {
 			$res = sql("select email from membership_users", $eo);
-		}elseif($isGroup) {
+		} elseif($isGroup) {
 			$res = sql("select email from membership_users where groupID='{$groupID}'", $eo);
-		}else{
+		} else {
 			$res = sql("select email from membership_users where lcase(memberID)='{$memberID->sql}'", $eo);
 		}
 		while($row = db_fetch_row($res)) {

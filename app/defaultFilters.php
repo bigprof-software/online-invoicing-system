@@ -270,7 +270,7 @@
 				if(!hide) jQuery('div.FilterSet' + i).fadeIn(function() {
 					jQuery('#FilterField_' + ((groupIndex - 1) * FiltersPerGroup + 1) + '_').focus();
 				});
-			}else{
+			} else {
 				if(hide) jQuery('div.FilterSet' + i).hide();
 				if(!hide) jQuery('div.FilterSet' + i).show(function() {
 					jQuery('#FilterField_' + ((groupIndex - 1) * FiltersPerGroup + 1) + '_').focus();

@@ -23,7 +23,7 @@
 
 	if($_SERVER['HTTP_REFERER']) {
 		redirect($_SERVER['HTTP_REFERER'], true);
-	}else{
+	} else {
 		redirect("admin/pageViewMembers.php");
 	}
 

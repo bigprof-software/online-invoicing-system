@@ -57,7 +57,7 @@
 
 		// redirect to member permissions page
 		redirect("admin/pageEditMemberPermissions.php?saved=1&memberID=" . $memberID->url);
-	}elseif(isset($_POST['resetPermissions'])) {
+	} elseif(isset($_POST['resetPermissions'])) {
 		sql("delete from membership_userpermissions where lcase(memberID)='{$memberID->sql}'", $eo);
 		// redirect to member permissions page
 		redirect("admin/pageEditMemberPermissions.php?reset=1&memberID=" . $memberID->url);
@@ -103,7 +103,7 @@
 			'class' => 'success',
 			'dismiss_seconds' => 10
 		));
-	}elseif(isset($_GET['reset'])) {
+	} elseif(isset($_GET['reset'])) {
 		echo Notification::show(array(
 			'message' => "<i class=\"glyphicon glyphicon-ok\"></i> {$Translation['member permissions reset']}",
 			'class' => 'success',
@@ -137,7 +137,7 @@
 					'class' => 'info',
 					'dismiss_seconds' => 3600
 				));
-			}else{
+			} else {
 				?>
 					<button type="submit" name="resetPermissions" value="1" class="btn btn-warning btn-lg reset-permissions">
 						<i class="glyphicon glyphicon-refresh"></i> 
@@ -211,8 +211,8 @@
 <script>
 	$j(function () {
 		var highlight_selections = function () {
-			$j('input[type=radio]').parent().parent().removeClass('bg-warning text-warning text-bold');
-			$j('input[type=radio]:checked').parent().parent().addClass('bg-warning text-warning text-bold');
+			$j('input[type=radio]').parent().parent().removeClass('bg-warning text-primary text-bold');
+			$j('input[type=radio]:checked').parent().parent().addClass('bg-warning text-primary text-bold');
 		}
 
 		$j('button.reset-permissions').click(function() {

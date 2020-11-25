@@ -1,9 +1,7 @@
 <?php
 	define('PREPEND_PATH', '');
 	$app_dir = dirname(__FILE__);
-	include("{$app_dir}/defaultLang.php");
-	include("{$app_dir}/language.php");
-	include("{$app_dir}/lib.php");
+	include_once("{$app_dir}/lib.php");
 
 	/*
 	 * calculated fields configuration array, $calc:
@@ -15,10 +13,11 @@
 	cleanup_calc_fields($calc);
 
 	list($table, $id) = get_params();
-	if(!$table || !strlen($id))
-		return_json(array(), 'Access denied or invalid parameters');
+
+	// $id could be a single ID or an array
+	if((!is_array($id) && !strlen($id)) || !$table) return_json([], 'Access denied or invalid parameters');
 	if(!isset($calc[$table]))
-		return_json(array('table' => $table), 'No fields to calculate in this table');
+		return_json(['table' => $table], 'No fields to calculate in this table');
 
 	/*
 		update_calc_fields($table, $id, $calc[$table])
@@ -27,28 +26,40 @@
 		stored in record $id of $table:
 		update_calc_fields($parent_table, $parent_id, $calc[$parent_table])
 	 */
-	$caluclations_made = array();
-	$caluclations_made[] = update_calc_fields($table, $id, $calc[$table]);
-
-	// get parents of current table
-	$parents = get_parent_tables($table);
-	$pk = getPKFieldName($table);
-	$safe_id = makeSafe($id);
-	foreach($parents as $pt => $mlufs /* main lookup fields in child */) {
-		if(!isset($calc[$pt])) continue; // parent table has no calc fields
-
-		foreach($mlufs as $mluf) {
-			// retrieve parent record ID as stored in lookup field of current table
-			$pid = sqlValue("SELECT `{$mluf}` FROM `{$table}` WHERE `{$pk}`='{$safe_id}'");
-			if(!strlen($pid)) continue;
-
-			$caluclations_made[] = update_calc_fields($pt, $pid, $calc[$pt]);
+	$caluclations_made = [];
+	if(is_array($id)) {
+		foreach ($id as $singleId) {
+			if(!strlen($singleId)) cotinue;
+			$caluclations_made[] = update_calc_fields($table, $singleId, $calc[$table]);
+			update_parents($table, $singleId, $calc, $caluclations_made);
 		}
+	} else {
+		$caluclations_made[] = update_calc_fields($table, $id, $calc[$table]);
+		update_parents($table, $id, $calc, $caluclations_made);
 	}
 
 	return_json($caluclations_made);
 
 	#############################################################
+
+	/* update parents of given record */
+	function update_parents($table, $id, $calc, &$caluclations_made) {
+		// get parents of current table
+		$parents = get_parent_tables($table);
+		$pk = getPKFieldName($table);
+		$safe_id = makeSafe($id);
+		foreach($parents as $pt => $mlufs /* main lookup fields in child */) {
+			if(!isset($calc[$pt])) continue; // parent table has no calc fields
+
+			foreach($mlufs as $mluf) {
+				// retrieve parent record ID as stored in lookup field of current table
+				$pid = sqlValue("SELECT `{$mluf}` FROM `{$table}` WHERE `{$pk}`='{$safe_id}'");
+				if(!strlen($pid)) continue;
+
+				$caluclations_made[] = update_calc_fields($pt, $pid, $calc[$pt]);
+			}
+		}
+	}
 
 	/* get and validate params */
 	function get_params() {
@@ -57,12 +68,20 @@
 		$table = $_REQUEST['table'];
 		$id = $_REQUEST['id'];
 		if(!get_sql_from($table)) return $ret_error;
-		if(!check_record_permission($table, $id)) return $ret_error;
+
+		if(is_array($id)) {
+			$id = array_filter($id, function($singleId) use ($table) {
+				return check_record_permission($table, $singleId);
+			});
+			if(!count($id)) return $ret_error;
+		} else {
+			if(!check_record_permission($table, $id)) return $ret_error;
+		}
 
 		return array($table, $id);
 	}
 
-	function return_json($data = array(), $error = '') {
+	function return_json($data = [], $error = '') {
 		@header('Content-type: application/json');
 		die(json_encode(array('data' => $data, 'error' => $error)));
 	}

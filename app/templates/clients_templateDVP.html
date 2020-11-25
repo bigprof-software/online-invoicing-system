@@ -14,85 +14,99 @@
 
 <div class="panel-body">
 	<fieldset class="form-horizontal">
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: ID -->
+		<div class="form-group clients-id" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">ID</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(id)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Name -->
+		<div class="form-group clients-name" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Name</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(name)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Contact -->
+		<div class="form-group clients-contact" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Contact</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(contact)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Title -->
+		<div class="form-group clients-title" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Title</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(title)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Address -->
+		<div class="form-group clients-address" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Address</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(address)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: City -->
+		<div class="form-group clients-city" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">City</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(city)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Country -->
+		<div class="form-group clients-country" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Country</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%COMBOTEXT(country)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Phone -->
+		<div class="form-group clients-phone" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Phone</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(phone)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Email -->
+		<div class="form-group clients-email" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Email</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(email)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Website -->
+		<div class="form-group clients-website" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Website</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><a id="website-link" href="link.php?t=clients&f=website&i=<%%VALUE(id)%%>" target="_blank"><%%VALUE(website)%%></a><script>jQuery(function() { /* */ var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;' || e_website == 'blank.gif') jQuery('#website-link').hide(); });</script></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Comments -->
+		<div class="form-group clients-comments" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Comments</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(comments)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Unpaid sales -->
+		<div class="form-group clients-unpaid_sales" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Unpaid sales</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(unpaid_sales)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Paid sales -->
+		<div class="form-group clients-paid_sales" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Paid sales</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(paid_sales)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Total sales -->
+		<div class="form-group clients-total_sales" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Total sales</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(total_sales)%%></div>

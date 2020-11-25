@@ -14,49 +14,57 @@
 
 <div class="panel-body">
 	<fieldset class="form-horizontal">
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: ID -->
+		<div class="form-group invoice_items-id" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">ID</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(id)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Invoice -->
+		<div class="form-group invoice_items-invoice" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Invoice</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><span id="invoice-readonly<%%RND1%%>"><%%COMBOTEXT(invoice)%%></span></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Item -->
+		<div class="form-group invoice_items-item" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Item</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><span id="item<%%RND1%%>"><%%COMBOTEXT(item)%%></span></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Current price -->
+		<div class="form-group invoice_items-current_price" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Current price</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><span id="current_price<%%RND1%%>"></span></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Catalog price at order date -->
+		<div class="form-group invoice_items-catalog_price" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Catalog price at order date</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(catalog_price)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Unit price -->
+		<div class="form-group invoice_items-unit_price" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Unit price</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(unit_price)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Qty -->
+		<div class="form-group invoice_items-qty" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Qty</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(qty)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Price -->
+		<div class="form-group invoice_items-price" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Price</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(price)%%></div>

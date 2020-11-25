@@ -6,8 +6,8 @@
 <div class="panel-body" id="invoices_dv_container">
 	<!-- child links -->
 	<div class="row vspacer-md">
-		<div class="col-xs-12">
-			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm" href="invoice_items_view.php?filterer_invoice=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="invoice_items_link"><i class="glyphicon glyphicon-list-alt"></i> Invoice items</a>
+		<div class="col-xs-12 children-links">
+			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm vspacer-sm" href="invoice_items_view.php?filterer_invoice=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="invoice_items_link"><i class="glyphicon glyphicon-list-alt"></i> Invoice items</a>
 			<a class="visible-xs btn btn-default btn-lg btn-block hidden vspacer-sm" href="invoice_items_view.php?filterer_invoice=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="xs_invoice_items_link"><i class="glyphicon glyphicon-list-alt"></i> Invoice items</a>
 			<input type="hidden" id="invoice_items_hclink" value="invoice_items_view.php?filterer_invoice=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>">
 			<div class="clearfix"></div>
@@ -20,7 +20,8 @@
 		<div class="col-md-8 col-lg-10" id="invoices_dv_form">
 			<fieldset class="form-horizontal">
 
-				<div class="form-group">
+				<!-- Field: ID -->
+				<div class="form-group invoices-id">
 					<hr class="hidden-md hidden-lg">
 					<label for="id" class="control-label col-lg-3">ID</label>
 					<div class="col-lg-9">
@@ -28,7 +29,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Code -->
+				<div class="form-group invoices-code">
 					<hr class="hidden-md hidden-lg">
 					<label for="code" class="control-label col-lg-3">Code</label>
 					<div class="col-lg-9">
@@ -36,7 +38,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Status -->
+				<div class="form-group invoices-status">
 					<hr class="hidden-md hidden-lg">
 					<label for="status" class="control-label col-lg-3">Status<span class="text-danger"><%%TRANSLATION(*)%%></span></label>
 					<div class="col-lg-9">
@@ -44,7 +47,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Date due -->
+				<div class="form-group invoices-date_due">
 					<hr class="hidden-md hidden-lg">
 					<label for="date_due" class="control-label col-lg-3">Date due</label>
 					<div class="col-lg-9">
@@ -52,7 +56,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Client -->
+				<div class="form-group invoices-client">
 					<hr class="hidden-md hidden-lg">
 					<label for="client" class="control-label col-lg-3" data-parent_link="view_parent_modal">Client</label>
 					<div class="col-lg-9">
@@ -60,7 +65,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Client contact -->
+				<div class="form-group invoices-client_contact">
 					<hr class="hidden-md hidden-lg">
 					<label for="client_contact" class="control-label col-lg-3">Client contact</label>
 					<div class="col-lg-9">
@@ -68,7 +74,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Client address -->
+				<div class="form-group invoices-client_address">
 					<hr class="hidden-md hidden-lg">
 					<label for="client_address" class="control-label col-lg-3">Client address</label>
 					<div class="col-lg-9">
@@ -76,7 +83,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Client phone -->
+				<div class="form-group invoices-client_phone">
 					<hr class="hidden-md hidden-lg">
 					<label for="client_phone" class="control-label col-lg-3">Client phone</label>
 					<div class="col-lg-9">
@@ -84,7 +92,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Client email -->
+				<div class="form-group invoices-client_email">
 					<hr class="hidden-md hidden-lg">
 					<label for="client_email" class="control-label col-lg-3">Client email</label>
 					<div class="col-lg-9">
@@ -92,7 +101,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Client website -->
+				<div class="form-group invoices-client_website">
 					<hr class="hidden-md hidden-lg">
 					<label for="client_website" class="control-label col-lg-3">Client website</label>
 					<div class="col-lg-9">
@@ -100,7 +110,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Client comments -->
+				<div class="form-group invoices-client_comments">
 					<hr class="hidden-md hidden-lg">
 					<label for="client_comments" class="control-label col-lg-3">Client comments</label>
 					<div class="col-lg-9">
@@ -108,7 +119,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Subtotal -->
+				<div class="form-group invoices-subtotal">
 					<hr class="hidden-md hidden-lg">
 					<label for="subtotal" class="control-label col-lg-3">Subtotal <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#subtotal-description"></i></label>
 					<div class="col-lg-9">
@@ -118,7 +130,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Discount % -->
+				<div class="form-group invoices-discount">
 					<hr class="hidden-md hidden-lg">
 					<label for="discount" class="control-label col-lg-3">Discount % <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#discount-description"></i></label>
 					<div class="col-lg-9">
@@ -128,7 +141,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Tax % -->
+				<div class="form-group invoices-tax">
 					<hr class="hidden-md hidden-lg">
 					<label for="tax" class="control-label col-lg-3">Tax % <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#tax-description"></i></label>
 					<div class="col-lg-9">
@@ -138,7 +152,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Total -->
+				<div class="form-group invoices-total">
 					<hr class="hidden-md hidden-lg">
 					<label for="total" class="control-label col-lg-3">Total <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#total-description"></i></label>
 					<div class="col-lg-9">
@@ -148,7 +163,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Comments -->
+				<div class="form-group invoices-comments">
 					<hr class="hidden-md hidden-lg">
 					<label for="comments" class="control-label col-lg-3">Comments</label>
 					<div class="col-lg-9">
@@ -156,7 +172,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Invoice template -->
+				<div class="form-group invoices-invoice_template">
 					<hr class="hidden-md hidden-lg">
 					<label for="invoice_template" class="control-label col-lg-3">Invoice template <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#invoice_template-description"></i></label>
 					<div class="col-lg-9">
@@ -166,7 +183,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Created -->
+				<div class="form-group invoices-created">
 					<hr class="hidden-md hidden-lg">
 					<label for="created" class="control-label col-lg-3">Created</label>
 					<div class="col-lg-9">
@@ -174,7 +192,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Last updated -->
+				<div class="form-group invoices-last_updated">
 					<hr class="hidden-md hidden-lg">
 					<label for="last_updated" class="control-label col-lg-3">Last updated</label>
 					<div class="col-lg-9">
@@ -209,12 +228,13 @@
 	<hr>
 	<div class="row">
 		<div class="col-lg-10 col-lg-offset-1">
-			<div id="invoices-children" class="children-tabs"></div>
+			<div id="invoices-children" class="children-tabs">
+				<div class="text-center"><i class="glyphicon glyphicon-refresh loop-rotate"></i> <%%TRANSLATION(Loading ...)%%></div>
+			</div>
 		</div>
 	</div>
 
 </div><!-- /div class="panel-body" -->
-	<script src="nicEdit.js"></script>
 	<script>
 		$j(function() {
 			var add_new_mode = (!$j('input[name=SelectedID]').val());
@@ -228,12 +248,11 @@
 				setTimeout(AppGini.closeParentModal, 2000);
 			}
 
-			bkLib.onDomLoaded(function() {
-				if($j('textarea#comments').length) new nicEditor({ fullPanel : true }).panelInstance('comments');
-
-				$j('.nicEdit-panelContain').parent().width('100%');
-				$j('.nicEdit-panelContain').parent().next().width('98%');
-				$j('.nicEdit-main').width('99%');
+			AppGini.once({
+				condition: function() { return bkLib != undefined; },
+				action: function() {
+					if($j('textarea#comments').length) new nicEditor({ fullPanel : true }).panelInstance('comments');
+				}
 			});
 			/* enable DV action buttons to float on scrolling down the form */
 			enable_dvab_floating();
@@ -273,7 +292,7 @@
 			if(add_new_mode) {
 				/* hide links to children tables */
 				$j('.detail_view a[id$=_link]').remove();
-			}else{
+			} else {
 				post(
 					'parent-children.php', {
 						ParentTable: 'invoices',
@@ -322,7 +341,7 @@
 				var pt = $j(this).attr('id').replace(/_view_parent$/, '');
 				if($j(this).prevAll('input:hidden').length) {
 					var parent_id = $j(this).prevAll('input:hidden').eq(0).val();
-				}else{
+				} else {
 					var parent_id = $j(this).prevAll().children('input:hidden').eq(0).val();
 				}
 

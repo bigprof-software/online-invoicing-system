@@ -14,7 +14,7 @@
 				$backup_log,
 				$initial_ts; /* initial timestamp */
 
-		public function __construct($request = array()) {
+		public function __construct($request = []) {
 			global $Translation;
 
 			$this->curr_dir = dirname(__FILE__);
@@ -37,9 +37,9 @@
 
 			/* process request to retrieve $this->request, and then execute the requested action */
 			$this->process_request($request);
-			$out = call_user_func_array(array($this, $this->request['action']), array());
+			$out = call_user_func_array(array($this, $this->request['action']), []);
 			if($out === true || $out === false) {
-				echo $this->backup_log;
+				echo $this->cmd . "\n\n" . $this->backup_log;
 				if(!$out) @header("{$_SERVER['SERVER_PROTOCOL']} 500 Internal Server Error");
 				return;
 			}
@@ -73,7 +73,7 @@
 			$csv = new ReflectionClass($this);
 			$methods = $csv->getMethods(ReflectionMethod::IS_PUBLIC);
 
-			$controllers = array();
+			$controllers = [];
 			foreach($methods as $mthd) {
 				$controllers[] = $mthd->name;
 			}
@@ -358,7 +358,7 @@
 			$admin_cfg = config('adminConfig');
 			$dtf = $admin_cfg['PHPDateTimeFormat'];
 
-			$list = array();
+			$list = [];
 
 			while(false !== ($entry = $d->read())) {
 				if(!preg_match('/^[a-f0-9]{32}\.sql$/i', $entry)) continue;
@@ -385,17 +385,21 @@
 		 *  @details Uses mysqldump (if available) to create a new backup file
 		 */
 		public function create_backup() {
-			$config = array('dbServer' => '', 'dbUsername' => '', 'dbPassword' => '', 'dbDatabase' => '');
+			$config = ['dbServer' => '', 'dbUsername' => '', 'dbPassword' => '', 'dbDatabase' => ''];
 			foreach($config as $k => $v) $config[$k] = escapeshellarg(config($k));
 
-			$dump_file = $this->curr_dir . '/backups/' . md5(microtime()) . '.sql';
-			$out = array(); $ret = 0;
-			maintenance_mode(true);
+			$dump_file = escapeshellarg(normalize_path($this->curr_dir)) . '/backups/' . md5(microtime()) . '.sql';
 			$pass_param = ($config['dbPassword'] ? "-p{$config['dbPassword']}" : '');
-			@exec("(mysqldump -u{$config['dbUsername']} {$pass_param} -h{$config['dbServer']} {$config['dbDatabase']} > {$dump_file}) 2>&1", $out, $ret);
-			$this->backup_log = implode("\n", $out);
+			$this->cmd = "(mysqldump --no-tablespaces -u{$config['dbUsername']} {$pass_param} -h{$config['dbServer']} {$config['dbDatabase']} -r {$dump_file}) 2>&1";
+
+			maintenance_mode(true);
+			$out = []; $ret = 0;
+			@exec($this->cmd, $out, $ret);
+			// redact password to avoid revealing it on error
+			if($pass_param !== '') $this->cmd = str_replace(" {$pass_param} ", ' -p**** ', $this->cmd);
 			maintenance_mode(false);
 
+			$this->backup_log = implode("\n", $out);
 			if($ret) return false;
 
 			return true;

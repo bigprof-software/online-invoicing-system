@@ -5,27 +5,30 @@
 	define('ADMIN_AREA', true);
 
 	if(!defined('datalist_db_encoding')) define('datalist_db_encoding', 'UTF-8');
-	if(function_exists('set_magic_quotes_runtime')) @set_magic_quotes_runtime(0);
 	ob_start();
 	$currDir = dirname(__FILE__);
-	include("{$currDir}/../db.php");
-	include("{$currDir}/../settings-manager.php");
+	include_once("{$currDir}/../settings-manager.php");
+
+	include_once("{$currDir}/../defaultLang.php");
+	include_once("{$currDir}/../language.php");
+	$Translation = array_merge($TranslationEn, $Translation);
+
+	include_once("{$currDir}/../db.php");
 
 	// check if initial setup was performed or not
 	detect_config();
 	migrate_config();
 
 	$adminConfig = config('adminConfig');
-	include("{$currDir}/incFunctions.php");
+	include_once("{$currDir}/incFunctions.php");
 	@include_once("{$currDir}/../hooks/__global.php");
-	include("{$currDir}/../language.php");
-	include("{$currDir}/../defaultLang.php");
-	include("{$currDir}/../language-admin.php");
+
+	checkAppRequirements();
 
 	// detecting classes not included above
 	@spl_autoload_register(function($class) {
 		$admin_dir = dirname(__FILE__);
-		@include("{$admin_dir}/../resources/lib/{$class}.php");
+		@include_once("{$admin_dir}/../resources/lib/{$class}.php");
 	});
 
 	/* trim $_POST, $_GET, $_REQUEST */

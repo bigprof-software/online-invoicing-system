@@ -10,7 +10,7 @@
 
 	if($_SERVER['HTTP_REFERER']) {
 		redirect($_SERVER['HTTP_REFERER'], TRUE);
-	}else{
+	} else {
 		redirect("admin/pageViewMembers.php");
 	}
 

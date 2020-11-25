@@ -120,7 +120,7 @@
 	// redirect to mail queue processor
 	if(!$simulate) {
 		redirect("admin/pageSender.php?queue={$queue}");
-	}else{
+	} else {
 		echo "<a href=\"pageSender.php?queue={$queue}&simulate=1\">{$Translation['next']}</a>";
 	}
 

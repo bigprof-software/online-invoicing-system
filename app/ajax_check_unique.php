@@ -8,9 +8,7 @@
 	 * @returns json result: { "result": "ok" } or { "result": "error" }
 	 */
 	$currDir=dirname(__FILE__);
-	include("$currDir/defaultLang.php");
-	include("$currDir/language.php");
-	include("$currDir/lib.php");
+	include_once("$currDir/lib.php");
 
 	/* maintenance mode */
 	handle_maintenance();
@@ -38,7 +36,7 @@
 
 	/* user has access to table? */
 	$table_perms = getTablePermissions($table->raw);
-	if(!$table_perms[0]) exit();
+	if(!$table_perms['access']) exit();
 
 	/* PK field name */
 	$pk = getPKFieldName($table->raw);

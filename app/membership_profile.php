@@ -1,8 +1,6 @@
 <?php
 	$currDir=dirname(__FILE__);
-	include("$currDir/defaultLang.php");
-	include("$currDir/language.php");
-	include("$currDir/lib.php");
+	include_once("$currDir/lib.php");
 
 	$adminConfig = config('adminConfig');
 
@@ -35,11 +33,11 @@
 
 		/* update profile */
 		$updateDT = date($adminConfig['PHPDateTimeFormat']);
-		sql("UPDATE `membership_users` set email='$email', custom1='$custom1', custom2='$custom2', custom3='$custom3', custom4='$custom4', comments=CONCAT_WS('\\n', comments, 'member updated his profile on $updateDT from IP address {$mi[IP]}') WHERE memberID='{$mi['username']}'", $eo);
+		sql("UPDATE `membership_users` set email='$email', custom1='$custom1', custom2='$custom2', custom3='$custom3', custom4='$custom4', comments=CONCAT_WS('\\n', comments, 'member updated his profile on $updateDT from IP address {$mi['IP']}') WHERE memberID='{$mi['username']}'", $eo);
 
 		// hook: member_activity
 		if(function_exists('member_activity')) {
-			$args=array();
+			$args=[];
 			member_activity($mi, 'profile', $args);
 		}
 
@@ -85,11 +83,11 @@
 
 		/* update password */
 		$updateDT = date($adminConfig['PHPDateTimeFormat']);
-		sql("UPDATE `membership_users` set `passMD5`='" . password_hash($newPassword, PASSWORD_DEFAULT) . "', `comments`=CONCAT_WS('\\n', comments, 'member changed his password on $updateDT from IP address {$mi[IP]}') WHERE memberID='{$mi['username']}'", $eo);
+		sql("UPDATE `membership_users` set `passMD5`='" . password_hash($newPassword, PASSWORD_DEFAULT) . "', `comments`=CONCAT_WS('\\n', comments, 'member changed his password on $updateDT from IP address {$mi['IP']}') WHERE memberID='{$mi['username']}'", $eo);
 
 		// hook: member_activity
 		if(function_exists('member_activity')) {
-			$args=array();
+			$args=[];
 			member_activity($mi, 'password', $args);
 		}
 
@@ -103,7 +101,7 @@
 
 		custom field names are stored in $adminConfig['custom1'] to $adminConfig['custom4']
 	*/
-	$permissions = array();
+	$permissions = [];
 	$userTables = getTableList();
 	if(is_array($userTables))  foreach($userTables as $tn => $tc) {
 		$permissions[$tn] = getTablePermissions($tn);
@@ -194,10 +192,10 @@
 								<?php foreach($permissions as $tn => $perm) { ?>
 									<tr>
 										<td><img src="<?php echo $userTables[$tn][2]; ?>"> <a href="<?php echo $tn; ?>_view.php"><?php echo $userTables[$tn][0]; ?></a></td>
-										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm[2]); ?>" /></td>
-										<td class="text-center"><img src="admin/images/<?php echo ($perm[1] ? 'approve' : 'stop'); ?>_icon.gif" /></td>
-										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm[3]); ?>" /></td>
-										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm[4]); ?>" /></td>
+										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm['view']); ?>" /></td>
+										<td class="text-center"><img src="admin/images/<?php echo ($perm['insert'] ? 'approve' : 'stop'); ?>_icon.gif" /></td>
+										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm['edit']); ?>" /></td>
+										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm['delete']); ?>" /></td>
 									</tr>
 								<?php } ?>
 							</tbody>
@@ -329,9 +327,9 @@
 				/* inline feedback of confirm password */
 				$j('#confirm-password').on('keyup', function() {
 					if($j('#confirm-password').val() != $j('#new-password').val() || !$j('#confirm-password').val().length) {
-						$j('#confirm-status').html('<img align="top" src="Exit.gif"/>');
-					}else{
-						$j('#confirm-status').html('<img align="top" src="update.gif"/>');
+						$j('#confirm-status').html('<i class="glyphicon glyphicon-remove text-danger"></i>');
+					} else {
+						$j('#confirm-status').html('<i class="glyphicon glyphicon-ok text-success"></i>');
 					}
 				});
 			<?php } ?>

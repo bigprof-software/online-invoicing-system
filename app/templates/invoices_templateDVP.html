@@ -14,115 +14,134 @@
 
 <div class="panel-body">
 	<fieldset class="form-horizontal">
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: ID -->
+		<div class="form-group invoices-id" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">ID</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(id)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Code -->
+		<div class="form-group invoices-code" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Code</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(code)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Status -->
+		<div class="form-group invoices-status" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Status</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%COMBOTEXT(status)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Date due -->
+		<div class="form-group invoices-date_due" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Date due</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%COMBOTEXT(date_due)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Client -->
+		<div class="form-group invoices-client" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Client</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><span id="client<%%RND1%%>"><%%COMBOTEXT(client)%%></span></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Client contact -->
+		<div class="form-group invoices-client_contact" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Client contact</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><span id="client_contact<%%RND1%%>"></span></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Client address -->
+		<div class="form-group invoices-client_address" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Client address</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><span id="client_address<%%RND1%%>"></span></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Client phone -->
+		<div class="form-group invoices-client_phone" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Client phone</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><span id="client_phone<%%RND1%%>"></span></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Client email -->
+		<div class="form-group invoices-client_email" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Client email</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><span id="client_email<%%RND1%%>"></span></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Client website -->
+		<div class="form-group invoices-client_website" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Client website</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><span id="client_website<%%RND1%%>"></span></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Client comments -->
+		<div class="form-group invoices-client_comments" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Client comments</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><span id="client_comments<%%RND1%%>"></span></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Subtotal -->
+		<div class="form-group invoices-subtotal" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Subtotal</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(subtotal)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Discount % -->
+		<div class="form-group invoices-discount" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Discount %</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(discount)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Tax % -->
+		<div class="form-group invoices-tax" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Tax %</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(tax)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Total -->
+		<div class="form-group invoices-total" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Total</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(total)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Comments -->
+		<div class="form-group invoices-comments" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Comments</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(comments)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Invoice template -->
+		<div class="form-group invoices-invoice_template" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Invoice template</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%COMBOTEXT(invoice_template)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Created -->
+		<div class="form-group invoices-created" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Created</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(created)%%></div>
 			</div>
 		</div>
-		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+		<!-- Field: Last updated -->
+		<div class="form-group invoices-last_updated" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Last updated</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%VALUE(last_updated)%%></div>

@@ -13,14 +13,11 @@
 	if(!defined('DATABASE')) {
 		if(function_exists('mysqli_connect')) {
 			define('DATABASE', 'mysqli');
-		}else{
+		} else {
 			define('DATABASE', 'mysql');
 		}
 	}
 
-
-
-	define('mysql_charset', 'utf8');
 
 	function db_link($link = NULL) {
 		static $db_link;

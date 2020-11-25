@@ -31,7 +31,7 @@
 					SortBy: command.SortBy,
 					SortDirection: command.SortDirection,
 					Operation: 'get-records-printable'
-				}, panelID, undefined, 'pc-loading');
+				}, panelID, undefined, 'pc-loading', function() { AppGini.calculatedFields.init() });
 				break;
 			case 'page': /* next or previous page as provided by 'Page' */
 				if(command.Page.toLowerCase() == 'next') { command.Page = param.Page + 1; }
@@ -46,7 +46,7 @@
 					SortBy: param.SortBy,
 					SortDirection: param.SortDirection,
 					Operation: 'get-records-printable'
-				}, panelID, undefined, 'pc-loading');
+				}, panelID, undefined, 'pc-loading', function() { AppGini.calculatedFields.init() });
 				break;
 			case 'reload': /* just a way of refreshing children, retaining sorting and pagination & without reloading the whole page */
 				post("parent-children.php", {
@@ -57,7 +57,7 @@
 					SortBy: param.SortBy,
 					SortDirection: param.SortDirection,
 					Operation: 'get-records-printable'
-				}, panelID, undefined, 'pc-loading');
+				}, panelID, undefined, 'pc-loading', function() { AppGini.calculatedFields.init() });
 				break;
 		}
 	};
@@ -73,24 +73,25 @@
 
 
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed table-bordered">
+			<table data-tablename="<?php echo $current_table; ?>" class="table table-striped table-hover table-condensed table-bordered">
 				<thead>
 					<tr>
 						<?php if(is_array($config['display-fields'])) foreach($config['display-fields'] as $fieldIndex => $fieldLabel) { ?>
 							<th 
 								<?php if($config['sortable-fields'][$fieldIndex]) { ?>
 									onclick="<?php echo $current_table; ?>GetChildrenRecordsList({
-										Verb: 'sort', 
-										SortBy: <?php echo $fieldIndex; ?>, 
+										Verb: 'sort',
+										SortBy: <?php echo $fieldIndex; ?>,
 										SortDirection: '<?php echo ($parameters['SortBy'] == $fieldIndex && $parameters['SortDirection'] == 'asc' ? 'desc' : 'asc'); ?>'
-									});" 
-									style="cursor: pointer;" 
+									});"
+									style="cursor: pointer;"
+									tabindex="0"
 								<?php } ?>
 								class="<?php echo "{$current_table}-{$config['display-field-names'][$fieldIndex]}"; ?>">
 								<?php echo $fieldLabel; ?>
 								<?php if($parameters['SortBy'] == $fieldIndex && $parameters['SortDirection'] == 'desc') { ?>
 									<i class="glyphicon glyphicon-sort-by-attributes-alt text-warning"></i>
-								<?php }elseif($parameters['SortBy'] == $fieldIndex && $parameters['SortDirection'] == 'asc') { ?>
+								<?php } elseif($parameters['SortBy'] == $fieldIndex && $parameters['SortDirection'] == 'asc') { ?>
 									<i class="glyphicon glyphicon-sort-by-attributes text-warning"></i>
 								<?php } ?>
 							</th>
@@ -115,7 +116,7 @@
 										<?php echo str_replace(array('<FirstRecord>', '<LastRecord>', '<RecordCount>'), array($firstRecord, $firstRecord + count($records) - 1, $totalMatches), $Translation['records x to y of z']); ?>
 									</span>
 								<?php } ?>
-							<?php }else{ ?>
+							<?php } else { ?>
 								<span class="text-danger" style="margin: 10px;"><?php echo $Translation['No matches found!']; ?></span>
 							<?php } ?>
 						</td>
@@ -123,14 +124,42 @@
 				</tfoot>
 			</table>
 		</div>
-		<?php if($totalMatches) { ?>
+		<?php if($totalMatches > $config['records-per-page']) { ?>
 			<div class="row hidden-print">
 				<div class="col-xs-12">
-					<button type="button" class="btn btn-default" onclick="<?php echo $current_table; ?>GetChildrenRecordsList({ Verb: 'page', Page: 'previous' });"><i class="glyphicon glyphicon-chevron-left"></i></button>
-					<button type="button" class="btn btn-default" onclick="<?php echo $current_table; ?>GetChildrenRecordsList({ Verb: 'page', Page: 'next' });"><i class="glyphicon glyphicon-chevron-right"></i></button>
+					<button
+						type="button" 
+						class="btn btn-default btn-previous" 
+						<?php echo $parameters['Page'] <= 1 ? 'disabled' : ''; ?>
+						><i class="glyphicon glyphicon-chevron-left"></i>
+					</button>
+					<button
+						type="button" 
+						class="btn btn-default btn-next" 
+						<?php echo ($firstRecord + count($records) - 1) == $totalMatches ? 'disabled' : ''; ?>
+						><i class="glyphicon glyphicon-chevron-right"></i>
+					</button>
 				</div>
 			</div>
 		<?php } ?>
 	</div>
 </div>
-<script>$j(function() { /* */ $j('img[src^="thumbnail.php?i=&"').parent().hide(); });</script>
+
+<script>
+	$j(function() {
+		$j('img[src^="thumbnail.php?i=&"').parent().hide();
+
+		$j('.btn-previous, .btn-next').on('click', function() {
+			$j('.btn-previous, .btn-next')
+				.prop('disabled', true);
+			$j(this).find('.glyphicon')
+				.removeClass('glyphicon-chevron-right glyphicon-chevron-left')
+				.addClass('glyphicon-refresh loop-rotate');
+
+			<?php echo $current_table; ?>GetChildrenRecordsList({
+				Verb: 'page',
+				Page: ($j(this).hasClass('btn-next') ? 'next' : 'previous')
+			});
+		});
+	})
+</script>

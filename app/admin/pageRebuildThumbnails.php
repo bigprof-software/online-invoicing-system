@@ -40,7 +40,7 @@
 		foreach($p[$t] as $f=>$path) {
 			$res=sql("select `$f` from `$t`", $eo);
 			echo str_replace ( "<FIELD>" , $f , $Translation['building field thumbnails'] )."<br>";
-			$tv = $dv = array();
+			$tv = $dv = [];
 			while($row=db_fetch_row($res)) {
 				if($row[0]!='') {
 					$tv[]=$row[0];

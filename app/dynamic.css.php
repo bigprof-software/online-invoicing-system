@@ -242,3 +242,35 @@ img[src="blank.gif"] { max-height: 10px !important; }
 	background-color: rgba(255, 255, 0, 0.5);
 }
 
+/* continuous rotation animation */
+.loop-rotate {
+	animation: spin 2s linear infinite;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+kbd {
+	background-color: #eee;
+	border-radius: 3px;
+	border: 1px solid #b4b4b4;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
+	color: #333;
+	display: inline-block;
+	font-size: .85em;
+	font-weight: 700;
+	line-height: 1;
+	padding: 4px 8px;
+	white-space: nowrap;
+}
+
+th:focus {
+	outline: thin dotted;
+}
+
+img.help-shortcuts-launcher {
+	height: 21px;
+	cursor: pointer;
+}
+
+.theme-compact .help-shortcuts-launcher-container {
+	margin: 10px !important;
+}

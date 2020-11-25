@@ -7,7 +7,7 @@
 
 	// get a list of tables
 	$arrTables = getTableList();
-	$arrTablesNoOwners = array();
+	$arrTablesNoOwners = [];
 
 	// get a list of tables with records that have no owners
 	foreach($arrTables as $tn => $tc) {
@@ -55,7 +55,7 @@
 				if ($memberID) {
 					$tempStatus = $Translation["assigned table records to group and member"];
 					$tempStatus = str_replace ( "<MEMBERID>" , $memberID , $tempStatus );
-				}else{
+				} else {
 					$tempStatus = $Translation["assigned table records to group"];   
 				}
 

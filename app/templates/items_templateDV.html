@@ -6,11 +6,11 @@
 <div class="panel-body" id="items_dv_container">
 	<!-- child links -->
 	<div class="row vspacer-md">
-		<div class="col-xs-12">
-			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm" href="item_prices_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="item_prices_link"><i class="glyphicon glyphicon-list-alt"></i> Prices History</a>
+		<div class="col-xs-12 children-links">
+			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm vspacer-sm" href="item_prices_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="item_prices_link"><i class="glyphicon glyphicon-list-alt"></i> Prices History</a>
 			<a class="visible-xs btn btn-default btn-lg btn-block hidden vspacer-sm" href="item_prices_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="xs_item_prices_link"><i class="glyphicon glyphicon-list-alt"></i> Prices History</a>
 			<input type="hidden" id="item_prices_hclink" value="item_prices_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>">
-			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm" href="invoice_items_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="invoice_items_link"><i class="glyphicon glyphicon-list-alt"></i> Invoice items</a>
+			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm vspacer-sm" href="invoice_items_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="invoice_items_link"><i class="glyphicon glyphicon-list-alt"></i> Invoice items</a>
 			<a class="visible-xs btn btn-default btn-lg btn-block hidden vspacer-sm" href="invoice_items_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="xs_invoice_items_link"><i class="glyphicon glyphicon-list-alt"></i> Invoice items</a>
 			<input type="hidden" id="invoice_items_hclink" value="invoice_items_view.php?filterer_item=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>">
 			<div class="clearfix"></div>
@@ -23,7 +23,8 @@
 		<div class="col-md-8 col-lg-10" id="items_dv_form">
 			<fieldset class="form-horizontal">
 
-				<div class="form-group">
+				<!-- Field: ID -->
+				<div class="form-group items-id">
 					<hr class="hidden-md hidden-lg">
 					<label for="id" class="control-label col-lg-3">ID</label>
 					<div class="col-lg-9">
@@ -31,7 +32,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Item Description -->
+				<div class="form-group items-item_description">
 					<hr class="hidden-md hidden-lg">
 					<label for="item_description" class="control-label col-lg-3">Item Description</label>
 					<div class="col-lg-9">
@@ -39,7 +41,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Unit price -->
+				<div class="form-group items-unit_price">
 					<hr class="hidden-md hidden-lg">
 					<label for="unit_price" class="control-label col-lg-3">Unit price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#unit_price-description"></i></label>
 					<div class="col-lg-9">
@@ -76,7 +79,9 @@
 	<hr>
 	<div class="row">
 		<div class="col-lg-10 col-lg-offset-1">
-			<div id="items-children" class="children-tabs"></div>
+			<div id="items-children" class="children-tabs">
+				<div class="text-center"><i class="glyphicon glyphicon-refresh loop-rotate"></i> <%%TRANSLATION(Loading ...)%%></div>
+			</div>
 		</div>
 	</div>
 
@@ -129,7 +134,7 @@
 			if(add_new_mode) {
 				/* hide links to children tables */
 				$j('.detail_view a[id$=_link]').remove();
-			}else{
+			} else {
 				post(
 					'parent-children.php', {
 						ParentTable: 'items',
@@ -178,7 +183,7 @@
 				var pt = $j(this).attr('id').replace(/_view_parent$/, '');
 				if($j(this).prevAll('input:hidden').length) {
 					var parent_id = $j(this).prevAll('input:hidden').eq(0).val();
-				}else{
+				} else {
 					var parent_id = $j(this).prevAll().children('input:hidden').eq(0).val();
 				}
 

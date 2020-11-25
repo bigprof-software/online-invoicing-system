@@ -1,4 +1,7 @@
 <?php
+
+	define('mysql_charset', 'utf8');
+
 	function detect_config($redirect_to_setup = true) {
 		$config_exists = is_readable(dirname(__FILE__) . '/config.php');
 
@@ -7,7 +10,7 @@
 
 			if(!headers_sent()) {
 				@header("Location: $url");
-			}else{
+			} else {
 				echo '<META HTTP-EQUIV="Refresh" CONTENT="0;url=' . $url . '">' .
 					 '<script>window.location = "' . $url . '";</script>';
 			}
@@ -50,7 +53,7 @@
 		return false;
 	}
 
-	function save_config($config_array = array()) {
+	function save_config($config_array = []) {
 		$curr_dir = dirname(__FILE__);
 		if(!count($config_array) || !count($config_array['adminConfig'])) return array('error' => 'Invalid config array');
 
@@ -147,33 +150,6 @@
 		return (isset($config[$var]) && $config[$var] ? $config[$var] : $default_config[$var]);
 	}
 
-	/* 
-		handling password hashing in old PHP versions
-			to hash a password, store the return val of 
-				password_hash($pass, PASSWORD_DEFAULT) 
-
-			to verify:
-				if(!password_match($pass, $hash)) { no_match_code_here }
-
-			to migrate old hashes:
-				password_harden($user, $pass, $hash);
-	*/
-	if(!defined('PASSWORD_DEFAULT')) {
-		define('PASSWORD_DEFAULT', 1);
-	}
-
-	if (!function_exists('password_hash')) {
-		function password_hash($password, $algo, $options = array()) {
-			return md5($password);
-		}
-	}
-
-	if (!function_exists('password_verify')) {
-		function password_verify($password, $hash) {
-			return (md5($password) == $hash);
-		}
-	}
-
 	/**
 	 *  @brief check if given password matches given hash, preserving backward compatibility with MD5
 	 *  
@@ -182,7 +158,7 @@
 	 *  @return Boolean indicating match or no match
 	 */
 	function password_match($password, $hash) {
-		if(strlen($hash) == 32) return (md5($password) == $hash);
+		if(strlen($hash) == 32) return (md5($password) == $hash); // for backward compatibility with old password hashes
 		return password_verify($password, $hash);
 	}
 
@@ -197,9 +173,9 @@
 		/* continue only if PHP 5.5+ and hash is 32 chars (md5) */
 		if(version_compare(PHP_VERSION, '5.5.0') == -1 || strlen($hash) > 32) return;
 
-		$new_hash = password_hash($pass, PASSWORD_DEFAULT);
+		$new_hash = makeSafe(password_hash($pass, PASSWORD_DEFAULT));
 		$suser = makeSafe($user, false);
-		sql("update `membership_users` set `passMD5`='{$new_hash}' where `memberID`='{$suser}'", $eo);
+		sql("UPDATE `membership_users` SET `passMD5`='{$new_hash}' WHERE `memberID`='{$suser}'", $eo);
 	}
 
 	function update_config_app_uri() {

@@ -1,9 +1,7 @@
 <?php
 	$app_name = 'online inovicing system';
 	$currDir = dirname(__FILE__);
-	include("{$currDir}/defaultLang.php");
-	include("{$currDir}/language.php");
-	include("{$currDir}/lib.php");
+	include_once("{$currDir}/lib.php");
 	include_once("{$currDir}/header.php");
 
 	$adminConfig = config('adminConfig');
@@ -73,7 +71,7 @@
 				'subject' => "[{$app_name}] New member signup",
 				'message' => $message
 			));
-		}elseif($adminConfig['notifyAdminNewMembers'] >= 1 && $needsApproval) {
+		} elseif($adminConfig['notifyAdminNewMembers'] >= 1 && $needsApproval) {
 			sendmail(array(
 				'to' => $adminConfig['senderEmail'],
 				'subject' => "[{$app_name}] New member awaiting approval",
@@ -83,7 +81,7 @@
 
 		// hook: member_activity
 		if(function_exists('member_activity')) {
-			$args = array();
+			$args = [];
 			member_activity(getMemberInfo($memberID), ($needsApproval ? 'pending' : 'automatic'), $args);
 		}
 
@@ -189,10 +187,10 @@
 				if(ps == 'strong') {
 					$j('#password').parents('.form-group').removeClass('has-error has-warning').addClass('has-success');
 					$j('#password').attr('title', '<?php echo html_attr($Translation['Password strength: strong']); ?>');
-				}else if(ps == 'good') {
+				} else if(ps == 'good') {
 					$j('#password').parents('.form-group').removeClass('has-success has-error').addClass('has-warning');
 					$j('#password').attr('title', '<?php echo html_attr($Translation['Password strength: good']); ?>');
-				}else{
+				} else {
 					$j('#password').parents('.form-group').removeClass('has-success has-warning').addClass('has-error');
 					$j('#password').attr('title', '<?php echo html_attr($Translation['Password strength: weak']); ?>');
 				}
@@ -202,7 +200,7 @@
 			$j('#confirmPassword').on('keyup blur', function() {
 				if($j('#confirmPassword').val() != $j('#password').val() || !$j('#confirmPassword').val().length) {
 					$j('#confirmPassword').parents('.form-group').removeClass('has-success').addClass('has-error');
-				}else{
+				} else {
 					$j('#confirmPassword').parents('.form-group').removeClass('has-error').addClass('has-success');
 				}
 			});
@@ -211,7 +209,7 @@
 			$j('#email').on('change', function() {
 				if(validateEmail($j('#email').val())) {
 					$j('#email').parents('.form-group').removeClass('has-error').addClass('has-success');
-				}else{
+				} else {
 					$j('#email').parents('.form-group').removeClass('has-success').addClass('has-error');
 				}
 			});
@@ -235,7 +233,7 @@
 						var ua=resp;
 						if(ua.match(/\<!-- AVAILABLE --\>/)) {
 							reset_username_status('success');
-						}else{
+						} else {
 							reset_username_status('error');
 						}
 					}

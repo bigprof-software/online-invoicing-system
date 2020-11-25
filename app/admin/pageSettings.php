@@ -15,11 +15,9 @@
 			include("{$currDir}/incFooter.php");
 		}
 
-		// apply undo_magic_quotes to all input
-		$post = @array_map('undo_magic_quotes', $_POST);
-
 		// validate inputs
-		$errors = array();
+		$errors = [];
+		$post = $_POST;
 
 		// if admin username changed, check if the new username already exists
 		$adminUsername = makeSafe(strtolower($post['adminUsername']));
@@ -42,9 +40,9 @@
 		$adminPassword = $post['adminPassword'];
 		if($adminPassword != '' && $adminPassword == $post['confirmPassword']) {
 			$adminPassword = password_hash($adminPassword, PASSWORD_DEFAULT);
-		}elseif($adminPassword != '' && $adminPassword != $post['confirmPassword']) {
+		} elseif($adminPassword != '' && $adminPassword != $post['confirmPassword']) {
 			$errors[] = $Translation['admin password mismatch'];
-		}else{
+		} else {
 			$adminPassword = $adminConfig['adminPassword'];
 		}
 
@@ -107,22 +105,34 @@
 		$save_result = save_config($new_config);
 		if($save_result === true) {
 			// update admin member
-			sql( "update membership_users set memberID='$adminUsername', passMD5='$adminPassword', email='{$post['senderEmail']}', comments=concat_ws('', comments, '\\n', '".str_replace ( "<DATE>" , @date('Y-m-d') , $Translation['record updated automatically'] ) ."') where lcase(memberID)='" . makeSafe(strtolower($adminConfig['adminUsername'])) . "'" , $eo);
+			$new_comment = str_replace(
+				'<DATE>', 
+				@date('Y-m-d'), 
+				makeSafe($Translation['record updated automatically'])
+			);
+			sql("UPDATE `membership_users` SET
+					`memberID`='$adminUsername',
+					`passMD5`='$adminPassword',
+					`email`='{$post['senderEmail']}',
+					`comments`=CONCAT_WS('\\n', `comments`, '{$new_comment}')
+				WHERE LCASE(`memberID`)='" . makeSafe(strtolower($adminConfig['adminUsername'])) . "'", 
+			$eo);
+
 			$_SESSION['memberID'] = $_SESSION['adminUsername'] = strtolower($post['adminUsername']);
 
 			// update anonymous group name if changed
 			if($adminConfig['anonymousGroup'] != $post['anonymousGroup']) {
-				sql("update membership_groups set name='$anonymousGroup' where name='" . addslashes($adminConfig['anonymousGroup']) . "'", $eo);
+				sql("UPDATE `membership_groups` SET `name`='{$anonymousGroup}' WHERE `name`='" . makeSafe($adminConfig['anonymousGroup']) . "'", $eo);
 			}
 
 			// update anonymous username if changed
 			if($adminConfig['anonymousMember'] != $post['anonymousMember']) {
-				sql("update membership_users set memberID='$anonymousMember' where memberID='" . addslashes($adminConfig['anonymousMember']) . "'", $eo);
+				sql("UPDATE `membership_users` SET `memberID`='{$anonymousMember}' WHERE `memberID`='" . makeSafe($adminConfig['anonymousMember']) . "'", $eo);
 			}
 
 			// display status
 			echo "<div class=\"alert alert-success\"><h2>{$Translation['admin settings saved']}</h2></div>";
-		}else{
+		} else {
 			// display status
 			echo "<div class=\"alert alert-danger\"><h2>" . str_replace('<ERROR>', $save_result['error'], $Translation['admin settings not saved']) . "</h2></div>";
 		}
@@ -352,7 +362,7 @@
 					.removeClass('text-muted bg-muted')
 					.parents('.form-group')
 					.removeClass('text-muted');
-			}else{
+			} else {
 				$j('#smtp_server, #smtp_port, #smtp_user, #smtp_pass, [name=smtp_encryption]')
 					.prop('readonly', true)
 					.addClass('text-muted bg-muted')

@@ -46,7 +46,7 @@
 		// redirect to member editing page
 		redirect("admin/pageEditOwnership.php?recID={$recID}");
 		exit;
-	}elseif(isset($_GET['recID'])) {
+	} elseif(isset($_GET['recID'])) {
 		// we have an edit request for a member
 		$recID = intval($_GET['recID']);
 	}
@@ -69,7 +69,7 @@
 		$dateAdded = @date($adminConfig['PHPDateTimeFormat'], $row['dateAdded']);
 		$dateUpdated = @date($adminConfig['PHPDateTimeFormat'], $row['dateUpdated']);
 		$groupID = $row['groupID'];
-	}else {
+	} else {
 		// no such record exists
 		die("<div class=\"alert alert-danger\">{$Translation['record not found error']}</div>");
 	}
@@ -207,7 +207,7 @@
 										   <td><?php echo $field_name; ?></td>
 										   <?php if($field_link) { ?>
 										       <td><?php echo $field_value; ?></td>
-										   <?php }else{ ?>
+										   <?php } else { ?>
 										       <td><?php echo nl2br(htmlspecialchars($field_value, ENT_NOQUOTES | ENT_COMPAT | ENT_HTML401, datalist_db_encoding)); ?></td>
 										   <?php } ?>
 										</tr>
@@ -217,7 +217,7 @@
 							</tbody>
 						</table>
 						<?php
-					}else{
+					} else {
 						?>
 						<div class="alert alert-danger"><?php echo $Translation['record not found error']; ?></div>
 						<?php

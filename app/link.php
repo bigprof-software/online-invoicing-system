@@ -1,8 +1,6 @@
 <?php
-	$currDir=dirname(__FILE__);
-	include("$currDir/defaultLang.php");
-	include("$currDir/language.php");
-	include("$currDir/lib.php");
+	$currDir = dirname(__FILE__);
+	include_once("$currDir/lib.php");
 
 	// upload paths
 	$p=array(   
@@ -49,7 +47,7 @@
 		if(preg_match('/^Lookup: (.*?)::(.*?)::(.*?)$/', $path, $m)) {
 			$linkID=makeSafe(sqlValue("select `$linkField` from `$table` where `$pk`='$id'"));
 			$link=sqlValue("select `{$m[3]}` from `{$m[1]}` where `{$m[2]}`='$linkID'");
-		}else{
+		} else {
 			$link=sqlValue("select `$linkField` from `$table` where `$pk`='$id'");
 		}
 
@@ -59,7 +57,7 @@
 
 		if(preg_match('/^(http|ftp)/i', $link)) {    // if the link points to an external url, don't prepend path
 			$path='';
-		}elseif(!is_file(dirname(__FILE__)."/$path$link")) {    // if the file doesn't exist in the given path, try to find it without the path
+		} elseif(!is_file(dirname(__FILE__)."/$path$link")) {    // if the file doesn't exist in the given path, try to find it without the path
 			$path='';
 		}
 

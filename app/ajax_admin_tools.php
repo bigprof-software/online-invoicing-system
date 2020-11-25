@@ -1,15 +1,13 @@
 <?php
 	$curr_dir = dirname(__FILE__);
-	include("{$curr_dir}/defaultLang.php");
-	include("{$curr_dir}/language.php");
-	include("{$curr_dir}/lib.php");
+	include_once("{$curr_dir}/lib.php");
 
 	$admin_tools = new AdminTools($_REQUEST);
 
 	class AdminTools{
 		private $request, $lang;
 
-		public function __construct($request = array()) {
+		public function __construct($request = []) {
 			global $Translation;
 
 			if(!getLoggedAdmin()) return;
@@ -17,7 +15,7 @@
 
 			/* process request to retrieve $this->request, and then execute the requested action */
 			$this->process_request($request);          
-			echo call_user_func_array(array($this, $this->request['action']), array());
+			echo call_user_func_array(array($this, $this->request['action']), []);
 		}
 
 		protected function process_request($request) {
@@ -37,7 +35,7 @@
 			$rc = new ReflectionClass($this);
 			$methods = $rc->getMethods(ReflectionMethod::IS_PUBLIC);
 
-			$controllers = array();
+			$controllers = [];
 			foreach($methods as $mthd) {
 				$controllers[] = $mthd->name;
 			}

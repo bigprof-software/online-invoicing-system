@@ -19,7 +19,7 @@
 		<!--[if lt IE 9]>
 			<script src="<?php echo PREPEND_PATH; ?>resources/initializr/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
 		<![endif]-->
-		<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/jquery-1.12.4.min.js"></script>
+		<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/<?php echo latest_jquery(); ?>"></script>
 		<script>var $j = jQuery.noConflict(); var AppGini = AppGini || {};</script>
 		<script src="toolTips.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>resources/initializr/js/vendor/bootstrap.min.js"></script>
@@ -34,7 +34,7 @@
 				if(reg.test(address) == false) {
 					modal_window({ message: '<div class="alert alert-danger">'+"<?php echo $Translation['invalid email'];?>"+'</div>', title: "<?php echo $Translation['error'] ; ?>"  });
 					return false;
-				}else{
+				} else {
 					return true;
 				}
 			}
@@ -48,7 +48,7 @@
 				var p2=document.getElementById('confirmPassword').value;
 				if(p1=='' || p1==p2) {
 					return jsValidateEmail(document.getElementById('senderEmail').value);
-				}else{
+				} else {
 					modal_window({ message: '<div class="alert alert-error">'+"<?php echo $Translation['password mismatch']; ?>"+'</div>', title: "<?php echo $Translation['error'] ; ?>" });
 					return false;
 				}
@@ -203,7 +203,7 @@
 							<li><a href="pageSettings.php"><i class="glyphicon menu-item-icon text-info glyphicon-cog"></i> <?php echo $Translation['admin settings']; ?></a></li>
 							<li class="divider"></li>
 							<li><a href="pageRebuildThumbnails.php"><i class="glyphicon menu-item-icon text-info glyphicon-picture"></i> <?php echo  $Translation['rebuild thumbnails']; ?></a></li>
-							<li><a href="pageRebuildFields.php"><i class="glyphicon menu-item-icon text-info glyphicon-refresh"></i> <?php echo  $Translation['rebuild fields']; ?></a></li>
+							<li><a href="pageRebuildFields.php"><i class="glyphicon menu-item-icon text-info glyphicon-refresh"></i> <?php echo  $Translation['view or rebuild fields']; ?></a></li>
 							<li><a href="pageUploadCSV.php"><i class="glyphicon menu-item-icon text-info glyphicon-upload"></i> <?php echo $Translation['import CSV']; ?></a></li>
 							<li><a href="pageTransferOwnership.php"><i class="glyphicon menu-item-icon text-info glyphicon-random"></i> <?php echo $Translation['batch transfer']; ?></a></li>
 							<li><a href="pageMail.php?sendToAll=1"><i class="glyphicon menu-item-icon text-info glyphicon-envelope"></i> <?php echo $Translation['mail all users']; ?></a></li>
@@ -269,7 +269,7 @@
 			<p><strong><?php echo $Translation["attention"] ; ?></strong></p>
 			<p><?php if($adminConfig['adminUsername'] == 'admin') {
 					echo $Translation['security risk admin'];
-			}else{
+			} else {
 					echo $Translation['security risk'];
 			} ?></p>
 		</div>

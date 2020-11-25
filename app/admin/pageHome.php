@@ -49,7 +49,7 @@
 	if(maintenance_mode()) {
 		$off_classes = 'btn-default locked_inactive';
 		$on_classes = 'btn-danger unlocked_active';
-	}else{
+	} else {
 		$off_classes = 'btn-success locked_active';
 		$on_classes = 'btn-default unlocked_inactive';
 	}
@@ -72,7 +72,7 @@
 					}
 				});
 			}
-		}else{
+		} else {
 			if(confirm('<?php echo html_attr($Translation['disable maintenance mode?']); ?>')) {
 				$j.ajax({
 					url: 'ajax-maintenance-mode.php?status=off', 
@@ -218,7 +218,7 @@
 					show_remove_feed_link = function() {
 						if(!$j('.twitter-timeline-rendered').length) {
 							setTimeout(function() { /* */ show_remove_feed_link(); }, 1000);
-						}else{
+						} else {
 							$j('#remove-feed-link').removeClass('hidden');
 						}
 					};

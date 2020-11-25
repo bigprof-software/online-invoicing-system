@@ -9,66 +9,7 @@
 	*/
 
 	/* application schema as created in AppGini */
-	$schema = array(
-		'invoices' => array(
-			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'code' => array('appgini' => 'VARCHAR(20) null unique '),
-			'status' => array('appgini' => 'VARCHAR(20) not null default \'Unpaid\' '),
-			'date_due' => array('appgini' => 'DATE null '),
-			'client' => array('appgini' => 'INT unsigned null '),
-			'client_contact' => array('appgini' => 'INT unsigned null '),
-			'client_address' => array('appgini' => 'INT unsigned null '),
-			'client_phone' => array('appgini' => 'INT unsigned null '),
-			'client_email' => array('appgini' => 'INT unsigned null '),
-			'client_website' => array('appgini' => 'INT unsigned null '),
-			'client_comments' => array('appgini' => 'INT unsigned null '),
-			'subtotal' => array('appgini' => 'DECIMAL(9,2) null '),
-			'discount' => array('appgini' => 'DECIMAL(4,2) null default \'0\' '),
-			'tax' => array('appgini' => 'DECIMAL(9,2) null default \'0\' '),
-			'total' => array('appgini' => 'DECIMAL(9,2) null '),
-			'comments' => array('appgini' => 'TEXT null '),
-			'invoice_template' => array('appgini' => 'VARCHAR(100) null '),
-			'created' => array('appgini' => 'VARCHAR(200) null '),
-			'last_updated' => array('appgini' => 'VARCHAR(200) null '),
-		),
-		'clients' => array(
-			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'name' => array('appgini' => 'VARCHAR(200) null unique '),
-			'contact' => array('appgini' => 'VARCHAR(255) null '),
-			'title' => array('appgini' => 'VARCHAR(40) null '),
-			'address' => array('appgini' => 'TEXT null '),
-			'city' => array('appgini' => 'VARCHAR(40) null '),
-			'country' => array('appgini' => 'VARCHAR(40) null '),
-			'phone' => array('appgini' => 'VARCHAR(100) null '),
-			'email' => array('appgini' => 'VARCHAR(80) null '),
-			'website' => array('appgini' => 'VARCHAR(200) null '),
-			'comments' => array('appgini' => 'TEXT null '),
-			'unpaid_sales' => array('appgini' => 'DECIMAL(10,2) null '),
-			'paid_sales' => array('appgini' => 'DECIMAL(10,2) null '),
-			'total_sales' => array('appgini' => 'DECIMAL(10,2) null '),
-		),
-		'item_prices' => array(
-			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'item' => array('appgini' => 'INT unsigned null '),
-			'price' => array('appgini' => 'DECIMAL(10,2) null default \'0.00\' '),
-			'date' => array('appgini' => 'DATE null '),
-		),
-		'invoice_items' => array(
-			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'invoice' => array('appgini' => 'INT unsigned null '),
-			'item' => array('appgini' => 'INT unsigned null '),
-			'current_price' => array('appgini' => 'INT unsigned null '),
-			'catalog_price' => array('appgini' => 'DECIMAL(10,2) unsigned null '),
-			'unit_price' => array('appgini' => 'DECIMAL(10,2) unsigned not null '),
-			'qty' => array('appgini' => 'DECIMAL(9,3) null default \'1\' '),
-			'price' => array('appgini' => 'DECIMAL(9,2) null '),
-		),
-		'items' => array(
-			'id' => array('appgini' => 'INT unsigned not null primary key auto_increment '),
-			'item_description' => array('appgini' => 'TEXT null '),
-			'unit_price' => array('appgini' => 'DECIMAL(10,2) null '),
-		),
-	);
+	$schema = get_table_fields();
 
 	$table_captions = getTableList();
 
@@ -77,15 +18,15 @@
 		$def = strtolower($def);
 
 		/* ignore 'null' */
-		$def = preg_replace('/\s+not\s+null\s*/', '%%NOT_NULL%%', $def);
-		$def = preg_replace('/\s+null\s*/', ' ', $def);
+		$def = preg_replace('/\s+not\s+null\s*/i', '%%NOT_NULL%%', $def);
+		$def = preg_replace('/\s+null\s*/i', ' ', $def);
 		$def = str_replace('%%NOT_NULL%%', ' not null ', $def);
 
 		/* ignore length for int data types */
-		$def = preg_replace('/int\s*\([0-9]+\)/', 'int', $def);
+		$def = preg_replace('/int\s*\([0-9]+\)/i', 'int', $def);
 
 		/* make sure there is always a space before mysql words */
-		$def = preg_replace('/(\S)(unsigned|not null|binary|zerofill|auto_increment|default)/', '$1 $2', $def);
+		$def = preg_replace('/(\S)(unsigned|not null|binary|zerofill|auto_increment|default)/i', '$1 $2', $def);
 
 		/* treat 0.000.. same as 0 */
 		$def = preg_replace('/([0-9])*\.0+/', '$1', $def);
@@ -94,7 +35,7 @@
 		$def = str_ireplace('unsigned zerofill', 'zerofill', $def);
 
 		/* ignore zero-padding for date data types */
-		$def = preg_replace("/date\s*default\s*'([0-9]{4})-0?([1-9])-0?([1-9])'/", "date default '$1-$2-$3'", $def);
+		$def = preg_replace("/date\s*default\s*'([0-9]{4})-0?([1-9])-0?([1-9])'/i", "date default '$1-$2-$3'", $def);
 
 		return trim($def);
 	}
@@ -111,18 +52,18 @@
 		$eo['silentErrors'] = true;
 
 		// field exists?
-		$res = sql("show columns from `{$fix_table}` like '{$fix_field}'", $eo);
+		$res = sql("SHOW COLUMNS FROM `{$fix_table}` LIKE '{$fix_field}'", $eo);
 		if($row = db_fetch_assoc($res)) {
 			// modify field
-			$qry = "alter table `{$fix_table}` modify `{$fix_field}` {$def['appgini']}";
+			$qry = "ALTER TABLE `{$fix_table}` MODIFY `{$fix_field}` {$def['appgini']}";
 			sql($qry, $eo);
 
 			// remove unique from db if necessary
 			if($row['Key'] == 'UNI' && !stripos($def['appgini'], ' unique')) {
 				// retrieve unique index name
-				$res_unique = sql("show index from `{$fix_table}` where Column_name='{$fix_field}' and Non_unique=0", $eo);
+				$res_unique = sql("SHOW INDEX FROM `{$fix_table}` WHERE Column_name='{$fix_field}' AND Non_unique=0", $eo);
 				if($row_unique = db_fetch_assoc($res_unique)) {
-					$qry_unique = "drop index `{$row_unique['Key_name']}` on `{$fix_table}`";
+					$qry_unique = "DROP INDEX `{$row_unique['Key_name']}` ON `{$fix_table}`";
 					sql($qry_unique, $eo);
 					$qry .= ";\n{$qry_unique}";
 				}
@@ -138,7 +79,7 @@
 			if(!isset($schema[$fix_table][$current_pk])) {
 				// no need to include 'primary key' in definition since it's already a PK field
 				$redef = str_ireplace(' primary key', '', $def['appgini']);
-				$qry = "alter table `{$fix_table}` change `{$current_pk}` `{$fix_field}` {$redef}";
+				$qry = "ALTER TABLE `{$fix_table}` CHANGE `{$current_pk}` `{$fix_field}` {$redef}";
 				sql($qry, $eo);
 				return 1;
 			}
@@ -150,11 +91,11 @@
 			// and also remove auto_increment from it if defined
 			// then proceed to creating the missing PK field
 			$pk_def = str_ireplace(' auto_increment', '', $schema[$fix_table][$current_pk]);
-			sql("alter table `{$fix_table}` modify `{$current_pk}` {$pk_def}", $eo);
+			sql("ALTER TABLE `{$fix_table}` MODIFY `{$current_pk}` {$pk_def}", $eo);
 		}
 
 		// create field
-		$qry = "alter table `{$fix_table}` add column `{$fix_field}` {$def['appgini']}";
+		$qry = "ALTER TABLE `{$fix_table}` ADD COLUMN `{$fix_field}` {$def['appgini']}";
 		sql($qry, $eo);
 		return 2;
 	}
@@ -169,7 +110,7 @@
 	/* retrieve actual db schema */
 	foreach($table_captions as $tn => $tc) {
 		$eo['silentErrors'] = true;
-		$res = sql("show columns from `{$tn}`", $eo);
+		$res = sql("SHOW COLUMNS FROM `{$tn}`", $eo);
 		if($res) {
 			while($row = db_fetch_assoc($res)) {
 				if(!isset($schema[$tn][$row['Field']]['appgini'])) continue;
@@ -245,12 +186,12 @@
 			<tr class="<?php echo ($diff ? 'warning' : 'field_ok'); ?>">
 				<td><i class="glyphicon glyphicon-<?php echo ($diff ? 'remove text-danger' : 'ok text-success'); ?>"></i></td>
 				<td><?php echo $fn; ?></td>
-				<td class="<?php echo ($diff ? 'bold text-success' : ''); ?>"><?php echo $fd['appgini']; ?></td>
-				<td class="<?php echo ($diff ? 'bold text-danger' : ''); ?>"><?php echo thisOr($fd['db'], $Translation['does not exist']); ?></td>
+				<td class="<?php echo ($diff ? 'bold text-success' : ''); ?>"><samp><?php echo $fd['appgini']; ?></samp></td>
+				<td class="<?php echo ($diff ? 'bold text-danger' : ''); ?>"><?php echo thisOr("<samp>{$fd['db']}</samp>", $Translation['does not exist']); ?></td>
 				<td>
 					<?php if($diff && $no_db) { ?>
 						<a href="pageRebuildFields.php?t=<?php echo $tn; ?>&f=<?php echo $fn; ?>" class="btn btn-success btn-xs btn_create" data-toggle="tooltip" data-placement="top" title="<?php echo $Translation['create field'] ; ?>"><i class="glyphicon glyphicon-plus"></i> <?php echo $Translation['create it'] ; ?></a>
-					<?php }elseif($diff) { ?>
+					<?php } elseif($diff) { ?>
 						<a href="pageRebuildFields.php?t=<?php echo $tn; ?>&f=<?php echo $fn; ?>" class="btn btn-warning btn-xs btn_update" data-toggle="tooltip" title="<?php echo $Translation['fix field'] ; ?>"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['fix it'] ; ?></a>
 					<?php } ?>
 				</td>
@@ -290,7 +231,7 @@
 		var count_creates = $j('.btn_create').length;
 		if(!count_creates && !count_updates) {
 			$j('.summary').addClass('alert-success').html("<?php echo $Translation['no deviations found'] ; ?>");
-		}else{
+		} else {
 			var fieldsCount = "<?php echo $Translation['error fields']; ?>";
 			fieldsCount = fieldsCount.replace(/<CREATENUM>/, count_creates ).replace(/<UPDATENUM>/, count_updates);
 

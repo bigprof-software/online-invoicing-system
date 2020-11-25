@@ -6,8 +6,8 @@
 <div class="panel-body" id="clients_dv_container">
 	<!-- child links -->
 	<div class="row vspacer-md">
-		<div class="col-xs-12">
-			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm" href="invoices_view.php?filterer_client=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="invoices_link"><i class="glyphicon glyphicon-list-alt"></i> Invoices</a>
+		<div class="col-xs-12 children-links">
+			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm vspacer-sm" href="invoices_view.php?filterer_client=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="invoices_link"><i class="glyphicon glyphicon-list-alt"></i> Invoices</a>
 			<a class="visible-xs btn btn-default btn-lg btn-block hidden vspacer-sm" href="invoices_view.php?filterer_client=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>" id="xs_invoices_link"><i class="glyphicon glyphicon-list-alt"></i> Invoices</a>
 			<input type="hidden" id="invoices_hclink" value="invoices_view.php?filterer_client=<%%URLVALUE(id)%%>&<%%EMBEDDED%%>">
 			<div class="clearfix"></div>
@@ -20,7 +20,8 @@
 		<div class="col-md-8 col-lg-10" id="clients_dv_form">
 			<fieldset class="form-horizontal">
 
-				<div class="form-group">
+				<!-- Field: ID -->
+				<div class="form-group clients-id">
 					<hr class="hidden-md hidden-lg">
 					<label for="id" class="control-label col-lg-3">ID</label>
 					<div class="col-lg-9">
@@ -28,7 +29,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Name -->
+				<div class="form-group clients-name">
 					<hr class="hidden-md hidden-lg">
 					<label for="name" class="control-label col-lg-3">Name</label>
 					<div class="col-lg-9">
@@ -36,7 +38,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Contact -->
+				<div class="form-group clients-contact">
 					<hr class="hidden-md hidden-lg">
 					<label for="contact" class="control-label col-lg-3">Contact</label>
 					<div class="col-lg-9">
@@ -44,7 +47,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Title -->
+				<div class="form-group clients-title">
 					<hr class="hidden-md hidden-lg">
 					<label for="title" class="control-label col-lg-3">Title</label>
 					<div class="col-lg-9">
@@ -52,7 +56,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Address -->
+				<div class="form-group clients-address">
 					<hr class="hidden-md hidden-lg">
 					<label for="address" class="control-label col-lg-3">Address</label>
 					<div class="col-lg-9">
@@ -60,7 +65,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: City -->
+				<div class="form-group clients-city">
 					<hr class="hidden-md hidden-lg">
 					<label for="city" class="control-label col-lg-3">City</label>
 					<div class="col-lg-9">
@@ -68,7 +74,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Country -->
+				<div class="form-group clients-country">
 					<hr class="hidden-md hidden-lg">
 					<label for="country" class="control-label col-lg-3">Country</label>
 					<div class="col-lg-9">
@@ -76,7 +83,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Phone -->
+				<div class="form-group clients-phone">
 					<hr class="hidden-md hidden-lg">
 					<label for="phone" class="control-label col-lg-3">Phone</label>
 					<div class="col-lg-9">
@@ -84,20 +92,22 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Email -->
+				<div class="form-group clients-email">
 					<hr class="hidden-md hidden-lg">
 					<label for="email" class="control-label col-lg-3">Email</label>
 					<div class="col-lg-9">
 						
 						<div>
 							<a id="email-link" href="mailto:<%%VALUE(email)%%>" target="_blank"><i class="glyphicon glyphicon-envelope text-info" title="<%%VALUE(email)%%>"></i></a>
-							<label for="email"><button type="button" id="email-edit-link" class="btn btn-default hspacer-lg vspacer-sm" data-toggle="collapse" data-target="#email" title="<%%TRANSLATION(Edit)%%>"><i class="glyphicon glyphicon-pencil"></i></button></label>
+							<label for="email"><button type="button" id="email-edit-link" class="btn btn-default hspacer-lg vspacer-sm collapsed" data-toggle="collapse" data-target="#email" title="<%%TRANSLATION(Edit)%%>"><i class="glyphicon glyphicon-pencil"></i></button></label>
 						</div>
 						<script>jQuery(function() { /* */ var e_email = '<%%VALUE(email)%%>'; if(e_email == '' || e_email == '&nbsp;' || e_email == 'blank.gif') jQuery('#email-link').hide(); });</script><input maxlength="80" type="text" class="form-control collapse" name="email" id="email" value="<%%VALUE(email)%%>">
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Website -->
+				<div class="form-group clients-website">
 					<hr class="hidden-md hidden-lg">
 					<label for="website" class="control-label col-lg-3">Website</label>
 					<div class="col-lg-9">
@@ -105,14 +115,15 @@
 						<div class="row">
 							<div class="col-md-8">
 								<a id="website-link" href="link.php?t=clients&f=website&i=<%%VALUE(id)%%>" target="_blank"><%%VALUE(website)%%></a>
-								<label for="website"><button type="button" id="website-edit-link" class="btn btn-default hspacer-lg vspacer-sm" data-toggle="collapse" data-target="#website" title="<%%TRANSLATION(Edit)%%>"><i class="glyphicon glyphicon-pencil"></i></button></label>
+								<label for="website"><button type="button" id="website-edit-link" class="btn btn-default hspacer-lg vspacer-sm collapsed" data-toggle="collapse" data-target="#website" title="<%%TRANSLATION(Edit)%%>"><i class="glyphicon glyphicon-pencil"></i></button></label>
 							</div> <!-- /div.col-* -->
 							<script>jQuery(function() { /* */ var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;' || e_website == 'blank.gif') jQuery('#website-link').hide(); });</script><input maxlength="200" type="text" class="form-control collapse" name="website" id="website" value="<%%VALUE(website)%%>">					</div>
 
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Comments -->
+				<div class="form-group clients-comments">
 					<hr class="hidden-md hidden-lg">
 					<label for="comments" class="control-label col-lg-3">Comments</label>
 					<div class="col-lg-9">
@@ -120,7 +131,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Unpaid sales -->
+				<div class="form-group clients-unpaid_sales">
 					<hr class="hidden-md hidden-lg">
 					<label for="unpaid_sales" class="control-label col-lg-3">Unpaid sales <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#unpaid_sales-description"></i></label>
 					<div class="col-lg-9">
@@ -130,7 +142,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Paid sales -->
+				<div class="form-group clients-paid_sales">
 					<hr class="hidden-md hidden-lg">
 					<label for="paid_sales" class="control-label col-lg-3">Paid sales <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#paid_sales-description"></i></label>
 					<div class="col-lg-9">
@@ -140,7 +153,8 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<!-- Field: Total sales -->
+				<div class="form-group clients-total_sales">
 					<hr class="hidden-md hidden-lg">
 					<label for="total_sales" class="control-label col-lg-3">Total sales <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#total_sales-description"></i></label>
 					<div class="col-lg-9">
@@ -177,12 +191,13 @@
 	<hr>
 	<div class="row">
 		<div class="col-lg-10 col-lg-offset-1">
-			<div id="clients-children" class="children-tabs"></div>
+			<div id="clients-children" class="children-tabs">
+				<div class="text-center"><i class="glyphicon glyphicon-refresh loop-rotate"></i> <%%TRANSLATION(Loading ...)%%></div>
+			</div>
 		</div>
 	</div>
 
 </div><!-- /div class="panel-body" -->
-	<script src="nicEdit.js"></script>
 	<script>
 		$j(function() {
 			var add_new_mode = (!$j('input[name=SelectedID]').val());
@@ -196,12 +211,11 @@
 				setTimeout(AppGini.closeParentModal, 2000);
 			}
 
-			bkLib.onDomLoaded(function() {
-				if($j('textarea#comments').length) new nicEditor({ fullPanel : true }).panelInstance('comments');
-
-				$j('.nicEdit-panelContain').parent().width('100%');
-				$j('.nicEdit-panelContain').parent().next().width('98%');
-				$j('.nicEdit-main').width('99%');
+			AppGini.once({
+				condition: function() { return bkLib != undefined; },
+				action: function() {
+					if($j('textarea#comments').length) new nicEditor({ fullPanel : true }).panelInstance('comments');
+				}
 			});
 			/* enable DV action buttons to float on scrolling down the form */
 			enable_dvab_floating();
@@ -241,7 +255,7 @@
 			if(add_new_mode) {
 				/* hide links to children tables */
 				$j('.detail_view a[id$=_link]').remove();
-			}else{
+			} else {
 				post(
 					'parent-children.php', {
 						ParentTable: 'clients',
@@ -290,7 +304,7 @@
 				var pt = $j(this).attr('id').replace(/_view_parent$/, '');
 				if($j(this).prevAll('input:hidden').length) {
 					var parent_id = $j(this).prevAll('input:hidden').eq(0).val();
-				}else{
+				} else {
 					var parent_id = $j(this).prevAll().children('input:hidden').eq(0).val();
 				}
 
