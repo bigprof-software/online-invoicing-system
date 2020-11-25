@@ -41,6 +41,10 @@
 	*/
 
 	function invoices_init(&$options, $memberInfo, &$args) {
+		/* Inserted by Search Page Maker for AppGini on 2020-11-25 06:38:04 */
+		$options->FilterPage = 'hooks/invoices_filter.php';
+		/* End of Search Page Maker for AppGini code */
+
 		load_invoice_templates();
 
 		return TRUE;
