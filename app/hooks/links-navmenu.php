@@ -19,3 +19,14 @@
 		'groups' => array('*'),
 		'icon' => 'hooks/summary_reports-logo-md.png'
 	);
+
+	/* calendar links */
+		$navLinks[] = array(
+			'url' => 'hooks/calendar-unpaid-invoices.php',
+			'icon' => 'resources/table_icons/calendar.png',
+			'title' => 'Unpaid invoices',
+			'groups' => array('Admins'),
+			'table_group' => '0',
+		);
+
+	/* end of calendar links */
