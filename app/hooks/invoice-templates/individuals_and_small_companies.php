@@ -12,36 +12,56 @@
 	}
 
 	$results = print_invoice_query($id);
+?>
 
-	?>
+<!-- non-printable buttons for printing and closing invoice -->
+	<div class="btn-group hidden-print pull-right">
+		<button type="button" class="btn btn-default btn-lg" onclick="window.close();">
+			<i class="glyphicon glyphicon-chevron-left"></i> <?php echo html_attr($Translation['Back']); ?>
+		</button>
+		<button type="button" class="btn btn-primary btn-lg" onclick="window.print();">
+			<i class="glyphicon glyphicon-print"></i> <?php echo $Translation['Print']; ?>
+		</button>
+	</div>
+	<div class="clearfix"></div>
+<!-- end of buttons -->
 	
-	<a href="<?php echo PREPEND_PATH; ?>invoices_view.php?SelectedID=<?php echo urlencode($id) ?>" class="btn btn-info hidden-print btn-lg"><i class="glyphicon glyphicon-chevron-left"></i> <?php echo html_attr($Translation['Back']); ?></a>
-	<button class="btn btn-primary hidden-print btn-lg hspacer-lg" type="button" id="sendToPrinter" onclick="window.print();"><i class="glyphicon glyphicon-print"></i> Print</button>
-
-	<!-- Bootstarp image class needed here-->
-
-	<div>
-		<img src="<?php echo PREPEND_PATH; ?>resources/images/nontax.png" style="width: 200px; margin-bottom: 50px;">
+	<div style="margin-bottom: 1cm;">
+		<img src="corporate-invoice-logo.png">
 	</div>
 
-	<div style="font-weight: bold; font-size: 16px;">
-		<p>Invoice # <?php echo $results['totals']['code']; ?> </p>
-		<p>Client: <?php echo $results['totals']['name']; ?></p>
-		<?php $s = config("adminConfig"); ?>
 
-		<p>Due date: <?php echo date($s['PHPDateFormat'], strtotime($results['totals']['date_due'])); ?> </p>
-	</div>
+	<table class="invoice-header">
+		<tr>
+			<th>Invoice #</th>
+			<td><?php echo $results['totals']['code']; ?></td>
+		</tr>
+		<tr>
+			<th>Client:</th>
+			<td><?php echo $results['totals']['name']; ?></td>
+		</tr>
+		<tr>
+			<th>Due date:</th>
+			<td><?php echo date(config("adminConfig")['PHPDateFormat'], strtotime($results['totals']['date_due'])); ?></td>
+		</tr>
+	</table>
+	<style>
+		.invoice-header th{
+			padding: 0.1cm 0.3cm;
+			text-align: right;
+		}
+	</style>
 
-			
+
 	<div class="vspacer-lg"></div>
 
-	<table class="table table-hover table-bordered">
+	<table class="table table-hover table-bordered table-striped">
 		<thead>
-			<tr class="active">
-				<th class="text-center text-primary">Description</th>
-				<th class="text-center text-primary">Unit price </th>
-				<th class="text-center text-primary">Quantity </th>
-				<th class="text-center text-primary">Price </th>
+			<tr>
+				<th class="text-left" style="width: 50%;">Description</th>
+				<th class="text-right">Unit price </th>
+				<th class="text-right">Quantity </th>
+				<th class="text-right">Price </th>
 			</tr>
 		</thead>
 		
