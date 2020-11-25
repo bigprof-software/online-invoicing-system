@@ -1,0 +1,9 @@
+tasks:
+  - init: mysql -e "create database appgini; create user appgini identified by 'appgini'; grant all on appgini.* to appgini;"
+    command: php -S 0.0.0.0:8080
+image: gitpod/workspace-mysql
+ports:
+  - port: 8080
+    onOpen: open-preview
+  - port: 3306
+    onOpen: ignore
