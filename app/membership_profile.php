@@ -192,10 +192,10 @@
 								<?php foreach($permissions as $tn => $perm) { ?>
 									<tr>
 										<td><img src="<?php echo $userTables[$tn][2]; ?>"> <a href="<?php echo $tn; ?>_view.php"><?php echo $userTables[$tn][0]; ?></a></td>
-										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm['view']); ?>" /></td>
-										<td class="text-center"><img src="admin/images/<?php echo ($perm['insert'] ? 'approve' : 'stop'); ?>_icon.gif" /></td>
-										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm['edit']); ?>" /></td>
-										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm['delete']); ?>" /></td>
+										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm['view']); ?>"></td>
+										<td class="text-center"><img src="admin/images/<?php echo ($perm['insert'] ? 'approve' : 'stop'); ?>_icon.gif"></td>
+										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm['edit']); ?>"></td>
+										<td class="text-center"><img src="admin/images/<?php echo permIcon($perm['delete']); ?>"></td>
 									</tr>
 								<?php } ?>
 							</tbody>
@@ -337,7 +337,7 @@
 
 		function notify(msg) {
 			$j('#notify').html(msg).fadeIn();
-			window.setTimeout(function() { /* */ $j('#notify').fadeOut(); }, 15000);
+			window.setTimeout(function() { $j('#notify').fadeOut(); }, 15000);
 		}
 	</script>
 

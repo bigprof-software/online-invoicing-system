@@ -26,7 +26,7 @@
 	if($sourceGroupID && $sourceMemberID && $destinationGroupID && ($destinationMemberID || $moveMembers) && isset($_GET['beginTransfer'])) {
 
 		// csrf check
-		if(!csrf_token(true)) die(str_replace('pageSettings.php', basename($_SERVER['PHP_SELF']), $Translation['invalid security token']));
+		if(!csrf_token(true)) die(str_replace('pageSettings.php', basename(htmlspecialchars($_SERVER['PHP_SELF'])), $Translation['invalid security token']));
 
 		/* validate everything:
 			1. Make sure sourceMemberID belongs to sourceGroupID

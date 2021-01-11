@@ -320,7 +320,7 @@
 			if(!$connected) {
 				/****** Connect to MySQL ******/
 				if(!extension_loaded('mysql') && !extension_loaded('mysqli')) {
-					$o['error'] = 'PHP is not configured to connect to MySQL on this machine. Please see <a href="http://www.php.net/manual/en/ref.mysql.php">this page</a> for help on how to configure MySQL.';
+					$o['error'] = 'PHP is not configured to connect to MySQL on this machine. Please see <a href="https://www.php.net/manual/en/ref.mysql.php">this page</a> for help on how to configure MySQL.';
 					if($o['silentErrors']) return false;
 
 					@include_once($header);
@@ -746,11 +746,7 @@
 	}
 	########################################################################
 	function isEmail($email) {
-		if(preg_match('/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,45})$/i', $email)) {
-			return $email;
-		}
-
-		return false;
+		return filter_var(trim($email), FILTER_VALIDATE_EMAIL);
 	}
 	########################################################################
 	function notifyMemberApproval($memberID) {
@@ -1166,7 +1162,7 @@
 	########################################################################
 	function toBytes($val) {
 		$val = trim($val);
-		$last = strtolower($val{strlen($val)-1});
+		$last = strtolower($val[strlen($val)-1]);
 		switch($last) {
 			 // The 'G' modifier is available since PHP 5.1.0
 			 case 'g':
@@ -1448,7 +1444,7 @@
 
 						/* dismiss after x seconds if requested */
 						if(options.dismiss_seconds > 0) {
-							setTimeout(function() { /* */ this_notif.addClass('invisible'); }, options.dismiss_seconds * 1000);
+							setTimeout(function() { this_notif.addClass('invisible'); }, options.dismiss_seconds * 1000);
 						}
 
 						/* dismiss for x days if requested and user dismisses it */
@@ -1564,8 +1560,7 @@
 		/* if $str has no HTML tags, apply nl2br */
 		if($str == strip_tags($str)) return nl2br($str);
 
-		$hc = new CI_Input();
-		$hc->charset = datalist_db_encoding;
+		$hc = new CI_Input(datalist_db_encoding);
 
 		return $hc->xss_clean($str);
 	}
@@ -2181,7 +2176,6 @@ ORDER BY `date` DESC LIMIT 1',
 
 		return trim("$date $time");
 	}
-
 	#########################################################
 	function lookupQuery($tn, $lookupField) {
 		/* 
@@ -2281,3 +2275,22 @@ ORDER BY `date` DESC LIMIT 1',
 		return false;
 	}
 	#########################################################
+	function parseTemplate($template) {
+		if(trim($template) == '') return $template;
+
+		global $Translation;
+		foreach($Translation as $symbol => $trans)
+			$template = str_replace("<%%TRANSLATION($symbol)%%>", $trans, $template);
+
+		// Correct <MaxSize> and <FileTypes> to prevent invalid HTML
+		$template = str_replace(['<MaxSize>', '<FileTypes>'], ['{MaxSize}', '{FileTypes}'], $template);
+		$template = str_replace('<%%BASE_UPLOAD_PATH%%>', getUploadDir(''), $template);
+
+		return $template;
+	}
+	#########################################################
+	function getUploadDir($dir) {
+		if($dir == '') $dir = config('adminConfig')['baseUploadPath'];
+
+		return rtrim($dir, '\\/') . '/';
+	}

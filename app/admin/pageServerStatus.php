@@ -1,6 +1,6 @@
 <?php
-	$appgini_version = '5.92.1126';
-	$generated_ts = '25/11/2020 6:38:45 PM';
+	$appgini_version = '5.93.1127';
+	$generated_ts = '11/1/2021 5:42:13 PM';
 
 	$currDir = dirname(__FILE__);
 	require("{$currDir}/incCommon.php");
@@ -33,10 +33,10 @@
 	// uploads storage
 	$num_uploads = $uploads_size = 0;
 	// if uploads folder path is absolute, don't prepend app path
-	if($Translation['ImageFolder'][0] == '/')
-		$uploads_path = $Translation['ImageFolder'];
+	if(getUploadDir('')[0] == '/')
+		$uploads_path = getUploadDir('');
 	else
-		$uploads_path = dirname(__FILE__) . '/../' . $Translation['ImageFolder'];
+		$uploads_path = dirname(__FILE__) . '/../' . getUploadDir('');
 
 	$uploads_path = rtrim($uploads_path, '\\/') . '/';
 

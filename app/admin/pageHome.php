@@ -211,13 +211,13 @@
 			<a class="twitter-timeline" data-height="300" href="https://twitter.com/bigprof?ref_src=twsrc%5Etfw"><?php echo $Translation["BigProf tweets"]; ?></a>
 			<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
 
-			<div class="text-right hidden" id="remove-feed-link"><a href="pageSettings.php#anonymousMember"><i class="glyphicon glyphicon-remove"></i> <?php echo $Translation["remove feed"]; ?></a></div>
+			<div class="text-right hidden" id="remove-feed-link"><a href="pageSettings.php?search-settings=twitter"><i class="glyphicon glyphicon-remove"></i> <?php echo $Translation["remove feed"]; ?></a></div>
 
 			<script>
 				$j(function() {
 					show_remove_feed_link = function() {
 						if(!$j('.twitter-timeline-rendered').length) {
-							setTimeout(function() { /* */ show_remove_feed_link(); }, 1000);
+							setTimeout(function() { show_remove_feed_link(); }, 1000);
 						} else {
 							$j('#remove-feed-link').removeClass('hidden');
 						}

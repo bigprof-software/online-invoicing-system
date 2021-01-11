@@ -1,9 +1,10 @@
-<!-- Edit this file to change the layout of the detail view form -->
+<!-- To change the layout of the detail view form, we recommend using JS code in hooks/items-dv.js rather than editing this file -->
 
-<a name="detail-view"></a>
+<div id="detail-view"></div>
 <div class="panel-heading"><h3 class="panel-title"><strong><%%DETAIL_VIEW_TITLE%%></strong></h3></div>
 
-<div class="panel-body" id="items_dv_container">
+<div id="items_dv_container-loading" class="text-center text-info text-bold vspacer-lg"><i class="glyphicon glyphicon-refresh loop-rotate"></i> <%%TRANSLATION(Loading ...)%%></div>
+<div class="panel-body hidden" id="items_dv_container">
 	<!-- child links -->
 	<div class="row vspacer-md">
 		<div class="col-xs-12 children-links">
@@ -26,7 +27,7 @@
 				<!-- Field: ID -->
 				<div class="form-group items-id">
 					<hr class="hidden-md hidden-lg">
-					<label for="id" class="control-label col-lg-3">ID</label>
+					<label class="control-label col-lg-3" for="id">ID</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="id"><%%VALUE(id)%%></div>
 					</div>
@@ -35,19 +36,18 @@
 				<!-- Field: Item Description -->
 				<div class="form-group items-item_description">
 					<hr class="hidden-md hidden-lg">
-					<label for="item_description" class="control-label col-lg-3">Item Description</label>
+					<label class="control-label col-lg-3" for="item_description">Item Description</label>
 					<div class="col-lg-9">
-						<input maxlength="" type="text" class="form-control" name="item_description" id="item_description" value="<%%VALUE(item_description)%%>">
+						<input type="text" class="form-control" name="item_description" id="item_description" value="<%%VALUE(item_description)%%>">
 					</div>
 				</div>
 
 				<!-- Field: Unit price -->
 				<div class="form-group items-unit_price">
 					<hr class="hidden-md hidden-lg">
-					<label for="unit_price" class="control-label col-lg-3">Unit price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#unit_price-description"></i></label>
+					<label class="control-label col-lg-3">Unit price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#unit_price-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="unit_price-description"><div class="alert alert-info">This is the most recent unit price as obtained from "Item prices" table.</div></span>
-
+						<span class="help-block bspacer-xs collapse" id="unit_price-description"><div class="alert alert-info bspacer-xs">This is the most recent unit price as obtained from "Item prices" table.</div></span>
 						<div class="form-control-static" id="unit_price"><%%VALUE(unit_price)%%></div>
 					</div>
 				</div>
@@ -102,7 +102,12 @@
 			/* enable DV action buttons to float on scrolling down the form */
 			enable_dvab_floating();
 
-			setTimeout(AppGini.focusFirstFormElement, 100);
+
+			setTimeout(function() {
+				$j('#items_dv_container-loading').addClass('hidden');
+				$j('#items_dv_container').removeClass('hidden');
+				AppGini.focusFormElement('items', 'item_description');
+			}, 1100);
 
 			$j('form').eq(0).change(function() {
 				if($j(this).data('already_changed')) return;
@@ -110,7 +115,7 @@
 				$j(this).data('already_changed', true);
 			});
 
-			$j('a[href="<%%TRANSLATION(ImageFolder)%%>"]').click(function() { /* */ return false; });
+			$j('a[href="<%%BASE_UPLOAD_PATH%%>"]').click(function() { return false; });
 
 			if(embedded_mode) {
 				/* hide links to children tables in embedded mode */

@@ -81,7 +81,7 @@
 		<div class="form-group clients-website" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Website</label>
 			<div class="col-xs-9">
-				<div class="form-control-static"><a id="website-link" href="link.php?t=clients&f=website&i=<%%VALUE(id)%%>" target="_blank"><%%VALUE(website)%%></a><script>jQuery(function() { /* */ var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;' || e_website == 'blank.gif') jQuery('#website-link').hide(); });</script></div>
+				<div class="form-control-static"><a id="website-link" href="link.php?t=clients&f=website&i=<%%VALUE(id)%%>" target="_blank"><%%VALUE(website)%%></a><script>jQuery(function() { var e_website = '<%%VALUE(website)%%>'; if(e_website == '' || e_website == '&nbsp;' || e_website == 'blank.gif') jQuery('#website-link').hide(); });</script></div>
 			</div>
 		</div>
 		<!-- Field: Comments -->

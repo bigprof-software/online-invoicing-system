@@ -27,6 +27,10 @@
 		$translationUTF8 = array_map(function($str) {
 			return iconv(datalist_db_encoding, 'UTF-8', $str);
 		}, $translationUTF8);
+
+	@include("{$currDir}/config.php");
+	if(!isset($adminConfig['baseUploadPath'])) $adminConfig['baseUploadPath'] = 'images';
+	$imgFolder = rtrim($adminConfig['baseUploadPath'], '\\/') . '/';
 ?>
 var AppGini = AppGini || {};
 
@@ -35,6 +39,8 @@ AppGini.Translate = {
 	_map: <?php echo json_encode($translationUTF8, JSON_PRETTY_PRINT); ?>,
 	_encoding: '<?php echo datalist_db_encoding; ?>'
 }
+
+AppGini.imgFolder = <?php echo json_encode($imgFolder, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>;
 
 /* initials and fixes */
 jQuery(function() {
@@ -80,8 +86,6 @@ jQuery(function() {
 			fix_lookup_width(field);
 		});
 
-		//fix_table_responsive_width();
-
 		var full_img_factor = 0.9; /* xs */
 		if(window_width >= 992) full_img_factor = 0.6; /* md, lg */
 		else if(window_width >= 768) full_img_factor = 0.9; /* sm */
@@ -95,17 +99,10 @@ jQuery(function() {
 			var mlabel = label.replace(/.*(<i.*?><\/i>).*/, '$1');
 			$j(this).html(mlabel);
 		});
-
-		// fix size of nicEditor, if present
-		var ne = $j('.nicEdit-panelContain');
-		if(ne.length) {
-			ne.parent().width('100%').next().width('99.75%');
-			$j('.nicEdit-main').width('99%');
-		}
 	});
 
-	setTimeout(function() { /* */ $j(window).resize(); }, 1000);
-	setTimeout(function() { /* */ $j(window).resize(); }, 3000);
+	setTimeout(function() { $j(window).resize(); }, 1000);
+	setTimeout(function() { $j(window).resize(); }, 3000);
 
 	/* don't allow saving detail view when there's an ajax request to a url that matches the following */
 	var ajax_blockers = new RegExp(/(ajax_combo\.php|_autofill\.php|ajax_check_unique\.php)/);
@@ -119,7 +116,7 @@ jQuery(function() {
 		if(s.url.match(ajax_blockers)) {
 			AppGini.count_ajaxes_blocking_saving = Math.max(AppGini.count_ajaxes_blocking_saving - 1, 0);
 			if(AppGini.count_ajaxes_blocking_saving <= 0)
-				$j('#update, #insert').prop('disabled', false);
+				$j('#update:not(.user-locked), #insert').prop('disabled', false);
 		}
 	});
 
@@ -166,7 +163,7 @@ jQuery(function() {
 	});
 
 	/* fix behavior of select2 in bootstrap modal. See: https://github.com/ivaynberg/select2/issues/1436 */
-	jQuery.fn.modal.Constructor.prototype.enforceFocus = function() { /* */ };
+	jQuery.fn.modal.Constructor.prototype.enforceFocus = function() { };
 
 	/* remove empty navbar menus */
 	$j('nav li.dropdown').each(function() {
@@ -177,8 +174,7 @@ jQuery(function() {
 	update_action_buttons();
 
 	/* remove empty images and links from TV, TVP */
-	var imgFolder = AppGini.Translate._map['ImageFolder'];
-	$j('.table a[href="' + imgFolder + '"], .table img[src="' + imgFolder + '"]').remove();
+	$j('.table a[href="' + AppGini.imgFolder + '"], .table img[src="' + AppGini.imgFolder + '"]').remove();
 
 	/* remove empty email links from TV, TVP */
 	$j('a[href="mailto:"]').remove();
@@ -228,7 +224,7 @@ jQuery(function() {
 	})
 
 	/* select email/web links on uncollapsing in DV */
-	$j('.detail_view').on('click', '.btn[data-toggle="collapse"].collapsed', function() {
+	$j('.detail_view').on('click', '.btn[data-toggle="collapse"]', function() {
 		var target = $j($j(this).data('target'));
 		setTimeout(function() { target.focus(); }, 100);
 	});
@@ -539,7 +535,7 @@ function random_string(string_length) {
  *  @return array of IDs (PK values) of selected records in TV (records that the user checked)
  */
 function get_selected_records_ids() {
-	return jQuery('.record_selector:checked').map(function() { /* */ return jQuery(this).val() }).get();
+	return jQuery('.record_selector:checked').map(function() { return jQuery(this).val() }).get();
 }
 
 function print_multiple_dv_tvdv(t, ids) {
@@ -883,7 +879,7 @@ function enforce_uniqueness(table, field) {
 					$j('#' + field + '-uniqueness-note').show();
 					$j('#' + field).parents('.form-group').addClass('has-error');
 					$j('#' + field).focus();
-					setTimeout(function() { /* */ $j('#update, #insert').prop('disabled', true); }, 500);
+					setTimeout(function() { $j('#update, #insert').prop('disabled', true); }, 500);
 				}
 			}
 		})
@@ -1195,7 +1191,7 @@ AppGini.TVScroll = function() {
 									'<iframe ' +
 										'width="100%" height="100%" ' +
 										'style="display: block; overflow: scroll !important; -webkit-overflow-scrolling: touch !important;" ' +
-										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups" ' +
+										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" ' +
 										'src="' + op.url + '">' +
 									'</iframe>'
 									: op.message
@@ -1272,7 +1268,7 @@ AppGini.TVScroll = function() {
 									'<iframe ' +
 										'width="100%" height="100%" ' +
 										'style="display: block; overflow: scroll !important; -webkit-overflow-scrolling: touch !important;" ' +
-										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups" ' +
+										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" ' +
 										'src="' + op.url + '">' +
 									'</iframe>'
 									: op.message
@@ -1324,7 +1320,7 @@ AppGini.TVScroll = function() {
 
 			var id = op.id, rsz = _resize;
 			rsz(id);
-			$j(window).resize(function() { /* */ rsz(id); });
+			$j(window).resize(function() { rsz(id); });
 		})
 		//.agModal('show')
 		.on('hidden.bs.modal', function() {
@@ -1619,7 +1615,7 @@ AppGini.checkFileUpload = function(fieldName, extensions, maxSize) {
 		fileTypeError.html(
 			fileTypeError
 				.html()
-				.replace(/<filetypes>/i, extensions.replace(/\|/g, ', '))
+				.replace(/[<{]filetypes[}>]/i, extensions.replace(/\|/g, ', '))
 		);
 
 		return false;
@@ -1639,7 +1635,7 @@ AppGini.checkFileUpload = function(fieldName, extensions, maxSize) {
 		fileSizeError.html(
 			fileSizeError
 				.html()
-				.replace(/<maxsize>/i, Math.round(maxSize / 1024))
+				.replace(/[<{]maxsize[}>]/i, Math.round(maxSize / 1024))
 		);
 
 		return false;
@@ -1737,7 +1733,7 @@ AppGini.alterDVTitleLinkToBack = function() {
 
 AppGini.lockUpdatesOnUserRequest = function() {
 	// if this is not DV of existing record where editing and saving a copy are both enabled, skip
-	if(!$j('#update:visible').length || !$j('#insert:visible').length || !$j('input[name=SelectedID]').val().length) return;
+	if(!$j('#update').length || !$j('#insert').length || !$j('input[name=SelectedID]').val().length) return;
 
 	// if lock behavior already implemented, skip
 	if($j('#update').hasClass('locking-enabled')) return;
@@ -1759,32 +1755,51 @@ AppGini.lockUpdatesOnUserRequest = function() {
 		})
 		.prop('title', AppGini.Translate._map['Disable'])
 		.click(function() {
-			var locker = $j(this);
+			var locker = $j(this), disable = !$j('#update').prop('disabled');
 
-			$j('#update').prop('disabled', !$j('#update').prop('disabled'));
+			$j('#update').prop('disabled', disable).toggleClass('user-locked', disable);
 
 			locker.toggleClass('active');
 			locker.prop('title', AppGini.Translate._map[locker.hasClass('active') ? 'Enable' : 'Disable']);
 		})
 }
 
-/* function to focus on first element of a form, with support for select2 */
-AppGini.focusFirstFormElement = function() {
+/* function to focus a specific element of a form, given field name */
+AppGini.focusFormElement = function(tn, fn) {
 	if(AppGini.mobileDevice()) return;
 
-	var fieTop = 1000000; // some very large initial value for element tops
+	var inputElem = $j([
+		'select[id=' + fn + '-dd]',
+		'select[id=' + fn + ']',
+		'input[type=text][id=' + fn + ']',
+		'input[type=file][id=' + fn + ']',
+		'input[type=radio][id=' + fn + '0]',
+		'input[type=checkbox][id=' + fn + ']',
+		'textarea[id=' + fn + ']',
+		'.' + tn + '-' + fn  + ' .nicEdit-main'    
+	].join(',')).not(':disabled').not('.select2-offscreen').filter(':visible').eq(0);
 
-	var firstInputElem = $j('select, input[type=text], textarea, .nicEdit-main').not(':disabled').not('.select2-offscreen').filter(':visible').eq(0);
-	if(firstInputElem.length) fieTop = firstInputElem.offset().top;
-
-	var firstSelect2 = $j('.select2-container').eq(0);
-	if(firstSelect2.length && firstSelect2.offset().top < fieTop) {
-		// we have a select2 on the top of the form, so focus it
-		$j('#' + firstSelect2.attr('id').replace(/^s2id_/, '')).select2('focus');
+	if(inputElem.length) {
+		inputElem.focus();
+		AppGini.scrollToDOMElement(inputElem[0], -100);
 		return;
 	}
 
-	firstInputElem.focus();
+	// maybe the field is a web/email link?
+	var linker = $j('[id=' + fn + '-edit-link]');
+	if(linker.length) {
+		linker.click();
+		AppGini.scrollToDOMElement(linker[0], -100);
+		return;
+	}
+
+	// perhaps field is a select2?
+	var s2 = $j('[id=' + fn + '-container], [id=s2id_' + fn + ']');
+	if(s2.length) {
+		s2.select2('focus');
+		AppGini.scrollToDOMElement(s2[0], -100);
+		return;
+	}
 }
 
 AppGini.scrollTo = function(id, useName) {
@@ -1798,8 +1813,8 @@ AppGini.scrollTo = function(id, useName) {
 	AppGini.scrollToDOMElement(obj);
 }
 
-AppGini.scrollToDOMElement = function(obj) {
-	var curtop = 0;
+AppGini.scrollToDOMElement = function(obj, shift) {
+	var curtop = shift ? shift : 0;
 
 	if(!obj.offsetParent) return;
 

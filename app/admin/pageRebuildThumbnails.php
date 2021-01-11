@@ -5,13 +5,13 @@
 	include("{$currDir}/incHeader.php");
 
 	// image paths
-	$p=array(   
-	);
+	$p = [
+	];
 
 	if(!count($p)) exit;
 
 	// validate input
-	$t=$_GET['table'];
+	$t = $_GET['table'];
 	if(!in_array($t, array_keys($p))) {
 		?>
 		<div class="page-header"><h1><?php echo $Translation['rebuild thumbnails']; ?></h1></div>

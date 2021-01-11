@@ -429,9 +429,10 @@ class DataList{
 			}
 
 			// hidden variables ....
-			$this->HTML .= '<input name="SortField" value="' . html_attr($SortField) . '" type="hidden" />';
-			$this->HTML .= '<input name="SortDirection" type="hidden" value="' . html_attr($SortDirection) . '" />';
-			$this->HTML .= '<input name="FirstRecord" type="hidden" value="1" />';
+			$this->HTML .= '<input name="SortField" value="' . html_attr($SortField) . '" type="hidden">';
+			$this->HTML .= '<input name="SortDirection" type="hidden" value="' . html_attr($SortDirection) . '" >';
+			$this->HTML .= '<input name="FirstRecord" type="hidden" value="1" >';
+			$this->HTML .= '</form></div></div>';
 
 			$this->ContentType = 'filters';
 			return;
@@ -701,7 +702,8 @@ class DataList{
 				$this->HTML .= '</div>';
 			}
 
-			// quick search and TV action buttons  
+			// quick search and TV action buttons
+			$tvRowNeedsClosing = false;
 			if(!$this->HideTableView && !($dvprint_x && $this->AllowSelection && $SelectedID) && !$PrintDV) {
 				/* if user can print DV, add action to 'More' menu */
 				$selected_records_more = [];
@@ -726,7 +728,7 @@ class DataList{
 
 				/* if user is admin, add 'Change owner' action to 'More' menu */
 				/* also, add help link for adding more actions */
-				if($mi['admin']) {
+				if(getLoggedAdmin() !== false) {
 					$selected_records_more[] = array(
 						'function' => 'mass_change_owner',
 						'title' => $this->translation['Change owner'],
@@ -809,6 +811,7 @@ class DataList{
 					$this->HTML .= '</div>';
 
 					$this->HTML .= '<div class="row"><div data-table="' . $this->TableName . '" class="table-' . $this->TableName . ' table_view col-xs-12 ' . $this->TVClasses . '">';
+					$tvRowNeedsClosing = true;
 				}
 
 				if($Print_x != '') {
@@ -831,6 +834,7 @@ class DataList{
 
 				$this->HTML .= '<thead><tr>';
 				if(!$Print_x) $this->HTML .= '<th style="width: 18px;" class="text-center"><input class="hidden-print" type="checkbox" title="' . html_attr($this->translation['Select all records']) . '" id="select_all_records"></th>';
+
 				// Templates
 				$rowTemplate = $selrowTemplate = '';
 				if($this->Template) {
@@ -841,16 +845,8 @@ class DataList{
 				}
 
 				// process translations
-				if($rowTemplate) {
-					foreach($this->translation as $symbol => $trans) {
-						$rowTemplate=str_replace("<%%TRANSLATION($symbol)%%>", $trans, $rowTemplate);
-					}
-				}
-				if($selrowTemplate) {
-					foreach($this->translation as $symbol => $trans) {
-						$selrowTemplate = str_replace("<%%TRANSLATION($symbol)%%>", $trans, $selrowTemplate);
-					}
-				}
+				$rowTemplate = parseTemplate($rowTemplate);
+				$selrowTemplate = parseTemplate($selrowTemplate);
 				// End of templates
 
 				// $this->ccffv: map $FilterField values to field captions as stored in ColCaption
@@ -1134,7 +1130,7 @@ class DataList{
 		// hidden variables ....
 		foreach($this->filterers as $filterer => $caption) {
 			if($_REQUEST['filterer_' . $filterer] != '') {
-				$this->HTML .= "<input name=\"filterer_{$filterer}\" value=\"" . html_attr($_REQUEST['filterer_' . $filterer]) . "\" type=\"hidden\" />";
+				$this->HTML .= "<input name=\"filterer_{$filterer}\" value=\"" . html_attr($_REQUEST['filterer_' . $filterer]) . "\" type=\"hidden\">";
 				break; // currently, only one filterer can be applied at a time
 			}
 		}
@@ -1163,7 +1159,7 @@ class DataList{
 				$FiltersCode .= "<input name=\"FilterValue[{$i}]\" value=\"" . html_attr($FilterValue[$i]) . "\" type=\"hidden\">\n";
 			}
 		}
-		$FiltersCode .= "<input name=\"DisplayRecords\" value=\"$DisplayRecords\" type=\"hidden\" />";
+		$FiltersCode .= "<input name=\"DisplayRecords\" value=\"$DisplayRecords\" type=\"hidden\">";
 		$this->HTML .= $FiltersCode;
 
 		// display details form ...
@@ -1234,7 +1230,7 @@ class DataList{
 			// hidden vars
 			foreach($this->filterers as $filterer => $caption) {
 				if($_REQUEST['filterer_' . $filterer] != '') {
-					$this->HTML .= "<input name=\"filterer_{$filterer}\" value=\"" . html_attr($_REQUEST['filterer_' . $filterer]) . "\" type=\"hidden\" />";
+					$this->HTML .= "<input name=\"filterer_{$filterer}\" value=\"" . html_attr($_REQUEST['filterer_' . $filterer]) . "\" type=\"hidden\">";
 					break; // currently, only one filterer can be applied at a time
 				}
 			}
@@ -1261,7 +1257,8 @@ class DataList{
 			}
 		}
 
-		$this->HTML .= "</div></form>";
+		if($tvRowNeedsClosing) $this->HTML .= "</div>";
+		$this->HTML .= "</form>";
 		$this->HTML .= '</div><div class="col-xs-1 md-hidden lg-hidden"></div></div>';
 
 		// $this->HTML .= '<font face="garamond">'.html_attr($tvQuery).'</font>';  // uncomment this line for debugging the table view query
@@ -1272,9 +1269,9 @@ class DataList{
 		if($PrintDV != '') $this->ContentType = 'print-detailview';
 
 		// call detail view javascript hook file if found
-		$dvJSHooksFile=dirname(__FILE__).'/hooks/'.$this->TableName.'-dv.js';
-		if(is_file($dvJSHooksFile) && ($this->ContentType=='detailview' || $this->ContentType=='tableview+detailview')) {
-			$this->HTML.="\n<script src=\"hooks/{$this->TableName}-dv.js\"></script>\n";
+		$dvJSHooksFile = dirname(__FILE__) . '/hooks/' . $this->TableName . '-dv.js';
+		if(is_file($dvJSHooksFile) && ($this->ContentType == 'detailview' || $this->ContentType == 'tableview+detailview')) {
+			$this->HTML .= "\n<script src=\"hooks/{$this->TableName}-dv.js\"></script>\n";
 		}
 
 		return;
@@ -1480,15 +1477,6 @@ class DataList{
 		return ob_get_clean();
 	}
 
-	function templateTranslate($template) {
-		$tr = &$this->translation;
-		return preg_replace_callback(
-			'/<%%TRANSLATION\((.*?)\)%%>/', 
-			function($m) use($tr) { return !empty($tr[$m[1]]) ? $tr[$m[1]] : $m[1]; }, 
-			$template
-		);
-	}
-
 	function resetSelection() {
 		if($this->SeparateDV)
 			return "document.myform.SelectedID.value = '';";
@@ -1499,7 +1487,7 @@ class DataList{
 	function getTVButtons($print = false) {
 		$buttons = '';
 
-		if($print) return $this->templateTranslate(
+		if($print) return parseTemplate(
 			'<button class="btn btn-primary" type="button" id="sendToPrinter" onClick="window.print();"><i class="glyphicon glyphicon-print"></i> <%%TRANSLATION(Print)%%></button>' .
 			'<button class="btn btn-default cancel-print" type="submit"><i class="glyphicon glyphicon-remove-circle"></i> <%%TRANSLATION(Cancel Printing)%%></button>'
 		);
@@ -1527,7 +1515,7 @@ class DataList{
 		return str_replace(
 			'<%%RESET_SELECTION%%>', 
 			$this->resetSelection(), 
-			$this->templateTranslate($buttons)
+			parseTemplate($buttons)
 		);
 	}
 

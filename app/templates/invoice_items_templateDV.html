@@ -1,9 +1,10 @@
-<!-- Edit this file to change the layout of the detail view form -->
+<!-- To change the layout of the detail view form, we recommend using JS code in hooks/invoice_items-dv.js rather than editing this file -->
 
-<a name="detail-view"></a>
+<div id="detail-view"></div>
 <div class="panel-heading"><h3 class="panel-title"><strong><%%DETAIL_VIEW_TITLE%%></strong></h3></div>
 
-<div class="panel-body" id="invoice_items_dv_container">
+<div id="invoice_items_dv_container-loading" class="text-center text-info text-bold vspacer-lg"><i class="glyphicon glyphicon-refresh loop-rotate"></i> <%%TRANSLATION(Loading ...)%%></div>
+<div class="panel-body hidden" id="invoice_items_dv_container">
 	<!-- child links -->
 	<div class="row vspacer-md">
 		<div class="col-xs-12 children-links">
@@ -20,7 +21,7 @@
 				<!-- Field: ID -->
 				<div class="form-group invoice_items-id">
 					<hr class="hidden-md hidden-lg">
-					<label for="id" class="control-label col-lg-3">ID</label>
+					<label class="control-label col-lg-3">ID</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="id"><%%VALUE(id)%%></div>
 					</div>
@@ -29,16 +30,19 @@
 				<!-- Field: Invoice -->
 				<div class="form-group invoice_items-invoice">
 					<hr class="hidden-md hidden-lg">
-					<label for="invoice" class="control-label col-lg-3" data-parent_link="view_parent_modal">Invoice</label>
+					<label class="control-label col-lg-3" data-parent_link="view_parent_modal">Invoice</label>
 					<div class="col-lg-9">
-						<div class="form-control-static"><span id="invoice-readonly"><%%COMBOTEXT(invoice)%%></span> <%%PLINK(invoice)%%></div>
+						<div class="form-control-static">
+							<span id="invoice-readonly"><%%COMBOTEXT(invoice)%%></span>
+							<%%PLINK(invoice)%%>
+						</div>
 					</div>
 				</div>
 
 				<!-- Field: Item -->
 				<div class="form-group invoice_items-item">
 					<hr class="hidden-md hidden-lg">
-					<label for="item" class="control-label col-lg-3" data-parent_link="view_parent_modal">Item</label>
+					<label class="control-label col-lg-3" for="item" data-parent_link="view_parent_modal">Item</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" style="white-space: nowrap; overflow-x: hidden;"><%%COMBO(item)%%><%%PLINK(item)%%><%%ADDNEW(items)%%><span id="itemLoading"></span></div>
 					</div>
@@ -47,10 +51,9 @@
 				<!-- Field: Current price -->
 				<div class="form-group invoice_items-current_price">
 					<hr class="hidden-md hidden-lg">
-					<label for="current_price" class="control-label col-lg-3">Current price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#current_price-description"></i></label>
+					<label class="control-label col-lg-3">Current price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#current_price-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="current_price-description"><div class="alert alert-info">This is the current catalog price of the selected item.</div></span>
-
+						<span class="help-block bspacer-xs collapse" id="current_price-description"><div class="alert alert-info bspacer-xs">This is the current catalog price of the selected item.</div></span>
 						<div class="form-control-static" id="current_price"></div>
 					</div>
 				</div>
@@ -58,7 +61,7 @@
 				<!-- Field: Catalog price at order date -->
 				<div class="form-group invoice_items-catalog_price">
 					<hr class="hidden-md hidden-lg">
-					<label for="catalog_price" class="control-label col-lg-3">Catalog price at order date</label>
+					<label class="control-label col-lg-3">Catalog price at order date</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="catalog_price"><%%VALUE(catalog_price)%%></div>
 					</div>
@@ -67,10 +70,9 @@
 				<!-- Field: Unit price -->
 				<div class="form-group invoice_items-unit_price">
 					<hr class="hidden-md hidden-lg">
-					<label for="unit_price" class="control-label col-lg-3">Unit price<span class="text-danger"><%%TRANSLATION(*)%%></span> <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#unit_price-description"></i></label>
+					<label class="control-label col-lg-3" for="unit_price">Unit price<span class="text-danger"><%%TRANSLATION(*)%%></span> <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#unit_price-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="unit_price-description"><div class="alert alert-info">You can either use the catalog price or change to a different price.</div></span>
-
+						<span class="help-block bspacer-xs collapse" id="unit_price-description"><div class="alert alert-info bspacer-xs">You can either use the catalog price or change to a different price.</div></span>
 						<input maxlength="13" type="text" class="form-control" name="unit_price" id="unit_price" value="<%%VALUE(unit_price)%%>" required>
 					</div>
 				</div>
@@ -78,7 +80,7 @@
 				<!-- Field: Qty -->
 				<div class="form-group invoice_items-qty">
 					<hr class="hidden-md hidden-lg">
-					<label for="qty" class="control-label col-lg-3">Qty</label>
+					<label class="control-label col-lg-3" for="qty">Qty</label>
 					<div class="col-lg-9">
 						<input maxlength="13" type="text" class="form-control" name="qty" id="qty" value="<%%VALUE(qty)%%>">
 					</div>
@@ -87,10 +89,9 @@
 				<!-- Field: Price -->
 				<div class="form-group invoice_items-price">
 					<hr class="hidden-md hidden-lg">
-					<label for="price" class="control-label col-lg-3">Price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#price-description"></i></label>
+					<label class="control-label col-lg-3">Price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#price-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="price-description"><div class="alert alert-info">Will be automatically calculated from unit price and quantity, excluding taxes.</div></span>
-
+						<span class="help-block bspacer-xs collapse" id="price-description"><div class="alert alert-info bspacer-xs">Will be automatically calculated from unit price and quantity, excluding taxes.</div></span>
 						<div class="form-control-static" id="price"><%%VALUE(price)%%></div>
 					</div>
 				</div>
@@ -135,7 +136,12 @@
 			/* enable DV action buttons to float on scrolling down the form */
 			enable_dvab_floating();
 
-			setTimeout(AppGini.focusFirstFormElement, 100);
+
+			setTimeout(function() {
+				$j('#invoice_items_dv_container-loading').addClass('hidden');
+				$j('#invoice_items_dv_container').removeClass('hidden');
+				AppGini.focusFormElement('invoice_items', 'item');
+			}, 1100);
 
 			$j('form').eq(0).change(function() {
 				if($j(this).data('already_changed')) return;
@@ -143,7 +149,7 @@
 				$j(this).data('already_changed', true);
 			});
 
-			$j('a[href="<%%TRANSLATION(ImageFolder)%%>"]').click(function() { /* */ return false; });
+			$j('a[href="<%%BASE_UPLOAD_PATH%%>"]').click(function() { return false; });
 
 
 			if(!embedded_mode) {
