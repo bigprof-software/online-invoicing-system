@@ -14,7 +14,7 @@ mobile or any other device.
 
 ### [⇩ Download the latest release](https://github.com/bigprof-software/online-invoicing-system/releases/latest)
 
-##### [_Changelog_](https://github.com/bigprof-software/online-invoicing-system/releases) | [![Buy Me A Coffee!](https://cdn.bigprof.com/appgini-open-source-apps/buy-me-a-coffee-sm.png)](https://www.buymeacoffee.com/genedy)
+##### [_Changelog_](https://github.com/bigprof-software/online-invoicing-system/releases) | [![](https://cdn.bigprof.com/appgini-open-source-apps/buy-me-a-coffee.gif) *Buy Me A Coffee!*](https://www.buymeacoffee.com/genedy)
 
 ## Features
 
