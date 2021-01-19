@@ -248,13 +248,13 @@
 
 								<div class="form-group">
 									<label for="new-password"><?php echo $Translation['new password']; ?></label>
-									<input type="password" id="new-password" autocomplete="off" class="form-control">
+									<input type="password" id="new-password" autocomplete="new-password" class="form-control">
 									<p id="password-strength" class="help-block"></p>
 								</div>
 
 								<div class="form-group">
 									<label for="confirm-password"><?php echo $Translation['confirm password']; ?></label>
-									<input type="password" id="confirm-password" autocomplete="off" class="form-control">
+									<input type="password" id="confirm-password" autocomplete="new-password" class="form-control">
 									<p id="confirm-status" class="help-block"></p>
 								</div>
 

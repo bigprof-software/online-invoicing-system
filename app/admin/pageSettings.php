@@ -153,6 +153,10 @@
 		include("{$currDir}/incFooter.php");
 	}
 
+	function setNewPasswordAttribute($html) {
+		return str_replace(' type="password" ', ' type="password" autocomplete="new-password" ', $html);
+	}
+
 	function settings_textbox($name, $label, $value, $hint = '', $type = 'text') {
 		ob_start();
 		?>
@@ -369,8 +373,8 @@
 		<div class="tab-pane" id="users-settings">
 			<div style="height: 3em;"></div>
 			<?php echo settings_textbox('adminUsername', $Translation['admin username'], $adminConfig['adminUsername']); ?>
-			<?php echo settings_textbox('adminPassword', $Translation['admin password'], '', $Translation['change admin password'], 'password'); ?>
-			<?php echo settings_textbox('confirmPassword', $Translation['confirm password'], '', '', 'password'); ?>
+			<?php echo setNewPasswordAttribute(settings_textbox('adminPassword', $Translation['admin password'], '', $Translation['change admin password'], 'password')); ?>
+			<?php echo setNewPasswordAttribute(settings_textbox('confirmPassword', $Translation['confirm password'], '', '', 'password')); ?>
 			<hr>
 			<?php echo settings_textbox('anonymousGroup', $Translation['anonymous group'], $adminConfig['anonymousGroup']); ?>
 			<?php echo settings_textbox('anonymousMember', $Translation['anonymous user name'], $adminConfig['anonymousMember']); ?>

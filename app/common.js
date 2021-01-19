@@ -1,46 +1,4 @@
-<?php
-	if(!defined('datalist_db_encoding')) define('datalist_db_encoding', 'UTF-8');
-	if(function_exists('date_default_timezone_set')) @date_default_timezone_set('Europe/London');
-
-	/* force caching */
-	$last_modified = filemtime(__FILE__);
-	$last_modified_gmt = gmdate('D, d M Y H:i:s', $last_modified) . ' GMT';
-	$headers = (function_exists('getallheaders') ? getallheaders() : $_SERVER);
-	if(isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == $last_modified)) {
-		@header("Last-Modified: {$last_modified_gmt}", true, 304);
-		@header("Cache-Control: public, max-age=240", true);
-		exit;
-	}
-
-	@header("Last-Modified: {$last_modified_gmt}", true, 200);
-	@header("Cache-Control: public, max-age=240", true);
-	@header('Content-Type: text/javascript; charset=' . datalist_db_encoding);
-
-	$currDir = dirname(__FILE__);
-	include("{$currDir}/defaultLang.php");
-	include("{$currDir}/language.php");
-	$Translation = array_merge($TranslationEn, $Translation);
-
-	// make a UTF8 version of $Translation
-	$translationUTF8 = $Translation;
-	if(datalist_db_encoding != 'UTF-8')
-		$translationUTF8 = array_map(function($str) {
-			return iconv(datalist_db_encoding, 'UTF-8', $str);
-		}, $translationUTF8);
-
-	@include("{$currDir}/config.php");
-	if(!isset($adminConfig['baseUploadPath'])) $adminConfig['baseUploadPath'] = 'images';
-	$imgFolder = rtrim($adminConfig['baseUploadPath'], '\\/') . '/';
-?>
 var AppGini = AppGini || {};
-
-/* translation strings */
-AppGini.Translate = {
-	_map: <?php echo json_encode($translationUTF8, JSON_PRETTY_PRINT); ?>,
-	_encoding: '<?php echo datalist_db_encoding; ?>'
-}
-
-AppGini.imgFolder = <?php echo json_encode($imgFolder, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>;
 
 /* initials and fixes */
 jQuery(function() {
@@ -254,6 +212,9 @@ jQuery(function() {
 	// apply keyboard shortcuts
 	AppGini.handleKeyboardShortcuts();
 	AppGini.updateKeyboardShortcutsStatus();
+
+	// handle clearing dates
+	AppGini.handleClearingDates();
 });
 
 /* show/hide TV action buttons based on whether records are selected or not */
@@ -1137,7 +1098,9 @@ AppGini.TVScroll = function() {
 
 			var wh = $j(window).height(),
 				mtm = mod.find(ipm + 'dialog').css('margin-top'),
-				mhfoh = mod.find(ipm + 'header').outerHeight() + mod.find(ipm + 'footer').outerHeight();
+				mhfoh = mod.find(ipm + 'header').outerHeight();
+
+			if(mod.find(ipm + 'footer').length) mhfoh += mod.find(ipm + 'footer').outerHeight();
 
 			mod.find(ipm + 'dialog').css({
 				margin: mtm,
@@ -2112,3 +2075,20 @@ AppGini.inputHasFocus = function() {
 
 	return $j(inp).length > 0 && ($j(inp).val().length || $j(inp).text().length);
 }
+AppGini.handleClearingDates = function() {
+	// run only once
+	if(AppGini._handleClearingDatesApplied != undefined) return;
+	AppGini._handleClearingDatesApplied = true;
+
+	$j('.detail_view').on('click', '.fd-date-clearer', function() {
+		var dateField = $j(this).data('for');
+		if(!dateField) return;
+
+		var dropdowns = '#DF-mm, #DF-dd, #DF'.replace(/DF/g, dateField);
+		var oldDate = [0, 1, 2].reduce(function(prev, i) { return prev +  $j(dropdowns).eq(i).val(); }, '');
+
+		$j(dropdowns).val('');
+		if(oldDate != '') $j(this).parents('form').trigger('change');
+	})
+}
+

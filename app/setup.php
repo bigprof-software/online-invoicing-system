@@ -415,7 +415,7 @@
 					<div class="form-group">
 						<label for="password" class="control-label"><?php echo $Translation['password']; ?></label>
 						<div class="input-group">
-							<input type="password" required class="form-control" id="password" name="password" placeholder="<?php echo htmlspecialchars($Translation['password']); ?>">
+							<input type="password" autocomplete="new-password" required class="form-control" id="password" name="password" placeholder="<?php echo htmlspecialchars($Translation['password']); ?>">
 							<span class="input-group-btn">
 								<button data-toggle="collapse" tabindex="-1" data-target="#password-help" class="btn btn-info" type="button"><i class="glyphicon glyphicon-info-sign"></i></button>
 							</span>
@@ -426,7 +426,7 @@
 				<div class="col-sm-6">
 					<div class="form-group">
 						<label for="confirmPassword" class="control-label"><?php echo $Translation['confirm password']; ?></label>
-						<input type="password" required class="form-control" id="confirmPassword" name="confirmPassword" placeholder="<?php echo htmlspecialchars($Translation['confirm password']); ?>">
+						<input type="password" autocomplete="new-password" required class="form-control" id="confirmPassword" name="confirmPassword" placeholder="<?php echo htmlspecialchars($Translation['confirm password']); ?>">
 					</div>
 				</div>
 			</div>

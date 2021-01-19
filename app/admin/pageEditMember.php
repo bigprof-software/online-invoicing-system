@@ -494,9 +494,6 @@
 				})
 		}
 
-		/* circumvent browser auto-filling of passwords */
-		setTimeout(function() { $j('#password').val(''); }, 100);
-
 		$j('#username-available, #username-not-available').click(function() { $j('#memberID').focus(); });
 
 		$j('#memberID').on('keyup blur', check_user);

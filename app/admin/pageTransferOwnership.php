@@ -327,13 +327,23 @@
 			<div class="panel-body">
 				<div class="step-details">
 					<?php
-						$anon_group_safe = makeSafe($adminConfig['anonymousGroup'], false);
-						$noMove = ($sourceGroupID == sqlValue("select groupID from membership_groups where name='{$anon_group_safe}'"));
-						$destinationHasMembers = sqlValue("select count(1) from membership_users where groupID='{$destinationGroupID}'");
+						$anon_group_safe = makeSafe(config('adminConfig')['anonymousGroup']);
+						$anonGroupId = sqlValue("SELECT groupID FROM membership_groups WHERE name='{$anon_group_safe}'");
 
-						if(!$noMove) {
-							echo $Translation['move records'] ; 
-						}
+						// present option to move member to destination group only if 
+						// source/destination group is not anonymous group and
+						// source member is not super admin and
+						// source member is not 'all members'
+						$noMove = (
+							$sourceGroupID == $anonGroupId ||
+							$destinationGroupID == $anonGroupId ||
+							$sourceMemberID == config('adminConfig')['adminUsername'] ||
+							$sourceMemberID == -1
+						);
+
+						$destinationHasMembers = sqlValue("SELECT COUNT(1) FROM membership_users WHERE groupID='{$destinationGroupID}'");
+
+						if(!$noMove) echo $Translation['move records'];
 					?>
 				</div>
 

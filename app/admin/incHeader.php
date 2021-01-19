@@ -40,7 +40,7 @@
 			}
 
 			function jsShowWait() {
-				return window.confirm("<?php echo $Translation['sending mails']; ?>");
+				return window.confirm('<?php echo addslashes($Translation['sending mails']); ?>');
 			}
 
 			function jsValidateAdminSettings() {
@@ -69,8 +69,6 @@
 					var mm=document.getElementById('moveMembers').checked;
 				}
 
-				//confirm('sg='+sg+'\n'+'sm='+sm+'\n'+'dg='+dg+'\n'+'dm='+dm+'\n'+'mm='+mm+'\n'+'dmm='+dmm+'\n');
-
 				if(dmm && !dm) {
 					modal_window({ message: '<div>'+"<?php echo $Translation['complete step 4']; ?>"+'</div>', title: "<?php echo $Translation['info']; ?>", close: function() { jQuery('#destinationMemberID').focus(); } });
 					return false;
@@ -78,21 +76,21 @@
 
 				if(mm && sm!='-1') {
 
-					confirmMessage = "<?php echo $Translation['sure move member']; ?>";
+					confirmMessage = '<?php echo addslashes($Translation['sure move member']); ?>';
 					confirmMessage = confirmMessage.replace(/<MEMBER>/, sm).replace(/<OLDGROUP>/, sg).replace(/<NEWGROUP>/, dg);
 					return window.confirm(confirmMessage);
 
 				}
 				if((dmm || dm) && sm!='-1') {
 
-					confirmMessage = "<?php echo $Translation['sure move data of member']; ?>";
+					confirmMessage = '<?php echo addslashes($Translation['sure move data of member']); ?>';
 					confirmMessage = confirmMessage.replace(/<OLDMEMBER>/, sm).replace(/<OLDGROUP>/, sg).replace(/<NEWMEMBER>/, dm).replace(/<NEWGROUP>/, dg);                 
 					return window.confirm(confirmMessage);
 				}
 
 				if(mm) {
 
-					confirmMessage = "<?php echo $Translation['sure move all members']; ?>";
+					confirmMessage = '<?php echo addslashes($Translation['sure move all members']); ?>';
 					confirmMessage = confirmMessage.replace(/<OLDGROUP>/, sg).replace(/<NEWGROUP>/, dg);
 					return window.confirm(confirmMessage);
 				}
@@ -100,7 +98,7 @@
 				if(dmm) {
 
 
-					confirmMessage = "<?php echo $Translation['sure move data of all members']; ?>";
+					confirmMessage = '<?php echo addslashes($Translation['sure move data of all members']); ?>';
 					confirmMessage = confirmMessage.replace(/<OLDGROUP>/, sg).replace(/<MEMBER>/, dm).replace(/<NEWGROUP>/, dg);
 					return window.confirm(confirmMessage);
 				}
@@ -223,7 +221,7 @@
 									<?php
 										$plugin_icon = '';
 										if($plugin['glyphicon']) $plugin_icon = "<i class=\"glyphicon glyphicon-{$plugin['glyphicon']}\"></i> ";
-										if($plugin['icon']) $plugin_icon = "<img src=\"{$plugin['admin_path']}/{$plugin['icon']}\"> ";
+										if($plugin['icon']) $plugin_icon = "<img class=\"rspacer-md\" src=\"{$plugin['admin_path']}/{$plugin['icon']}\"> ";
 									?>
 									<li><a target="_blank" href="<?php echo $plugin['admin_path']; ?>"><?php echo $plugin_icon . $plugin['title']; ?></a></li>
 								<?php } ?>

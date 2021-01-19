@@ -124,13 +124,13 @@
 							<div class="col-sm-6">
 								<div class="form-group">
 									<label for="password" class="control-label"><?php echo $Translation['password']; ?></label>
-									<input class="form-control" type="password" required="" placeholder="<?php echo $Translation['password']; ?>" id="password" name="password">
+									<input class="form-control" type="password" autocomplete="new-password" required="" placeholder="<?php echo $Translation['password']; ?>" id="password" name="password">
 								</div>
 							</div>
 							<div class="col-sm-6">
 								<div class="form-group">
 									<label for="confirmPassword" class="control-label"><?php echo $Translation['confirm password']; ?></label>
-									<input class="form-control" type="password" required="" placeholder="<?php echo $Translation['confirm password']; ?>" id="confirmPassword" name="confirmPassword">
+									<input class="form-control" type="password" autocomplete="new-password" required="" placeholder="<?php echo $Translation['confirm password']; ?>" id="confirmPassword" name="confirmPassword">
 								</div>
 							</div>
 						</div>
