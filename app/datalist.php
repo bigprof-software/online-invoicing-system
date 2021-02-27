@@ -461,6 +461,8 @@ class DataList{
 
 		// TV code, only if user has view permission
 		if($this->Permissions['view']) {
+			$QueryHasCustomWhere = (strlen($this->QueryWhere) > 0);
+
 			// apply lookup filterers to the query
 			foreach($this->filterers as $filterer => $caption) {
 				if($_REQUEST['filterer_' . $filterer] != '') {
@@ -568,7 +570,7 @@ class DataList{
 				}
 			}
 
-			if($WhereNeedsClosing)
+			if($WhereNeedsClosing && !$QueryHasCustomWhere)
 				$this->QueryWhere .= ")";
 
 			// set query sort
@@ -1591,10 +1593,12 @@ class DataList{
 		// output CSV data
 		while($row = db_fetch_row($result)) {
 			$prep = array_map(function($field) {
-				return str_replace(
-					["\r\n", "\r", "\n", '"'], 
-					[' ', ' ', ' ', '""'], 
-					strip_tags($field)
+				return strip_tags(
+					preg_replace(
+						['/<br\s*\/?>/i', '/^([=+\-@]+)/', '/[\r\n]+/', '/"/'], 
+						[' ',             '\'$1',          ' ',         '""'],
+						trim($field)
+					)
 				);
 			}, $row);
 

@@ -326,6 +326,7 @@ img.help-shortcuts-launcher {
 	font-size: 2em;
 }
 
-/* fix nicedit components' widths */
+/* fix nicedit components' dimensions */
 .has-nicedit > div { width: 100% !important; }
 .has-nicedit .nicEdit-main { width: 99% !important; }
+.nicEdit-main { height: 6em; }
