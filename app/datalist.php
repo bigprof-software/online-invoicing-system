@@ -539,7 +539,7 @@ class DataList{
 								$tn = substr($tn, 0, -1);
 								$tries++;
 							}
-							if($row = @db_fetch_array($res)) {
+							if($res !== false && $row = @db_fetch_array($res)) {
 								$isDateTime = in_array($row['Type'], array('date', 'time', 'datetime'));
 								$isDate = in_array($row['Type'], ['date', 'datetime']);
 							}
@@ -1560,6 +1560,7 @@ class DataList{
 		//$eo = ['silentErrors' => true];
 		$result = sql($tvQuery, $eo);
 		$tvRecords = [];
+		if(!$result) return $tvRecords;
 		while($row = db_fetch_array($result)) $tvRecords[] = $row;
 
 		return $tvRecords;
