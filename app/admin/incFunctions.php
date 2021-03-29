@@ -2294,3 +2294,29 @@ ORDER BY `date` DESC LIMIT 1',
 
 		return rtrim($dir, '\\/') . '/';
 	}
+	#########################################################
+
+	// Proposing the a wrapper function on /usr/bin/openssl in case the random_bytes function does not exists
+	if(!function_exists('random_bytes')) {
+		if(!function_exists('openssl_random_pseudo_bytes')) {
+			if(file_exists('/usr/bin/openssl')) {
+			    function random_bytes($length) {
+			        $length_n = (int) $length; // shell injection is no fun
+			        $handle = popen("/usr/bin/openssl rand $length_n", "r");
+			        $data = stream_get_contents($handle);
+			        pclose($handle);
+			        return $data;
+			    }
+			} else {
+				throw new \Exception("random_bytes does not exist and OpenSSL is not installed.");
+			}
+		} else {
+			function random_bytes($length) {
+				return openssl_random_pseudo_bytes($length);
+			}
+		}
+	}
+
+	if(!function_exists('random_bytes')) {
+		throw new \Exception("random_bytes function not available", 1);
+	}

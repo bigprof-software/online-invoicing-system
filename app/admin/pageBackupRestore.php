@@ -388,7 +388,7 @@
 			$config = ['dbServer' => '', 'dbUsername' => '', 'dbPassword' => '', 'dbDatabase' => ''];
 			foreach($config as $k => $v) $config[$k] = escapeshellarg(config($k));
 
-			$dump_file = escapeshellarg(normalize_path($this->curr_dir)) . '/backups/' . md5(microtime()) . '.sql';
+			$dump_file = escapeshellarg(normalize_path($this->curr_dir)) . '/backups/' . md5(random_bytes(16)) . '.sql';
 			$pass_param = ($config['dbPassword'] ? "-p{$config['dbPassword']}" : '');
 			$this->cmd = "(mysqldump --no-tablespaces -u{$config['dbUsername']} {$pass_param} -h{$config['dbServer']} {$config['dbDatabase']} -r {$dump_file}) 2>&1";
 
