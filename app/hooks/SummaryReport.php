@@ -90,12 +90,12 @@ class SummaryReport {
 				$this->show_p2 = true;
 			}
 
-			$this->p0_start = $this->_request['p0-start'];
-			$this->p0_end = $this->_request['p0-end'];
-			$this->p1_start = $this->_request['p1-start'];
-			$this->p1_end = $this->_request['p1-end'];
-			$this->p2_start = $this->_request['p2-start'];
-			$this->p2_end = $this->_request['p2-end'];
+			$this->p0_start = htmlspecialchars($this->_request['p0-start']);
+			$this->p0_end = htmlspecialchars($this->_request['p0-end']);
+			$this->p1_start = htmlspecialchars($this->_request['p1-start']);
+			$this->p1_end = htmlspecialchars($this->_request['p1-end']);
+			$this->p2_start = htmlspecialchars($this->_request['p2-start']);
+			$this->p2_end = htmlspecialchars($this->_request['p2-end']);
 		}
 		
 		$this->order_by = $this->_request['order-by'];	
@@ -687,7 +687,7 @@ class SummaryReport {
 						<th class="text-center label-group-by"><?php echo isset($this->date_field) ? ' ' : $this->label_title; ?></th>
 						<th class="text-center label-summarize"><?php echo isset($this->date_field) ? str_replace(
 							array('<FROM>', '<TO>'),
-							array($this->p0_start, $this->p0_end),
+							array(htmlspecialchars($this->p0_start), $this->p0_end),
 							$this->report_translation['period from to']
 						) : $this->value_title;?></th>	
 						<?php if(isset($this->date_field)){ ?>
