@@ -687,7 +687,7 @@ class SummaryReport {
 						<th class="text-center label-group-by"><?php echo isset($this->date_field) ? ' ' : $this->label_title; ?></th>
 						<th class="text-center label-summarize"><?php echo isset($this->date_field) ? str_replace(
 							array('<FROM>', '<TO>'),
-							array(htmlspecialchars($this->p0_start), $this->p0_end),
+							array($this->p0_start, $this->p0_end),
 							$this->report_translation['period from to']
 						) : $this->value_title;?></th>	
 						<?php if(isset($this->date_field)){ ?>
