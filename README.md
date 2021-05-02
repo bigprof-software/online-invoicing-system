@@ -12,9 +12,7 @@ details or any extra functionality to fit your own requirements.
 OIS is a responsive, multi-user web-based application that you can access from your PC, tablet, 
 mobile or any other device. 
 
-### [⇩ Download the latest release](https://github.com/bigprof-software/online-invoicing-system/releases/latest)
-
-##### [_Changelog_](https://github.com/bigprof-software/online-invoicing-system/releases) | [![](https://cdn.bigprof.com/appgini-open-source-apps/buy-me-a-coffee.gif) *Buy Me A Coffee!*](https://www.buymeacoffee.com/genedy)
+### [⇩ Download the latest release](https://github.com/bigprof-software/online-invoicing-system/releases/latest) ([_Changelog_](https://github.com/bigprof-software/online-invoicing-system/releases))
 
 ## Features
 
