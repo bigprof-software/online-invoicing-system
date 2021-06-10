@@ -66,7 +66,7 @@
 		</thead>
 		
 		<tbody>
-			<?php for($i = 0; $i < count($results); $i++) { ?>
+			<?php for($i = 0; $i < (count($results) - 1); $i++) { ?>
 				<tr>
 					<td class="text-left"><?php echo $results[$i]['item_description']; ?></td>
 					<td class="text-right"><?php echo number_format($results[$i]['unit_price'], 2); ?></td>
