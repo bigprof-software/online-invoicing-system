@@ -118,8 +118,7 @@
 						`invoices` AS I ON C.`id` = I.`client` INNER JOIN 
 						`invoice_items` AS IT ON IT.`invoice` = I.`id` INNER JOIN 
 						`items` AS T ON T.`id` = IT.`item` 
-					WHERE I.`id` = '{$id}'
-					GROUP BY T.`id`", $eo
+					WHERE I.`id` = '{$id}'", $eo
 				);
 
 		$results = $totals = [];
