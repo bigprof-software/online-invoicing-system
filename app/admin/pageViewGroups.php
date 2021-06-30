@@ -74,7 +74,7 @@
 				$groupMembersCount = sqlValue("select count(1) from membership_users where groupID='$row[0]'");
 				?>
 				<tr>
-					<td><a href="pageEditGroup.php?groupID=<?php echo $row[0]; ?>"><?php echo $row[1]; ?></a></td>
+					<td><a href="pageEditGroup.php?groupID=<?php echo $row[0]; ?>"><?php echo htmlspecialchars($row[1]); ?></a></td>
 					<td><?php echo htmlspecialchars(thisOr($row[2])); ?></td>
 					<td class="text-right"><?php echo $groupMembersCount; ?></td>
 					<td class="text-center">
