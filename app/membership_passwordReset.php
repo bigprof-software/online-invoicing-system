@@ -82,7 +82,7 @@
 							</div>
 						</div>
 
-						<input type="hidden" name="key" value="<?php echo $_GET['key']; ?>">
+						<input type="hidden" name="key" value="<?php echo html_attr($_GET['key']); ?>">
 					</form>
 				</div>
 			</div>
