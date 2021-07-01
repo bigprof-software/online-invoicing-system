@@ -160,8 +160,8 @@
 			<?php } else { ?>
 				<td class="text-left"><a href="pageEditMember.php?memberID=<?php echo $row[0]; ?>"><?php echo $row[0]; ?></a></td>
 			<?php } ?>
-			<td class="text-left"><?php echo $row[1]; ?></td>
-			<td class="text-left"><?php echo $row[2]; ?></td>
+			<td class="text-left"><?php echo htmlspecialchars($row[1]); ?></td>
+			<td class="text-left"><?php echo htmlspecialchars($row[2]); ?></td>
 			<td class="text-left"><?php echo htmlspecialchars($row[3]); ?></td>
 			<td class="text-left"><?php echo htmlspecialchars($row[4]); ?></td>
 			<td class="text-left"><?php echo htmlspecialchars($row[5]); ?></td>
