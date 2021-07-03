@@ -174,6 +174,8 @@
 	*/
 
 	function invoices_before_insert(&$data, $memberInfo, &$args) {
+		// can current user view the client to which this invoice is assigned?
+		if(!check_record_permission('clients', $data['client'])) return false;
 
 		return TRUE;
 	}
@@ -227,6 +229,8 @@
 	*/
 
 	function invoices_before_update(&$data, $memberInfo, &$args) {
+		// can current user view the client to which this invoice is assigned?
+		if(!check_record_permission('clients', $data['client'])) return false;
 
 		return TRUE;
 	}
