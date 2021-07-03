@@ -573,7 +573,7 @@ function invoices_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 		$templateCode = str_replace('<%%VALUE(total)%%>', safe_html($urow['total']), $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(total)%%>', urlencode($urow['total']), $templateCode);
 		if($AllowUpdate || $AllowInsert) {
-			$templateCode = str_replace('<%%HTMLAREA(comments)%%>', '<textarea name="comments" id="comments" rows="5">' . html_attr($row['comments']) . '</textarea>', $templateCode);
+			$templateCode = str_replace('<%%HTMLAREA(comments)%%>', '<textarea name="comments" id="comments" rows="5">' . safe_html(htmlspecialchars_decode($row['comments'])) . '</textarea>', $templateCode);
 		} else {
 			$templateCode = str_replace('<%%HTMLAREA(comments)%%>', '<div id="comments" class="form-control-static">' . $row['comments'] . '</div>', $templateCode);
 		}
