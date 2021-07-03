@@ -428,7 +428,7 @@ function clients_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $Al
 		if(!$dvprint) $templateCode = str_replace('<%%VALUE(website)%%>', html_attr($row['website']), $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(website)%%>', urlencode($urow['website']), $templateCode);
 		if($AllowUpdate || $AllowInsert) {
-			$templateCode = str_replace('<%%HTMLAREA(comments)%%>', '<textarea name="comments" id="comments" rows="5">' . html_attr($row['comments']) . '</textarea>', $templateCode);
+			$templateCode = str_replace('<%%HTMLAREA(comments)%%>', '<textarea name="comments" id="comments" rows="5">' . safe_html(htmlspecialchars_decode($row['comments'])) . '</textarea>', $templateCode);
 		} else {
 			$templateCode = str_replace('<%%HTMLAREA(comments)%%>', '<div id="comments" class="form-control-static">' . $row['comments'] . '</div>', $templateCode);
 		}
