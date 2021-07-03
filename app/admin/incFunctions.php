@@ -1457,7 +1457,7 @@
 	function html_attr_tags_ok($str) {
 		// use this instead of html_attr() if you don't want html tags to be escaped
 		$new_str = html_attr($str);
-		return str_replace(array('&lt;', '&gt;'), array('<', '>'), $new_str);
+		return str_replace(['&lt;', '&gt;'], ['<', '>'], $new_str);
 	}
 	#########################################################
 	class Notification{
