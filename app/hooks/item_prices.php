@@ -158,6 +158,8 @@
 	*/
 
 	function item_prices_before_insert(&$data, $memberInfo, &$args) {
+		// can current user view the item to which this item_price is assigned?
+		if(!check_record_permission('items', $data['item'])) return false;
 
 		return TRUE;
 	}
@@ -211,6 +213,8 @@
 	*/
 
 	function item_prices_before_update(&$data, $memberInfo, &$args) {
+		// can current user view the item to which this item_price is assigned?
+		if(!check_record_permission('items', $data['item'])) return false;
 
 		return TRUE;
 	}
