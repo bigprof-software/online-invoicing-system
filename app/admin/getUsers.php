@@ -56,6 +56,7 @@
 	}
 	$res = sql("select u.memberID, g.name from membership_users u left join membership_groups g on u.groupID=g.groupID left join  membership_grouppermissions p on g.groupID=p.groupID and p.tableName='{$table_name}' where {$where} order by g.name, u.memberID limit {$skip}, {$results_per_page}", $eo);
 	while($row = db_fetch_row($res)) {
+		$row = array_map('strip_tags', $row);
 		$prepared_data[] = array('id' => to_utf8($row[0]), 'text' => to_utf8("<b>{$row[1]}</b>/{$row[0]}"));
 	}
 
