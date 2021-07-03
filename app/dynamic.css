@@ -137,7 +137,7 @@ img[src="blank.gif"] { max-height: 10px !important; }
 .tv-tools .btn { width: 5em; }
 
 /* compact theme styles */
-.container.theme-compact, .container-fluid.theme-compact { font-size: 0.857em; }
+.container.theme-compact, .container-fluid.theme-compact { line-height: 1.6; font-size: 0.857em; }
 
 .theme-compact .btn {
 	font-size: 12px;

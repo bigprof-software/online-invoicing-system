@@ -1,12 +1,12 @@
 <?php
-	$currDir = dirname(__FILE__);
-	require("{$currDir}/incCommon.php");
+	require(__DIR__ . '/incCommon.php');
 
 	// validate input
 	$recID = intval($_GET['recID']);
 
 	if(!csrf_token(true)) die($Translation['csrf token expired or invalid']);
 
+	$eo = ['silentErrors' => true];
 	$res = sql("SELECT `tableName`, `pkValue` FROM `membership_userrecords` WHERE `recID`='{$recID}'", $eo);
 	if($row = db_fetch_row($res)) {
 		sql("DELETE FROM `membership_userrecords` WHERE `recID`='{$recID}'", $eo);
