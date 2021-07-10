@@ -107,9 +107,9 @@
 
 					2. Return a string containing the new/modified title to apply to the event, HTML is allowed
 			*/
-			'title' => function_exists('calendar_event_title') ? 
-					call_user_func_array('calendar_event_title', array($type, $currentTitle, $row)) :
-					$currentTitle,
+			'title' => safe_html(function_exists('calendar_event_title') ? 
+								call_user_func_array('calendar_event_title', array($type, $currentTitle, $row)) :
+								$currentTitle),
 
 			/*
 				if a function named 'calendar_event_classes' is defined
