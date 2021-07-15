@@ -90,7 +90,7 @@ For Xampp on Windows, this is usually `C:\xampp\htdocs`
 (change `app-folder` to the name of the folder inside your document root where you extracted the zip in step 2).
 
 4. You should now see the setup wizard in your browser. Just follow the steps!   
-![The setup wizard](https://cdn.bigprof.com/appgini-open-source-apps/setup-wizard-page-1.png)
+<img alt="The setup wizard" title="The setup wizard" src="https://cdn.bigprof.com/appgini-open-source-apps/setup-wizard-page-1.png" style="width: 100%">
 
 ---
 
