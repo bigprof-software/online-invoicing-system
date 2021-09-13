@@ -2,6 +2,8 @@
 	$currDir = dirname(__FILE__);
 	require("{$currDir}/incCommon.php");
 
+	if(!csrf_token(true)) die($Translation['csrf token expired or invalid']);
+
 	// validate input
 	$memberID = makeSafe(strtolower($_GET['memberID']));
 	$unban = ($_GET['unban'] == 1 ? 1 : 0);
