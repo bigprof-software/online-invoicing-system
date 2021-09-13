@@ -145,35 +145,30 @@
 	}
 
 	/* Receive, UTF-convert, and validate parameters */
-	$ParentTable = $_REQUEST['ParentTable']; // needed only with operation=show-children, will be validated in the processing code
-	$ChildTable = $_REQUEST['ChildTable'];
+	$ParentTable = Request::val('ParentTable'); // needed only with operation=show-children, will be validated in the processing code
+	$ChildTable = Request::val('ChildTable');
 		if(!in_array($ChildTable, array_keys($userPCConfig))) {
 			/* defaults to first child table in config array if not provided */
 			$ChildTable = current(array_keys($userPCConfig));
 		}
 		if(!$ChildTable) { die('<!-- No tables accessible to current user -->'); }
-	$SelectedID = strip_tags($_REQUEST['SelectedID']);
-	$ChildLookupField = $_REQUEST['ChildLookupField'];
+	$SelectedID = strip_tags(Request::val('SelectedID'));
+	$ChildLookupField = Request::val('ChildLookupField');
 		if(!in_array($ChildLookupField, array_keys($userPCConfig[$ChildTable]))) {
 			/* defaults to first lookup in current child config array if not provided */
 			$ChildLookupField = current(array_keys($userPCConfig[$ChildTable]));
 		}
-	$Page = intval($_REQUEST['Page']);
-		if($Page < 1) {
-			$Page = 1;
-		}
-	$SortBy = ($_REQUEST['SortBy'] != '' ? abs(intval($_REQUEST['SortBy'])) : false);
-		if(!in_array($SortBy, array_keys($userPCConfig[$ChildTable][$ChildLookupField]['sortable-fields']), true)) {
+	$Page = intval(Request::val('Page'));
+		if($Page < 1) $Page = 1;
+	$SortBy = (Request::val('SortBy') != '' ? abs(intval(Request::val('SortBy'))) : false);
+		if(!in_array($SortBy, array_keys($userPCConfig[$ChildTable][$ChildLookupField]['sortable-fields']), true))
 			$SortBy = $userPCConfig[$ChildTable][$ChildLookupField]['default-sort-by'];
-		}
-	$SortDirection = strtolower($_REQUEST['SortDirection']);
-		if(!in_array($SortDirection, array('asc', 'desc'))) {
+	$SortDirection = strtolower(Request::val('SortDirection'));
+		if(!in_array($SortDirection, ['asc', 'desc']))
 			$SortDirection = $userPCConfig[$ChildTable][$ChildLookupField]['default-sort-direction'];
-		}
-	$Operation = strtolower($_REQUEST['Operation']);
-		if(!in_array($Operation, array('get-records', 'show-children', 'get-records-printable', 'show-children-printable'))) {
+	$Operation = strtolower(Request::val('Operation'));
+		if(!in_array($Operation, ['get-records', 'show-children', 'get-records-printable', 'show-children-printable']))
 			$Operation = 'get-records';
-		}
 
 	/* process requested operation */
 	switch($Operation) {

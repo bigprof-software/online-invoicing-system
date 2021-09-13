@@ -65,8 +65,8 @@
 	function get_params() {
 		$ret_error = array(false, false);
 
-		$table = $_REQUEST['table'];
-		$id = $_REQUEST['id'];
+		$table = Request::val('table');
+		$id = Request::val('id');
 		if(!get_sql_from($table)) return $ret_error;
 
 		if(is_array($id)) {

@@ -16,9 +16,9 @@
 
 	// determine and validate recipients
 	$memberID = new Request('memberID', 'strtolower');
-	$groupID = intval($_REQUEST['groupID']);
-	$sendToAll = intval($_REQUEST['sendToAll']);
-	$showDebug = $_REQUEST['showDebug'] ? true : false;
+	$groupID = intval(Request::val('groupID'));
+	$sendToAll = intval(Request::val('sendToAll'));
+	$showDebug = Request::val('showDebug') ? true : false;
 
 	$isGroup = ($memberID->raw != '' ? false : true);
 
@@ -109,7 +109,7 @@
 		if($showDebug) $_SESSION["debug_{$queueFile}"] = true;
 
 		// redirect to mail queue processor
-		$simulate = isset($_REQUEST['simulate']) ? '&simulate=1' : '';
+		$simulate = Request::val('simulate') ? '&simulate=1' : '';
 		redirect("admin/pageSender.php?queue={$queueFile}{$simulate}");
 		include("{$currDir}/incFooter.php");
 	}
@@ -131,7 +131,7 @@
 	<input type="hidden" name="memberID" value="<?php echo $memberID->attr; ?>">
 	<input type="hidden" name="groupID" value="<?php echo $groupID; ?>">
 	<input type="hidden" name="sendToAll" value="<?php echo $sendToAll; ?>">
-	<?php if(isset($_REQUEST['simulate'])) { ?>
+	<?php if(Request::val('simulate')) { ?>
 		<input type="hidden" name="simulate" value="1">
 	<?php } ?>
 

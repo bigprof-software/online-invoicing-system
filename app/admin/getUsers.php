@@ -25,17 +25,14 @@
 	// how many results to return per call, in case of json output
 	$results_per_page = 50;
 
-	$id = false;
-	if(isset($_REQUEST['id'])) $id = from_utf8($_REQUEST['id']);
+	$id = from_utf8(Request::val('id'));
+	$search_term = from_utf8(Request::val('s'));
 
-	$search_term = false;
-	if(isset($_REQUEST['s'])) $search_term = from_utf8($_REQUEST['s']);
-
-	$page = intval($_REQUEST['p']);
+	$page = intval(Request::val('p'));
 	if($page < 1) $page = 1;
 	$skip = $results_per_page * ($page - 1);
 
-	$table_name = $_REQUEST['t'];
+	$table_name = Request::val('t');
 	if(!in_array($table_name, array_keys(getTableList()))) {
 		/* invalid table */
 		echo '{"results":[{"id":"","text":"Invalid table"}],"more":false,"elapsed":0}';

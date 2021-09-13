@@ -3,8 +3,8 @@
 	include_once("{$currDir}/lib.php");
 	include_once("{$currDir}/header.php");
 
-	$current_user = isset($_REQUEST['currentUser']) ? $_REQUEST['currentUser'] : false;
-	$username = is_allowed_username($_REQUEST['memberID'], $current_user);
+	$current_user = Request::val('currentUser', false);
+	$username = is_allowed_username(Request::val('memberID'), $current_user);
 ?>
 
 <style>
@@ -21,7 +21,7 @@
 <?php } else { ?>
 	<div class="alert alert-danger">
 		<i class="glyphicon glyphicon-warning-sign"></i>
-		<?php echo str_replace('<MemberID>', '<b>' . html_attr($_REQUEST['memberID']) . '</b>', $Translation['username invalid']); ?>
+		<?php echo str_replace('<MemberID>', '<b>' . html_attr(Request::val('memberID')) . '</b>', $Translation['username invalid']); ?>
 		<span data-result="username-unavailable"></span>
 	</div>
 <?php } ?>

@@ -60,9 +60,9 @@ class Combo{
 
 		if($this->ListType != 2) {
 			if($this->ApplySelect2) {
-				$this->HTML .= "<select style=\"width: 100%;\" name=\"$this->SelectName" . ($this->ListType == 3 ? '[]' : '') . "\" id=\"$this->SelectID\"" . ($this->ListType == 1 ? ' size="' . ($this->ListBoxHeight < $ArrayCount ? $this->ListBoxHeight : ($ArrayCount + ($this->AllowNull ? 1 : 0))) . '"' : '') . ($this->ListType == 3 ? ' multiple' : '') . '>';
+				$this->HTML .= "<select style=\"width: 100%;\" name=\"{$this->SelectName}" . ($this->ListType == 3 ? '[]' : '') . "\" id=\"{$this->SelectID}\"" . ($this->ListType == 1 ? ' size="' . ($this->ListBoxHeight < $ArrayCount ? $this->ListBoxHeight : ($ArrayCount + ($this->AllowNull ? 1 : 0))) . '"' : '') . ($this->ListType == 3 ? ' multiple' : '') . '>';
 			} else {
-				$this->HTML .= "<select name=\"$this->SelectName".($this->ListType == 3 ? '[]' : '') . "\" id=\"$this->SelectID\" class=\"$this->Class\" style=\"$this->Style\"" . ($this->ListType == 1 ? ' size="' . ($this->ListBoxHeight < $ArrayCount ? $this->ListBoxHeight : ($ArrayCount + ($this->AllowNull ? 1 : 0))) . '"' : '') . ($this->ListType == 3 ? ' multiple' : '') . '>';
+				$this->HTML .= "<select name=\"{$this->SelectName}" . ($this->ListType == 3 ? '[]' : '') . "\" id=\"{$this->SelectID}\" class=\"{$this->Class}\" style=\"{$this->Style}\"" . ($this->ListType == 1 ? ' size="' . ($this->ListBoxHeight < $ArrayCount ? $this->ListBoxHeight : ($ArrayCount + ($this->AllowNull ? 1 : 0))) . '"' : '') . ($this->ListType == 3 ? ' multiple' : '') . '>';
 			}
 
 			if($this->ListType != 3 && $this->AllowNull)
@@ -75,12 +75,12 @@ class Combo{
 
 				if($this->ListType == 3) {
 					if(in_array($this->ListData[$i], $arrSelectedData)) {
-						$sel = "selected class=\"$this->SelectedClass\"";
+						$sel = "selected class=\"{$this->SelectedClass}\"";
 						$this->MatchText .= $this->ListItem[$i] . $this->MultipleSeparator;
 					}
 				} else {
 					if($this->SelectedData == $this->ListData[$i] || ($this->SelectedText == $this->ListItem[$i] && $this->SelectedText)) {
-						$sel = "selected class=\"$this->SelectedClass\"";
+						$sel = "selected class=\"{$this->SelectedClass}\"";
 						$this->MatchText = $this->ListItem[$i];
 						$this->SelectedData = $this->ListData[$i];
 						$this->SelectedText = $this->ListItem[$i];
@@ -112,7 +112,7 @@ class Combo{
 
 			$shift = 1;
 			if($this->AllowNull) {
-				$this->HTML .= "<input id=\"{$this->SelectName}{$j}\" type=\"radio\" name=\"$this->SelectName\" value=\"\" " . ($this->SelectedData == '' ? 'checked' : '') . "> <label for=\"{$this->SelectName}{$j}\">{$Translation['none']}</label>";
+				$this->HTML .= "<input id=\"{$this->SelectName}{$j}\" type=\"radio\" name=\"{$this->SelectName}\" value=\"\" " . ($this->SelectedData == '' ? 'checked' : '') . "> <label for=\"{$this->SelectName}{$j}\">{$Translation['none']}</label>";
 				$this->HTML .= ($this->RadiosPerLine == 1 ? '<br>' : $separator);
 				$shift = 2;
 			}
@@ -121,14 +121,14 @@ class Combo{
 				$j++;
 					$sel = '';
 				if($this->SelectedData == $this->ListData[$i] || ($this->SelectedText == $this->ListItem[$i] && $this->SelectedText)) {
-					$sel = "checked class=\"$this->SelectedClass\"";
+					$sel = "checked class=\"{$this->SelectedClass}\"";
 					$this->MatchText = $this->ListItem[$i];
 					$this->SelectedData = $this->ListData[$i];
 					$this->SelectedText = $this->ListItem[$i];
 				}
 
 				$safeVal = html_attr($this->ListData[$i]);
-				$this->HTML .= "<input id=\"{$this->SelectName}{$j}\" type=\"radio\" name=\"$this->SelectName\" value=\"$safeVal\" $sel> ";
+				$this->HTML .= "<input id=\"{$this->SelectName}{$j}\" type=\"radio\" name=\"{$this->SelectName}\" value=\"$safeVal\" $sel> ";
 				$this->HTML .= "<label for=\"{$this->SelectName}{$j}\">" . str_replace('&amp;', '&', html_attr(stripslashes($this->ListItem[$i]))) . "</label>";
 
 				$this->HTML .= ($i + $shift) % $this->RadiosPerLine ? $separator : '<br>';

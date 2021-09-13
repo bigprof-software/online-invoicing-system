@@ -6,14 +6,14 @@
 
 	// process search
 	$memberID = new Request('memberID', 'strtolower');
-	$groupID = max(0, intval($_REQUEST['groupID']));
+	$groupID = max(0, intval(Request::val('groupID')));
 	$tableName = new Request('tableName');
-	$page = max(1, intval($_REQUEST['page']));
+	$page = max(1, intval(Request::val('page')));
 	$where = [];
 
 	// process sort
-	$sortDir = ($_REQUEST['sortDir'] == 'DESC' ? 'DESC' : '');
-	$sort = makeSafe($_REQUEST['sort']);
+	$sortDir = (Request::val('sortDir') == 'DESC' ? 'DESC' : '');
+	$sort = makeSafe(Request::val('sort'));
 	if($sort != 'dateAdded' && $sort != 'dateUpdated') { // default sort is newly created first
 		$sort = 'dateAdded';
 		$sortDir = 'DESC';

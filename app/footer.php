@@ -1,10 +1,10 @@
 			<!-- Add footer template above here -->
 			<div class="clearfix"></div>
-			<?php if(!$_REQUEST['Embedded']) { ?>
+			<?php if(!Request::val('Embedded')) { ?>
 				<div style="height: 70px;" class="hidden-print"></div>
 			<?php } ?>
 
-			<?php if(!$_REQUEST['Embedded']) { ?>
+			<?php if(!Request::val('Embedded')) { ?>
 				<!-- AppGini powered by notice -->
 				<div style="height: 60px;" class="hidden-print"></div>
 				<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">

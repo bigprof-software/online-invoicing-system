@@ -73,7 +73,7 @@
 		<div class="users-area container theme-bootstrap theme-compact">
 			<?php if(function_exists('handle_maintenance')) echo handle_maintenance(true); ?>
 
-			<?php if(!$_REQUEST['Embedded']) { ?>
+			<?php if(!Request::val('Embedded')) { ?>
 				<?php if(function_exists('htmlUserBar')) echo htmlUserBar(); ?>
 				<div style="height: 70px;" class="hidden-print"></div>
 			<?php } ?>
@@ -85,7 +85,7 @@
 				if(function_exists('showNotifications')) echo showNotifications();
 			?>
 
-			<?php if($_REQUEST['Embedded']) { ?>
+			<?php if(Request::val('Embedded')) { ?>
 				<div style="height: 2rem;"></div>
 			<?php } ?>
 

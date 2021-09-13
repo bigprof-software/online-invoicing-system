@@ -5,20 +5,20 @@
 	$recID = 0;
 
 	// request to save changes?
-	if(isset($_REQUEST['saveChanges'])) {
+	if(Request::val('saveChanges')) {
 		// csrf check
 		if(!csrf_token(true)) die($Translation['invalid security token']);
 
 		// validate data
-		$recID = intval($_REQUEST['recID']);
-		$memberID = makeSafe(strtolower($_REQUEST['memberID']));
-		$groupID = intval($_REQUEST['groupID']);
+		$recID = intval(Request::val('recID'));
+		$memberID = makeSafe(strtolower(Request::val('memberID')));
+		$groupID = intval(Request::val('groupID'));
 		###############################
 
 		/* for ajax requests coming from the users' area, get the recID */
 		if(is_ajax()) {
-			$tableName = $_REQUEST['t'];
-			$pkValue = $_REQUEST['pkValue'];
+			$tableName = Request::val('t');
+			$pkValue = Request::val('pkValue');
 
 			if(!in_array($tableName, array_keys(getTableList()))) die($Translation['invalid table']);
 

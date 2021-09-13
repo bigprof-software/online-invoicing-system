@@ -6,7 +6,7 @@
 	$tables = getTableList();
 
 	// ensure that a memberID is provided
-	if(!isset($_REQUEST['memberID'])) {
+	if(!Request::has('memberID')) {
 		// error in request. redirect to members page.
 		redirect('admin/pageViewMembers.php');
 	}

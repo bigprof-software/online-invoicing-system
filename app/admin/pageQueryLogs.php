@@ -7,10 +7,10 @@
 			'error' => 'CHAR_LENGTH(COALESCE(`error`, \'\')) > 0',
 		];
 
-		$type = $_REQUEST['type'];
+		$type = Request::val('type');
 		if(!in_array($type, array_keys($queryTypes))) $type = 'slow';
 
-		$page = intval($_REQUEST['page']);
+		$page = intval(Request::val('page'));
 		if($page < 1) $page = 1;
 
 	// Starting record from $page (page is 1-based, while firstRecord is 0-based)

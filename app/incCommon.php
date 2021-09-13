@@ -379,7 +379,7 @@
 					</ul>
 				<?php } ?>
 
-				<?php if(!$_GET['signIn'] && !$_GET['loginFailed']) { ?>
+				<?php if(!Request::val('signIn') && !Request::val('loginFailed')) { ?>
 					<?php if(!$mi['username'] || $mi['username'] == $adminConfig['anonymousMember']) { ?>
 						<p class="navbar-text navbar-right">&nbsp;</p>
 						<a href="<?php echo PREPEND_PATH; ?>index.php?signIn=1" class="btn btn-success navbar-btn navbar-right"><?php echo $Translation['sign in']; ?></a>
@@ -434,28 +434,28 @@
 
 	function showNotifications($msg = '', $class = '', $fadeout = true) {
 		global $Translation;
-		if($error_message = strip_tags($_REQUEST['error_message']))
+		if($error_message = strip_tags(Request::val('error_message')))
 			$error_message = '<div class="text-bold">' . $error_message . '</div>';
 
 		if(!$msg) { // if no msg, use url to detect message to display
-			if($_REQUEST['record-added-ok'] != '') {
+			if(Request::val('record-added-ok')) {
 				$msg = $Translation['new record saved'];
 				$class = 'alert-success';
-			} elseif($_REQUEST['record-added-error'] != '') {
+			} elseif(Request::val('record-added-error')) {
 				$msg = $Translation['Couldn\'t save the new record'] . $error_message;
 				$class = 'alert-danger';
 				$fadeout = false;
-			} elseif($_REQUEST['record-updated-ok'] != '') {
+			} elseif(Request::val('record-updated-ok')) {
 				$msg = $Translation['record updated'];
 				$class = 'alert-success';
-			} elseif($_REQUEST['record-updated-error'] != '') {
+			} elseif(Request::val('record-updated-error')) {
 				$msg = $Translation['Couldn\'t save changes to the record'] . $error_message;
 				$class = 'alert-danger';
 				$fadeout = false;
-			} elseif($_REQUEST['record-deleted-ok'] != '') {
+			} elseif(Request::val('record-deleted-ok')) {
 				$msg = $Translation['The record has been deleted successfully'];
 				$class = 'alert-success';
-			} elseif($_REQUEST['record-deleted-error'] != '') {
+			} elseif(Request::val('record-deleted-error')) {
 				$msg = $Translation['Couldn\'t delete this record'] . $error_message;
 				$class = 'alert-danger';
 				$fadeout = false;
@@ -526,19 +526,32 @@
 
 	#########################################################
 
+	function validMySQLDate($date) {
+		$date = trim($date);
+		$parts = explode('-', $date);
+		return (
+			count($parts) == 3
+			// see https://dev.mysql.com/doc/refman/8.0/en/datetime.html
+			&& intval($parts[0]) >= 1000
+			&& intval($parts[0]) <= 9999
+			&& intval($parts[1]) >= 1
+			&& intval($parts[1]) <= 12
+			&& intval($parts[2]) >= 1
+			&& intval($parts[2]) <= 31
+			&& strtotime($date) > 0
+		);
+	}
+
+	#########################################################
+
 	function parseMySQLDate($date, $altDate) {
 		// is $date valid?
-		if(preg_match("/^\d{4}-\d{1,2}-\d{1,2}$/", trim($date))) {
-			return trim($date);
-		}
+		if(validMySQLDate($date)) return trim($date);
 
-		if($date != '--' && preg_match("/^\d{4}-\d{1,2}-\d{1,2}$/", trim($altDate))) {
-			return trim($altDate);
-		}
+		if($date != '--' && validMySQLDate($altDate)) return trim($altDate);
 
-		if($date != '--' && $altDate && intval($altDate)==$altDate) {
+		if($date != '--' && $altDate && is_numeric($altDate))
 			return @date('Y-m-d', @time() + ($altDate >= 1 ? $altDate - 1 : $altDate) * 86400);
-		}
 
 		return '';
 	}

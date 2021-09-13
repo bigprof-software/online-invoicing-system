@@ -9,7 +9,7 @@
 	$anonGroup = $adminConfig['anonymousGroup'];
 
 	/* no editing of guest user */
-	if(strtolower($_REQUEST['memberID']) == $anonMemberID || strtolower($_REQUEST['oldMemberID']) == $anonMemberID) {
+	if(strtolower(Request::val('memberID')) == $anonMemberID || strtolower(Request::val('oldMemberID')) == $anonMemberID) {
 		redirect('admin/pageViewMembers.php');
 		exit;
 	}

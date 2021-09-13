@@ -26,8 +26,8 @@
 <?php
 	foreach($this->filterers as $filterer => $caption) {
 		$fltrr_name = 'filterer_' . $filterer;
-		$fltrr_val = $_REQUEST[$fltrr_name];
-		if($fltrr_val != '') {
+		$fltrr_val = Request::val($fltrr_name);
+		if(strlen($fltrr_val)) {
 			?>
 			<div class="row">
 				<div class="col-md-offset-3 col-md-7">
@@ -293,7 +293,7 @@
 		if(jQuery('#FilterAnd_' + (    FiltersPerGroup + 1) + '_').val()) { filterGroupDisplay(2); }
 		if(jQuery('#FilterAnd_' + (2 * FiltersPerGroup + 1) + '_').val()) { filterGroupDisplay(3); }
 
-		var DisplayRecords = <?php echo json_encode($_REQUEST['DisplayRecords']); ?>;
+		var DisplayRecords = <?php echo json_encode(Request::val('DisplayRecords')); ?>;
 
 		switch(DisplayRecords) {
 			case 'user':

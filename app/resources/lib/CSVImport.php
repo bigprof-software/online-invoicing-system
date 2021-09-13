@@ -307,7 +307,7 @@
 				$affectedRows = min(count($rows), db_affected_rows());
 
 				if(!$res) {
-					$error = $this->memberInfo['admin'] && $eo['error'] ? ", error: {$eo['error']}" : $eo['error'] ? ', error: db error' : '';
+					$error = $this->memberInfo['admin'] && $eo['error'] ? ", error: {$eo['error']}" : ($eo['error'] ? ', error: db error' : '');
 					$action = $affectedRows > 0 ? 'inserted' : 'skipped';
 					$this->logs[] = "csv-index: {$this->config['cleanIndex']}{$error}, action: {$action}.";
 					$this->saveJob();
@@ -543,7 +543,7 @@
 			$affectedRows = db_affected_rows(); // 0 = no action, 1 = insert, 2 = update
 			$action = (!$affectedRows ? 'skipped' : ($affectedRows == 1 ? 'inserted' : 'updated'));
 
-			$error = $this->memberInfo['admin'] && $eo['error'] ? ", error: {$eo['error']}" : $eo['error'] ? ', error: db error' : '';
+			$error = $this->memberInfo['admin'] && $eo['error'] ? ", error: {$eo['error']}" : ($eo['error'] ? ', error: db error' : '');
 			$this->logs[] = "csv-index: {$this->config['cleanIndex']}, action: {$action}{$error}";
 
 			if($action == 'skipped') {

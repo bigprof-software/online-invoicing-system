@@ -400,7 +400,7 @@
 
 		/* log slow queries that take more than 1 sec */
 		$t1 = microtime(true);
-		if($t1 - $t0 > 1.0 && empty($o['noSlowQueryLog']))
+		if(($t1 - $t0) > 1.0 && empty($o['noSlowQueryLog']))
 			logSlowQuery($statement, $t1 - $t0);
 
 		return $result;
@@ -985,62 +985,350 @@
 			/* application schema as created in AppGini */
 			$schema = [
 				'invoices' => [
-					'id' => ['appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'code' => ['appgini' => "VARCHAR(20) NULL UNIQUE"],
-					'status' => ['appgini' => "VARCHAR(20) NOT NULL DEFAULT 'Unpaid'"],
-					'date_due' => ['appgini' => "DATE NULL"],
-					'client' => ['appgini' => "INT UNSIGNED NULL"],
-					'client_contact' => ['appgini' => "INT UNSIGNED NULL"],
-					'client_address' => ['appgini' => "INT UNSIGNED NULL"],
-					'client_phone' => ['appgini' => "INT UNSIGNED NULL"],
-					'client_email' => ['appgini' => "INT UNSIGNED NULL"],
-					'client_website' => ['appgini' => "INT UNSIGNED NULL"],
-					'client_comments' => ['appgini' => "INT UNSIGNED NULL"],
-					'subtotal' => ['appgini' => "DECIMAL(9,2) NULL"],
-					'discount' => ['appgini' => "DECIMAL(4,2) NULL DEFAULT '0'"],
-					'tax' => ['appgini' => "DECIMAL(9,2) NULL DEFAULT '0'"],
-					'total' => ['appgini' => "DECIMAL(9,2) NULL"],
-					'comments' => ['appgini' => "TEXT NULL"],
-					'invoice_template' => ['appgini' => "VARCHAR(100) NULL"],
-					'created' => ['appgini' => "VARCHAR(200) NULL"],
-					'last_updated' => ['appgini' => "VARCHAR(200) NULL"],
+					'id' => [
+						'appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'ID',
+							'description' => '',
+						],
+					],
+					'code' => [
+						'appgini' => "VARCHAR(20) NULL UNIQUE",
+						'info' => [
+							'caption' => 'Code',
+							'description' => '',
+						],
+					],
+					'status' => [
+						'appgini' => "VARCHAR(20) NOT NULL DEFAULT 'Unpaid'",
+						'info' => [
+							'caption' => 'Status',
+							'description' => '',
+						],
+					],
+					'date_due' => [
+						'appgini' => "DATE NULL",
+						'info' => [
+							'caption' => 'Date due',
+							'description' => '',
+						],
+					],
+					'client' => [
+						'appgini' => "INT UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Client',
+							'description' => '',
+						],
+					],
+					'client_contact' => [
+						'appgini' => "INT UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Client contact',
+							'description' => '',
+						],
+					],
+					'client_address' => [
+						'appgini' => "INT UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Client address',
+							'description' => '',
+						],
+					],
+					'client_phone' => [
+						'appgini' => "INT UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Client phone',
+							'description' => '',
+						],
+					],
+					'client_email' => [
+						'appgini' => "INT UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Client email',
+							'description' => '',
+						],
+					],
+					'client_website' => [
+						'appgini' => "INT UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Client website',
+							'description' => '',
+						],
+					],
+					'client_comments' => [
+						'appgini' => "INT UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Client comments',
+							'description' => '',
+						],
+					],
+					'subtotal' => [
+						'appgini' => "DECIMAL(9,2) NULL",
+						'info' => [
+							'caption' => 'Subtotal',
+							'description' => 'Automatically calculated from invoice items.',
+						],
+					],
+					'discount' => [
+						'appgini' => "DECIMAL(4,2) NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Discount %',
+							'description' => 'Enter discount percentage here. Example: enter "10" (without the quotes) to apply a 10% discount off the invoice subtotal.',
+						],
+					],
+					'tax' => [
+						'appgini' => "DECIMAL(9,2) NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Tax %',
+							'description' => 'Enter tax percentage here. Example: enter "10" (without the quotes) to apply a 10% tax to the invoice.',
+						],
+					],
+					'total' => [
+						'appgini' => "DECIMAL(9,2) NULL",
+						'info' => [
+							'caption' => 'Total',
+							'description' => 'Automatically calculated: (Subtotal - Discount%) + Tax%',
+						],
+					],
+					'comments' => [
+						'appgini' => "TEXT NULL",
+						'info' => [
+							'caption' => 'Comments',
+							'description' => '',
+						],
+					],
+					'invoice_template' => [
+						'appgini' => "VARCHAR(100) NULL",
+						'info' => [
+							'caption' => 'Invoice template',
+							'description' => 'Choose the template to use when printing this invoice',
+						],
+					],
+					'created' => [
+						'appgini' => "VARCHAR(200) NULL",
+						'info' => [
+							'caption' => 'Created',
+							'description' => '',
+						],
+					],
+					'last_updated' => [
+						'appgini' => "VARCHAR(200) NULL",
+						'info' => [
+							'caption' => 'Last updated',
+							'description' => '',
+						],
+					],
 				],
 				'clients' => [
-					'id' => ['appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'name' => ['appgini' => "VARCHAR(200) NULL UNIQUE"],
-					'contact' => ['appgini' => "VARCHAR(255) NULL"],
-					'title' => ['appgini' => "VARCHAR(40) NULL"],
-					'address' => ['appgini' => "TEXT NULL"],
-					'city' => ['appgini' => "VARCHAR(40) NULL"],
-					'country' => ['appgini' => "VARCHAR(40) NULL"],
-					'phone' => ['appgini' => "VARCHAR(100) NULL"],
-					'email' => ['appgini' => "VARCHAR(80) NULL"],
-					'website' => ['appgini' => "VARCHAR(200) NULL"],
-					'comments' => ['appgini' => "TEXT NULL"],
-					'unpaid_sales' => ['appgini' => "DECIMAL(10,2) NULL"],
-					'paid_sales' => ['appgini' => "DECIMAL(10,2) NULL"],
-					'total_sales' => ['appgini' => "DECIMAL(10,2) NULL"],
+					'id' => [
+						'appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'ID',
+							'description' => '',
+						],
+					],
+					'name' => [
+						'appgini' => "VARCHAR(200) NULL UNIQUE",
+						'info' => [
+							'caption' => 'Name',
+							'description' => '',
+						],
+					],
+					'contact' => [
+						'appgini' => "VARCHAR(255) NULL",
+						'info' => [
+							'caption' => 'Contact',
+							'description' => '',
+						],
+					],
+					'title' => [
+						'appgini' => "VARCHAR(40) NULL",
+						'info' => [
+							'caption' => 'Title',
+							'description' => '',
+						],
+					],
+					'address' => [
+						'appgini' => "TEXT NULL",
+						'info' => [
+							'caption' => 'Address',
+							'description' => '',
+						],
+					],
+					'city' => [
+						'appgini' => "VARCHAR(40) NULL",
+						'info' => [
+							'caption' => 'City',
+							'description' => '',
+						],
+					],
+					'country' => [
+						'appgini' => "VARCHAR(40) NULL",
+						'info' => [
+							'caption' => 'Country',
+							'description' => '',
+						],
+					],
+					'phone' => [
+						'appgini' => "VARCHAR(100) NULL",
+						'info' => [
+							'caption' => 'Phone',
+							'description' => '',
+						],
+					],
+					'email' => [
+						'appgini' => "VARCHAR(80) NULL",
+						'info' => [
+							'caption' => 'Email',
+							'description' => '',
+						],
+					],
+					'website' => [
+						'appgini' => "VARCHAR(200) NULL",
+						'info' => [
+							'caption' => 'Website',
+							'description' => '',
+						],
+					],
+					'comments' => [
+						'appgini' => "TEXT NULL",
+						'info' => [
+							'caption' => 'Comments',
+							'description' => '',
+						],
+					],
+					'unpaid_sales' => [
+						'appgini' => "DECIMAL(10,2) NULL",
+						'info' => [
+							'caption' => 'Unpaid sales',
+							'description' => 'Automatically calculated field by summing this client\'s unpaid invoices\' total.',
+						],
+					],
+					'paid_sales' => [
+						'appgini' => "DECIMAL(10,2) NULL",
+						'info' => [
+							'caption' => 'Paid sales',
+							'description' => 'Automatically calculated field by summing this client\'s paid invoices\' total.',
+						],
+					],
+					'total_sales' => [
+						'appgini' => "DECIMAL(10,2) NULL",
+						'info' => [
+							'caption' => 'Total sales',
+							'description' => 'Automatically calculated field by summing this client\'s non-cancelled invoices\' total.',
+						],
+					],
 				],
 				'item_prices' => [
-					'id' => ['appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'item' => ['appgini' => "INT UNSIGNED NULL"],
-					'price' => ['appgini' => "DECIMAL(10,2) NULL DEFAULT '0.00'"],
-					'date' => ['appgini' => "DATE NULL"],
+					'id' => [
+						'appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'ID',
+							'description' => '',
+						],
+					],
+					'item' => [
+						'appgini' => "INT UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Item',
+							'description' => '',
+						],
+					],
+					'price' => [
+						'appgini' => "DECIMAL(10,2) NULL DEFAULT '0.00'",
+						'info' => [
+							'caption' => 'Price',
+							'description' => '',
+						],
+					],
+					'date' => [
+						'appgini' => "DATE NULL",
+						'info' => [
+							'caption' => 'Date',
+							'description' => '',
+						],
+					],
 				],
 				'invoice_items' => [
-					'id' => ['appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'invoice' => ['appgini' => "INT UNSIGNED NULL"],
-					'item' => ['appgini' => "INT UNSIGNED NULL"],
-					'current_price' => ['appgini' => "INT UNSIGNED NULL"],
-					'catalog_price' => ['appgini' => "DECIMAL(10,2) UNSIGNED NULL"],
-					'unit_price' => ['appgini' => "DECIMAL(10,2) UNSIGNED NOT NULL"],
-					'qty' => ['appgini' => "DECIMAL(9,3) NULL DEFAULT '1'"],
-					'price' => ['appgini' => "DECIMAL(9,2) NULL"],
+					'id' => [
+						'appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'ID',
+							'description' => '',
+						],
+					],
+					'invoice' => [
+						'appgini' => "INT UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Invoice',
+							'description' => '',
+						],
+					],
+					'item' => [
+						'appgini' => "INT UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Item',
+							'description' => '',
+						],
+					],
+					'current_price' => [
+						'appgini' => "INT UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Current price',
+							'description' => 'This is the current catalog price of the selected item.',
+						],
+					],
+					'catalog_price' => [
+						'appgini' => "DECIMAL(10,2) UNSIGNED NULL",
+						'info' => [
+							'caption' => 'Catalog price at order date',
+							'description' => '',
+						],
+					],
+					'unit_price' => [
+						'appgini' => "DECIMAL(10,2) UNSIGNED NOT NULL",
+						'info' => [
+							'caption' => 'Unit price',
+							'description' => 'You can either use the catalog price or change to a different price.',
+						],
+					],
+					'qty' => [
+						'appgini' => "DECIMAL(9,3) NULL DEFAULT '1'",
+						'info' => [
+							'caption' => 'Qty',
+							'description' => '',
+						],
+					],
+					'price' => [
+						'appgini' => "DECIMAL(9,2) NULL",
+						'info' => [
+							'caption' => 'Price',
+							'description' => 'Will be automatically calculated from unit price and quantity, excluding taxes.',
+						],
+					],
 				],
 				'items' => [
-					'id' => ['appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'item_description' => ['appgini' => "TEXT NULL"],
-					'unit_price' => ['appgini' => "DECIMAL(10,2) NULL"],
+					'id' => [
+						'appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'ID',
+							'description' => '',
+						],
+					],
+					'item_description' => [
+						'appgini' => "TEXT NULL",
+						'info' => [
+							'caption' => 'Item Description',
+							'description' => '',
+						],
+					],
+					'unit_price' => [
+						'appgini' => "DECIMAL(10,2) NULL",
+						'info' => [
+							'caption' => 'Unit price',
+							'description' => 'This is the most recent unit price as obtained from "Item prices" table.',
+						],
+					],
 				],
 			];
 		}
@@ -1052,7 +1340,7 @@
 	########################################################################
 	function update_membership_groups() {
 		$tn = 'membership_groups';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `{$tn}` (
@@ -1073,7 +1361,7 @@
 	########################################################################
 	function update_membership_users() {
 		$tn = 'membership_users';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `{$tn}` (
@@ -1111,7 +1399,7 @@
 	########################################################################
 	function update_membership_userrecords() {
 		$tn = 'membership_userrecords';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `{$tn}` (
@@ -1141,7 +1429,7 @@
 	########################################################################
 	function update_membership_grouppermissions() {
 		$tn = 'membership_grouppermissions';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `{$tn}` (
@@ -1161,7 +1449,7 @@
 	########################################################################
 	function update_membership_userpermissions() {
 		$tn = 'membership_userpermissions';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `{$tn}` (
@@ -1182,7 +1470,7 @@
 	########################################################################
 	function update_membership_usersessions() {
 		$tn = 'membership_usersessions';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `membership_usersessions` (
@@ -1392,7 +1680,7 @@
 		}
 
 		/* validate submitted token */
-		$user_token = (isset($_REQUEST['csrf_token']) ? $_REQUEST['csrf_token'] : false);
+		$user_token = Request::val('csrf_token', false);
 		if($csrf_token_expiry < time() || !$user_token || $user_token != $csrf_token) {
 			return false;
 		}
@@ -1654,8 +1942,9 @@
 			$pm->Debugoutput = 'html';
 			$pm->Host = $cfg['smtp_server'];
 			$pm->Port = $cfg['smtp_port'];
-			$pm->SMTPAuth = true;
+			$pm->SMTPAuth = !empty($cfg['smtp_user']) || !empty($cfg['smtp_pass']);
 			$pm->SMTPSecure = $cfg['smtp_encryption'];
+			$pm->SMTPAutoTLS = $cfg['smtp_encryption'] ? true : false;
 			$pm->Username = $cfg['smtp_user'];
 			$pm->Password = $cfg['smtp_pass'];
 		}
@@ -2101,6 +2390,7 @@
 	 *  @details if the constant 'datalist_db_encoding' is not defined, original string is returned
 	 */
 	function from_utf8($str) {
+		if(!strlen($str)) return $str;
 		if(!defined('datalist_db_encoding')) return $str;
 		if(datalist_db_encoding == 'UTF-8') return $str;
 		return iconv('UTF-8', datalist_db_encoding, $str);
@@ -2426,7 +2716,7 @@ ORDER BY `date` DESC LIMIT 1',
 		return $template;
 	}
 	#########################################################
-	function getUploadDir($dir) {
+	function getUploadDir($dir = '') {
 		if($dir == '') $dir = config('adminConfig')['baseUploadPath'];
 
 		return rtrim($dir, '\\/') . '/';

@@ -138,9 +138,10 @@
 	// column sums
 	if(strpos($x->HTML, '<!-- tv data below -->')) {
 		// if printing multi-selection TV, calculate the sum only for the selected records
-		if(isset($_REQUEST['Print_x']) && is_array($_REQUEST['record_selector'])) {
+		$record_selector = Request::val('record_selector');
+		if(Request::val('Print_x') && is_array($record_selector)) {
 			$QueryWhere = '';
-			foreach($_REQUEST['record_selector'] as $id) {   // get selected records
+			foreach($record_selector as $id) {   // get selected records
 				if($id != '') $QueryWhere .= "'" . makeSafe($id) . "',";
 			}
 			if($QueryWhere != '') {
@@ -156,7 +157,7 @@
 		$res = sql($sumQuery, $eo);
 		if($row = db_fetch_row($res)) {
 			$sumRow = '<tr class="success sum">';
-			if(!isset($_REQUEST['Print_x'])) $sumRow .= '<th class="text-center sum">&sum;</th>';
+			if(!Request::val('Print_x')) $sumRow .= '<th class="text-center sum">&sum;</th>';
 			$sumRow .= '<td class="invoice_items-item sum"></td>';
 			$sumRow .= '<td class="invoice_items-unit_price sum"></td>';
 			$sumRow .= '<td class="invoice_items-qty sum"></td>';

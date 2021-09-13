@@ -77,9 +77,9 @@ checkAppRequirements();
 	// convert expanded sorting variables, if provided, to SortField and SortDirection
 	$postedOrderBy = [];
 	for($i = 0; $i < maxSortBy; $i++) {
-		if(isset($_REQUEST["OrderByField$i"])) {
-			$sd = ($_REQUEST["OrderDir$i"] == 'desc' ? 'desc' : 'asc');
-			if($sfi = intval($_REQUEST["OrderByField$i"])) {
+		if(Request::val("OrderByField$i")) {
+			$sd = (Request::val("OrderDir$i") == 'desc' ? 'desc' : 'asc');
+			if($sfi = intval(Request::val("OrderByField$i"))) {
 				$postedOrderBy[] = array($sfi => $sd);
 			}
 		}
@@ -94,7 +94,7 @@ checkAppRequirements();
 		}
 		$_REQUEST['SortField'] = substr($_REQUEST['SortField'], 0, -2 - strlen($sd));
 		$_REQUEST['SortDirection'] = $sd;
-	} elseif($_REQUEST['apply_sorting']) {
+	} elseif(Request::val('apply_sorting')) {
 		/* no sorting and came from filters page .. so clear sorting */
 		$_REQUEST['SortField'] = $_REQUEST['SortDirection'] = '';
 	}

@@ -11,8 +11,8 @@
 	</style>
 	<?php
 
-	$queue = $_REQUEST['queue'];
-	$simulate = (isset($_REQUEST['simulate']) ? true : false);
+	$queue = Request::val('queue');
+	$simulate = (Request::val('simulate') ? true : false);
 	if(!preg_match('/^[a-f0-9]{17,32}$/i', $queue)) {
 		echo "<div class=\"alert alert-danger\">{$Translation['invalid mail queue']}</div>";
 		include("{$currDir}/incFooter.php");

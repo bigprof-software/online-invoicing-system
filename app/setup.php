@@ -2,14 +2,18 @@
 	/* initial preps and includes */
 	define('APPGINI_SETUP', true); /* needed in included files to tell that this is the setup script */
 	error_reporting(E_ERROR /*| E_WARNING*/ | E_PARSE);
-	$curr_dir = dirname(__FILE__);
-	include_once("$curr_dir/settings-manager.php");
+	include_once(__DIR__ . '/settings-manager.php');
 
-	include_once("$curr_dir/defaultLang.php");
-	include_once("$curr_dir/language.php");
+	include_once(__DIR__ . '/defaultLang.php');
+	include_once(__DIR__ . '/language.php');
 	$Translation = array_merge($TranslationEn, $Translation);
 
-	include_once("$curr_dir/db.php");
+	include_once(__DIR__ . '/db.php');
+
+	// detecting classes not included above
+	@spl_autoload_register(function($class) {
+		@include_once(__DIR__ . "/resources/lib/{$class}.php");
+	});
 
 	/*
 		Determine execution scenario ...
@@ -70,7 +74,7 @@
 	$_REQUEST['Embedded'] = 1; /* to prevent displaying the navigation bar */
 	$x = new StdClass;
 	$x->TableTitle = $Translation['Setup Data']; /* page title */
-	if(!$test) include_once("$curr_dir/header.php");
+	if(!$test) include_once(__DIR__ . '/header.php');
 
 	if($submit || $test) {
 
@@ -132,7 +136,7 @@
 					</div>
 				</div>
 			<?php
-			include_once("$curr_dir/footer.php");
+			include_once(__DIR__ . '/footer.php');
 			exit;
 		}
 
@@ -144,7 +148,7 @@
 
 		/* create database tables */
 		$silent = false;
-		include_once("$curr_dir/updateDB.php");
+		include_once(__DIR__ . '/updateDB.php');
 
 
 		/* attempt to save db config file */
@@ -232,11 +236,11 @@
 		<?php
 
 		// exit
-		include_once("$curr_dir/footer.php");
+		include_once(__DIR__ . '/footer.php');
 		exit;
 	} elseif($finish) {
 		detect_config();
-		@include("$curr_dir/config.php");
+		@include(__DIR__ . '/config.php');
 	}
 ?>
 
@@ -277,7 +281,7 @@
 					'message' => 'PHP is not configured to use mbstring extension on this machine. This will prevent some app functions. If you\'re using a Windows server, make sure to enable mbstring extension in <code>php.ini</code>. If you\'re using a Linux server, you should install the appropriate <code>php-mbstring</code> package for your Linux flavor and PHP version.'
 				];
 
-			if(!@is_writable("{$curr_dir}/images"))
+			if(!@is_writable(__DIR__ . '/images'))
 				$checks[] = [
 					'class' => 'warning',
 					'message' => '<dfn><abbr title="' . dirname(__FILE__) . '/images">images</abbr></dfn> folder is not writeable (or doesn\'t exist). This will prevent file uploads from working correctly. Please create or set that folder as writeable.<br><br>For example, you might need to <code>chmod 777</code> using FTP, or if this is a linux system and you have shell access, better try using <code>chown -R www-data:www-data ' . dirname(__FILE__) . '</code>, replacing <i>www-data</i> with the actual username running the server process if necessary.'
@@ -611,5 +615,5 @@
 		ul#next-actions { padding: 2em;     }
 	</style>
 
-<?php include_once("$curr_dir/footer.php"); ?>
+<?php include_once(__DIR__ . '/footer.php'); ?>
 

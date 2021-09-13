@@ -168,15 +168,15 @@
 	$xss = new CI_Input(datalist_db_encoding);
 
 	// receive and verify user input
-	$table_name = $_REQUEST['t'];
-	$field_name = $_REQUEST['f'];
-	$search_id = makeSafe(from_utf8($_REQUEST['id']));
-	$selected_text = from_utf8($_REQUEST['text']);
-	$returnOptions = ($_REQUEST['o'] == 1 ? true : false);
-	$page = intval($_REQUEST['p']);
+	$table_name = Request::val('t');
+	$field_name = Request::val('f');
+	$search_id = makeSafe(from_utf8(Request::val('id')));
+	$selected_text = from_utf8(Request::val('text'));
+	$returnOptions = (Request::val('o') == 1 ? true : false);
+	$page = intval(Request::val('p'));
 	if($page < 1)  $page = 1;
 	$skip = $results_per_page * ($page - 1);
-	$search_term = makeSafe(from_utf8($_REQUEST['s']));
+	$search_term = makeSafe(from_utf8(Request::val('s')));
 
 	if(!isset($lookups[$table_name][$field_name])) die('{ "error": "Invalid table or field." }');
 
@@ -196,10 +196,8 @@
 	// any filterers specified?
 	if(is_array($field['filterers'])) {
 		foreach($field['filterers'] as $filterer => $filterer_parent) {
-			$get = (isset($_REQUEST["filterer_{$filterer}"]) ? $_REQUEST["filterer_{$filterer}"] : false);
-			if($get) {
+			if($get = Request::val("filterer_{$filterer}", false))
 				$wheres[] = "`{$field['parent_table']}`.`$filterer_parent`='" . makeSafe($get) . "'";
-			}
 		}
 	}
 

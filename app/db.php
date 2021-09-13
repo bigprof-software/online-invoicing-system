@@ -172,6 +172,11 @@
 				if($dbname === NULL) $dbname = "";
 				if($port === NULL) $port = ini_get("mysqli.default_port");
 				if($socket === NULL) $socket = ini_get("mysqli.default_socket");
+
+				// revert PHP 8.1 mysql error reporting behavior
+				// @see https://php.watch/versions/8.1/mysqli-error-mode
+				@mysqli_report(MYSQLI_REPORT_OFF);
+
 				$link = mysqli_connect($host, $username, $passwd, $dbname, $port, $socket);
 				if(!$link) return false;
 				db_link($link); /* db_link() can now be used to retrieve the db link from anywhere */

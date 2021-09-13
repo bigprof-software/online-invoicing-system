@@ -52,7 +52,7 @@ function items_insert(&$error_message = '') {
 	set_record_owner('items', $recID, getLoggedMemberID());
 
 	// if this record is a copy of another record, copy children if applicable
-	if(!empty($_REQUEST['SelectedID'])) items_copy_children($recID, $_REQUEST['SelectedID']);
+	if(strlen(Request::val('SelectedID'))) items_copy_children($recID, Request::val('SelectedID'));
 
 	return $recID;
 }
@@ -215,7 +215,7 @@ function items_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $Allo
 	$AllowInsert = ($arrPerm['insert'] ? true : false);
 	// print preview?
 	$dvprint = false;
-	if($selected_id && $_REQUEST['dvprint_x'] != '') {
+	if(strlen($selected_id) && Request::val('dvprint_x') != '') {
 		$dvprint = true;
 	}
 
@@ -249,6 +249,9 @@ function items_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $Allo
 		$urow = $row; /* unsanitized data */
 		$row = array_map('safe_html', $row);
 	} else {
+		$filterField = Request::val('FilterField');
+		$filterOperator = Request::val('FilterOperator');
+		$filterValue = Request::val('FilterValue');
 	}
 
 	ob_start();
@@ -282,7 +285,7 @@ function items_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $Allo
 	// process form title
 	$templateCode = str_replace('<%%DETAIL_VIEW_TITLE%%>', 'Item details', $templateCode);
 	$templateCode = str_replace('<%%RND1%%>', $rnd1, $templateCode);
-	$templateCode = str_replace('<%%EMBEDDED%%>', ($_REQUEST['Embedded'] ? 'Embedded=1' : ''), $templateCode);
+	$templateCode = str_replace('<%%EMBEDDED%%>', (Request::val('Embedded') ? 'Embedded=1' : ''), $templateCode);
 	// process buttons
 	if($AllowInsert) {
 		if(!$selected_id) $templateCode = str_replace('<%%INSERT_BUTTON%%>', '<button type="submit" class="btn btn-success" id="insert" name="insert_x" value="1" onclick="return items_validateData();"><i class="glyphicon glyphicon-plus-sign"></i> ' . $Translation['Save New'] . '</button>', $templateCode);
@@ -292,14 +295,14 @@ function items_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $Allo
 	}
 
 	// 'Back' button action
-	if($_REQUEST['Embedded']) {
+	if(Request::val('Embedded')) {
 		$backAction = 'AppGini.closeParentModal(); return false;';
 	} else {
 		$backAction = '$j(\'form\').eq(0).attr(\'novalidate\', \'novalidate\'); document.myform.reset(); return true;';
 	}
 
 	if($selected_id) {
-		if(!$_REQUEST['Embedded']) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" onclick="$j(\'form\').eq(0).prop(\'novalidate\', true); document.myform.reset(); return true;" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
+		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" onclick="$j(\'form\').eq(0).prop(\'novalidate\', true); document.myform.reset(); return true;" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
 		if($AllowUpdate) {
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '<button type="submit" class="btn btn-success btn-lg" id="update" name="update_x" value="1" onclick="return items_validateData();" title="' . html_attr($Translation['Save Changes']) . '"><i class="glyphicon glyphicon-ok"></i> ' . $Translation['Save Changes'] . '</button>', $templateCode);
 		} else {
@@ -342,7 +345,7 @@ function items_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $Allo
 		}
 
 		// if user has insert permission to parent table of a lookup field, put an add new button
-		if($pt_perm['insert'] /* && !$_REQUEST['Embedded']*/) {
+		if($pt_perm['insert'] /* && !Request::val('Embedded')*/) {
 			$templateCode = str_replace("<%%ADDNEW({$ptfc[0]})%%>", '<button type="button" class="btn btn-success add_new_parent hspacer-md" id="' . $ptfc[0] . '_add_new" title="' . html_attr($Translation['Add New'] . ' ' . $ptfc[1]) . '"><i class="glyphicon glyphicon-plus-sign"></i></button>', $templateCode);
 		}
 	}
@@ -379,7 +382,7 @@ function items_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $Allo
 	$templateCode = str_replace('%%>', ' -->', $templateCode);
 
 	// hide links to inaccessible tables
-	if($_REQUEST['dvprint_x'] == '') {
+	if(Request::val('dvprint_x') == '') {
 		$templateCode .= "\n\n<script>\$j(function() {\n";
 		$arrTables = getTableList();
 		foreach($arrTables as $name => $caption) {
@@ -406,6 +409,9 @@ function items_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $Allo
 	$templateCode .= $lookups;
 
 	// handle enforced parent values for read-only lookup fields
+	$filterField = Request::val('FilterField');
+	$filterOperator = Request::val('FilterOperator');
+	$filterValue = Request::val('FilterValue');
 
 	// don't include blank images in lightbox gallery
 	$templateCode = preg_replace('/blank.gif" data-lightbox=".*?"/', 'blank.gif"', $templateCode);
