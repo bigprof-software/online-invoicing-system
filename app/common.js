@@ -1,5 +1,7 @@
 var AppGini = AppGini || {};
 
+AppGini.version = 6.0;
+
 /* initials and fixes */
 jQuery(function() {
 	AppGini.count_ajaxes_blocking_saving = 0;

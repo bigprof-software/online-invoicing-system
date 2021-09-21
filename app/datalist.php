@@ -224,7 +224,7 @@ class DataList{
 		$this->HTML .= '   return false;';
 		$this->HTML .= '}';
 		$this->HTML .= '</script>';
-		$this->HTML .= '<input id="EnterAction" type="submit" style="position: absolute; left: 0px; top: -250px;" onclick="return enterAction();">';
+		$this->HTML .= '<input id="EnterAction" type="submit" style="position: fixed; left: 0px; top: -250px;" onclick="return enterAction();">';
 
 		$this->ContentType = 'tableview'; // default content type
 
