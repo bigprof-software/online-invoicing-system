@@ -3,9 +3,7 @@
 	#########################################################
 	/*
 	~~~~~~ LIST OF FUNCTIONS ~~~~~~
-		getTableList() -- returns an associative array (tableName => tableData, tableData is array(tableCaption, tableDescription, tableIcon)) of tables accessible by current user
 		get_table_groups() -- returns an associative array (table_group => tables_array)
-		logInMember() -- checks POST login. If not valid, redirects to index.php, else returns TRUE
 		getTablePermissions($tn) -- returns an array of permissions allowed for logged member to given table (allowAccess, allowInsert, allowView, allowEdit, allowDelete) -- allowAccess is set to true if any access level is allowed
 		get_sql_fields($tn) -- returns the SELECT part of the table view query
 		get_sql_from($tn[, true, [, false]]) -- returns the FROM part of the table view query, with full joins (unless third paramaeter is set to true), optionally skipping permissions if true passed as 2nd param.
@@ -19,9 +17,7 @@
 		clearFilters() -- clear all filters
 		loadView($view, $data) -- passes $data to templates/{$view}.php and returns the output
 		loadTable($table, $data) -- loads table template, passing $data to it
-		filterDropdownBy($filterable, $filterers, $parentFilterers, $parentPKField, $parentCaption, $parentTable, &$filterableCombo) -- applies cascading drop-downs for a lookup field, returns js code to be inserted into the page
 		br2nl($text) -- replaces all variations of HTML <br> tags with a new line character
-		htmlspecialchars_decode($text) -- inverse of htmlspecialchars()
 		entitiesToUTF8($text) -- convert unicode entities (e.g. &#1234;) to actual UTF8 characters, requires multibyte string PHP extension
 		func_get_args_byref() -- returns an array of arguments passed to a function, by reference
 		permissions_sql($table, $level) -- returns an array containing the FROM and WHERE additions for applying permissions to an SQL query
@@ -38,30 +34,6 @@
 		quick_search_html($search_term, $label, $separate_dv = true) -- returns HTML code for the quick search box.
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	*/
-
-	#########################################################
-
-	function getTableList($skip_authentication = false) {
-		$arrAccessTables = [];
-		$arrTables = [
-			/* 'table_name' => ['table caption', 'homepage description', 'icon', 'table group name'] */   
-			'invoices' => ['Invoices', '', 'resources/table_icons/attributes_display.png', 'None'],
-			'clients' => ['Clients', '', 'resources/table_icons/administrator.png', 'None'],
-			'item_prices' => ['Prices History', '', 'resources/table_icons/card_money.png', 'None'],
-			'invoice_items' => ['Invoice items', '', 'resources/table_icons/barcode.png', 'None'],
-			'items' => ['Items', '', 'resources/table_icons/installer_box.png', 'None'],
-		];
-		if($skip_authentication || getLoggedAdmin()) return $arrTables;
-
-		if(is_array($arrTables)) {
-			foreach($arrTables as $tn => $tc) {
-				$arrPerm = getTablePermissions($tn);
-				if($arrPerm['access']) $arrAccessTables[$tn] = $tc;
-			}
-		}
-
-		return $arrAccessTables;
-	}
 
 	#########################################################
 
@@ -200,7 +172,7 @@
 
 		$safe_id = makeSafe($id, false);
 		$sql = "SELECT {$sql_fields} FROM {$sql_from} AND `{$table}`.`{$pk}`='{$safe_id}'";
-		$eo['silentErrors'] = true;
+		$eo = ['silentErrors' => true];
 		$res = sql($sql, $eo);
 		if($row = db_fetch_assoc($res)) return $row;
 
@@ -277,70 +249,6 @@
 
 	#########################################################
 
-	function logInMember() {
-		$redir = 'index.php';
-		if($_POST['signIn'] != '') {
-			if($_POST['username'] != '' && $_POST['password'] != '') {
-				$username = makeSafe(strtolower($_POST['username']));
-				$hash = sqlValue("select passMD5 from membership_users where lcase(memberID)='{$username}' and isApproved=1 and isBanned=0");
-				$password = $_POST['password'];
-
-				if(password_match($password, $hash)) {
-					$_SESSION['memberID'] = $username;
-					$_SESSION['memberGroupID'] = sqlValue("SELECT `groupID` FROM `membership_users` WHERE LCASE(`memberID`)='{$username}'");
-
-					if($_POST['rememberMe'] == 1) {
-						RememberMe::login($username);
-					} else {
-						RememberMe::delete();
-					}
-
-					// harden user's password hash
-					password_harden($username, $password, $hash);
-
-					// hook: login_ok
-					if(function_exists('login_ok')) {
-						$args = [];
-						if(!$redir = login_ok(getMemberInfo(), $args)) {
-							$redir = 'index.php';
-						}
-					}
-
-					redirect($redir);
-					exit;
-				}
-			}
-
-			// hook: login_failed
-			if(function_exists('login_failed')) {
-				$args = [];
-				login_failed([
-					'username' => $_POST['username'],
-					'password' => $_POST['password'],
-					'IP' => $_SERVER['REMOTE_ADDR']
-				], $args);
-			}
-
-			if(!headers_sent()) header('HTTP/1.0 403 Forbidden');
-			redirect("index.php?loginFailed=1");
-			exit;
-		}
-
-		/* do we have a JWT auth header? */
-		jwt_check_login();
-
-		if(!empty($_SESSION['memberID']) && !empty($_SESSION['memberGroupID'])) return;
-
-		/* check if a rememberMe cookie exists and sign in user if so */
-		if(RememberMe::check()) {
-			$username = makeSafe(strtolower(RememberMe::user()));
-			$_SESSION['memberID'] = $username;
-			$_SESSION['memberGroupID'] = sqlValue("SELECT `groupID` FROM `membership_users` WHERE LCASE(`memberID`)='{$username}'");
-		}
-	}
-
-	#########################################################
-
 	function htmlUserBar() {
 		global $Translation;
 		if(!defined('PREPEND_PATH')) define('PREPEND_PATH', '');
@@ -360,7 +268,7 @@
 					<span class="icon-bar"></span>
 				</button>
 				<!-- application title is obtained from the name besides the yellow database icon in AppGini, use underscores for spaces -->
-				<a class="navbar-brand" href="<?php echo PREPEND_PATH; ?>index.php"><i class="glyphicon glyphicon-home"></i> online inovicing system</a>
+				<a class="navbar-brand" href="<?php echo PREPEND_PATH; ?>index.php"><i class="glyphicon glyphicon-home"></i> <?php echo APP_TITLE; ?></a>
 			</div>
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav"><?php echo ($home_page ? '' : NavMenus()); ?></ul>
@@ -424,10 +332,7 @@
 		</nav>
 		<?php
 
-		$html = ob_get_contents();
-		ob_end_clean();
-
-		return $html;
+		return ob_get_clean();
 	}
 
 	#########################################################
@@ -528,6 +433,13 @@
 
 	function validMySQLDate($date) {
 		$date = trim($date);
+
+		try {
+			$dtObj = new DateTime($date);
+		} catch(Exception $e) {
+			return false;
+		}
+
 		$parts = explode('-', $date);
 		return (
 			count($parts) == 3
@@ -538,7 +450,6 @@
 			&& intval($parts[1]) <= 12
 			&& intval($parts[2]) >= 1
 			&& intval($parts[2]) <= 31
-			&& strtotime($date) > 0
 		);
 	}
 
@@ -559,29 +470,31 @@
 	#########################################################
 
 	function parseCode($code, $isInsert = true, $rawData = false) {
+		$mi = Authentication::getUser();
+
 		if($isInsert) {
 			$arrCodes = [
-				'<%%creatorusername%%>' => $_SESSION['memberID'],
-				'<%%creatorgroupid%%>' => $_SESSION['memberGroupID'],
+				'<%%creatorusername%%>' => $mi['username'],
+				'<%%creatorgroupid%%>' => $mi['groupId'],
 				'<%%creatorip%%>' => $_SERVER['REMOTE_ADDR'],
-				'<%%creatorgroup%%>' => sqlValue("SELECT `name` FROM `membership_groups` WHERE `groupID`='{$_SESSION['memberGroupID']}'"),
+				'<%%creatorgroup%%>' => $mi['group'],
 
-				'<%%creationdate%%>' => ($rawData ? @date('Y-m-d') : @date('j/n/Y')),
-				'<%%creationtime%%>' => ($rawData ? @date('H:i:s') : @date('h:i:s a')),
-				'<%%creationdatetime%%>' => ($rawData ? @date('Y-m-d H:i:s') : @date('j/n/Y h:i:s a')),
-				'<%%creationtimestamp%%>' => ($rawData ? @date('Y-m-d H:i:s') : @time())
+				'<%%creationdate%%>' => ($rawData ? date('Y-m-d') : date(app_datetime_format('phps'))),
+				'<%%creationtime%%>' => ($rawData ? date('H:i:s') : date(app_datetime_format('phps', 't'))),
+				'<%%creationdatetime%%>' => ($rawData ? date('Y-m-d H:i:s') : date(app_datetime_format('phps', 'dt'))),
+				'<%%creationtimestamp%%>' => ($rawData ? date('Y-m-d H:i:s') : time()),
 			];
 		} else {
 			$arrCodes = [
-				'<%%editorusername%%>' => $_SESSION['memberID'],
-				'<%%editorgroupid%%>' => $_SESSION['memberGroupID'],
+				'<%%editorusername%%>' => $mi['username'],
+				'<%%editorgroupid%%>' => $mi['groupId'],
 				'<%%editorip%%>' => $_SERVER['REMOTE_ADDR'],
-				'<%%editorgroup%%>' => sqlValue("SELECT `name` FROM `membership_groups` WHERE `groupID`='{$_SESSION['memberGroupID']}'"),
+				'<%%editorgroup%%>' => $mi['group'],
 
-				'<%%editingdate%%>' => ($rawData ? @date('Y-m-d') : @date('j/n/Y')),
-				'<%%editingtime%%>' => ($rawData ? @date('H:i:s') : @date('h:i:s a')),
-				'<%%editingdatetime%%>' => ($rawData ? @date('Y-m-d H:i:s') : @date('j/n/Y h:i:s a')),
-				'<%%editingtimestamp%%>' => ($rawData ? @date('Y-m-d H:i:s') : @time())
+				'<%%editingdate%%>' => ($rawData ? date('Y-m-d') : date(app_datetime_format('phps'))),
+				'<%%editingtime%%>' => ($rawData ? date('H:i:s') : date(app_datetime_format('phps', 't'))),
+				'<%%editingdatetime%%>' => ($rawData ? date('Y-m-d H:i:s') : date(app_datetime_format('phps', 'dt'))),
+				'<%%editingtimestamp%%>' => ($rawData ? date('Y-m-d H:i:s') : time()),
 			];
 		}
 
@@ -599,11 +512,11 @@
 		$filterField = intval($filterField);
 
 		/* backward compatibility */
-		if(in_array($filterOperator, $GLOBALS['filter_operators'])) {
-			$filterOperator = array_search($filterOperator, $GLOBALS['filter_operators']);
+		if(in_array($filterOperator, FILTER_OPERATORS)) {
+			$filterOperator = array_search($filterOperator, FILTER_OPERATORS);
 		}
 
-		if(!in_array($filterOperator, array_keys($GLOBALS['filter_operators']))) {
+		if(!in_array($filterOperator, array_keys(FILTER_OPERATORS))) {
 			$filterOperator = 'like';
 		}
 
@@ -630,47 +543,27 @@
 
 	#########################################################
 
-	if(!function_exists('str_ireplace')) {
-		function str_ireplace($search, $replace, $subject) {
-			$ret=$subject;
-			if(is_array($search)) {
-				for($i=0; $i<count($search); $i++) {
-					$ret=str_ireplace($search[$i], $replace[$i], $ret);
-				}
-			} else {
-				$ret=preg_replace('/'.preg_quote($search, '/').'/i', $replace, $ret);
-			}
-
-			return $ret;
-		} 
-	} 
-
-	#########################################################
-
 	/**
 	* Loads a given view from the templates folder, passing the given data to it
 	* @param $view the name of a php file (without extension) to be loaded from the 'templates' folder
 	* @param $the_data_to_pass_to_the_view (optional) associative array containing the data to pass to the view
 	* @return the output of the parsed view as a string
 	*/
-	function loadView($view, $the_data_to_pass_to_the_view=false) {
+	function loadView($view, $the_data_to_pass_to_the_view = false) {
 		global $Translation;
 
-		$view = dirname(__FILE__)."/templates/$view.php";
+		$view = __DIR__ . "/templates/$view.php";
 		if(!is_file($view)) return false;
 
 		if(is_array($the_data_to_pass_to_the_view)) {
-			foreach($the_data_to_pass_to_the_view as $k => $v)
-				$$k = $v;
+			foreach($the_data_to_pass_to_the_view as $data_k => $data_v)
+				$$data_k = $data_v;
 		}
-		unset($the_data_to_pass_to_the_view, $k, $v);
+		unset($the_data_to_pass_to_the_view, $data_k, $data_v);
 
 		ob_start();
 		@include($view);
-		$out=ob_get_contents();
-		ob_end_clean();
-
-		return $out;
+		return ob_get_clean();
 	}
 
 	#########################################################
@@ -708,101 +601,8 @@
 
 	#########################################################
 
-	function filterDropdownBy($filterable, $filterers, $parentFilterers, $parentPKField, $parentCaption, $parentTable, &$filterableCombo) {
-		$filterersArray = explode(',', $filterers);
-		$parentFilterersArray = explode(',', $parentFilterers);
-		$parentFiltererList = '`' . implode('`, `', $parentFilterersArray) . '`';
-		$res=sql("SELECT `$parentPKField`, $parentCaption, $parentFiltererList FROM `$parentTable` ORDER BY 2", $eo);
-		$filterableData = [];
-		while($row=db_fetch_row($res)) {
-			$filterableData[$row[0]] = $row[1];
-			$filtererIndex = 0;
-			foreach($filterersArray as $filterer) {
-				$filterableDataByFilterer[$filterer][$row[$filtererIndex + 2]][$row[0]] = $row[1];
-				$filtererIndex++;
-			}
-			$row[0] = addslashes($row[0]);
-			$row[1] = addslashes($row[1]);
-			$jsonFilterableData .= "\"{$row[0]}\":\"{$row[1]}\",";
-		}
-		$jsonFilterableData .= '}';
-		$jsonFilterableData = '{'.str_replace(',}', '}', $jsonFilterableData);     
-		$filterJS = "\nvar {$filterable}_data = $jsonFilterableData;";
-
-		foreach($filterersArray as $filterer) {
-			if(is_array($filterableDataByFilterer[$filterer])) foreach($filterableDataByFilterer[$filterer] as $filtererItem => $filterableItem) {
-				$jsonFilterableDataByFilterer[$filterer] .= '"'.addslashes($filtererItem).'":{';
-				foreach($filterableItem as $filterableItemID => $filterableItemData) {
-					$jsonFilterableDataByFilterer[$filterer] .= '"'.addslashes($filterableItemID).'":"'.addslashes($filterableItemData).'",';
-				}
-				$jsonFilterableDataByFilterer[$filterer] .= '},';
-			}
-			$jsonFilterableDataByFilterer[$filterer] .= '}';
-			$jsonFilterableDataByFilterer[$filterer] = '{'.str_replace(',}', '}', $jsonFilterableDataByFilterer[$filterer]);
-
-			$filterJS.="\n\n// code for filtering {$filterable} by {$filterer}\n";
-			$filterJS.="\nvar {$filterable}_data_by_{$filterer} = {$jsonFilterableDataByFilterer[$filterer]}; ";
-			$filterJS.="\nvar selected_{$filterable} = \$j('#{$filterable}').val();";
-			$filterJS.="\nvar {$filterable}_change_by_{$filterer} = function() {";
-			$filterJS.="\n\t$('{$filterable}').options.length=0;";
-			$filterJS.="\n\t$('{$filterable}').options[0] = new Option();";
-			$filterJS.="\n\tif(\$j('#{$filterer}').val()) {";
-			$filterJS.="\n\t\tfor({$filterable}_item in {$filterable}_data_by_{$filterer}[\$j('#{$filterer}').val()]) {";
-			$filterJS.="\n\t\t\t$('{$filterable}').options[$('{$filterable}').options.length] = new Option(";
-			$filterJS.="\n\t\t\t\t{$filterable}_data_by_{$filterer}[\$j('#{$filterer}').val()][{$filterable}_item],";
-			$filterJS.="\n\t\t\t\t{$filterable}_item,";
-			$filterJS.="\n\t\t\t\t({$filterable}_item == selected_{$filterable} ? true : false),";
-			$filterJS.="\n\t\t\t\t({$filterable}_item == selected_{$filterable} ? true : false)";
-			$filterJS.="\n\t\t\t);";
-			$filterJS.="\n\t\t}";
-			$filterJS.="\n\t} else {";
-			$filterJS.="\n\t\tfor({$filterable}_item in {$filterable}_data) {";
-			$filterJS.="\n\t\t\t$('{$filterable}').options[$('{$filterable}').options.length] = new Option(";
-			$filterJS.="\n\t\t\t\t{$filterable}_data[{$filterable}_item],";
-			$filterJS.="\n\t\t\t\t{$filterable}_item,";
-			$filterJS.="\n\t\t\t\t({$filterable}_item == selected_{$filterable} ? true : false),";
-			$filterJS.="\n\t\t\t\t({$filterable}_item == selected_{$filterable} ? true : false)";
-			$filterJS.="\n\t\t\t);";
-			$filterJS.="\n\t\t}";
-			$filterJS.="\n\t\tif(selected_{$filterable} && selected_{$filterable} == \$j('#{$filterable}').val()) {";
-			$filterJS.="\n\t\t\tfor({$filterer}_item in {$filterable}_data_by_{$filterer}) {";
-			$filterJS.="\n\t\t\t\tfor({$filterable}_item in {$filterable}_data_by_{$filterer}[{$filterer}_item]) {";
-			$filterJS.="\n\t\t\t\t\tif({$filterable}_item == selected_{$filterable}) {";
-			$filterJS.="\n\t\t\t\t\t\t$('{$filterer}').value = {$filterer}_item;";
-			$filterJS.="\n\t\t\t\t\t\tbreak;";
-			$filterJS.="\n\t\t\t\t\t}";
-			$filterJS.="\n\t\t\t\t}";
-			$filterJS.="\n\t\t\t\tif({$filterable}_item == selected_{$filterable}) break;";
-			$filterJS.="\n\t\t\t}";
-			$filterJS.="\n\t\t}";
-			$filterJS.="\n\t}";
-			$filterJS.="\n\t$('{$filterable}').highlight();";
-			$filterJS.="\n};";
-			$filterJS.="\n$('{$filterer}').observe('change', function() { window.setTimeout({$filterable}_change_by_{$filterer}, 25); });";
-			$filterJS.="\n";
-		}
-
-		$filterableCombo = new Combo;
-		$filterableCombo->ListType = 0;
-		$filterableCombo->ListItem = array_slice(array_values($filterableData), 0, 10);
-		$filterableCombo->ListData = array_slice(array_keys($filterableData), 0, 10);
-		$filterableCombo->SelectName = $filterable;
-		$filterableCombo->AllowNull = true;
-
-		return $filterJS;
-	}
-
-	#########################################################
 	function br2nl($text) {
 		return  preg_replace('/\<br(\s*)?\/?\>/i', "\n", $text);
-	}
-
-	#########################################################
-
-	if(!function_exists('htmlspecialchars_decode')) {
-		function htmlspecialchars_decode($string, $quote_style = ENT_COMPAT) {
-			return strtr($string, array_flip(get_html_translation_table(HTML_SPECIALCHARS, $quote_style)));
-		}
 	}
 
 	#########################################################
@@ -855,12 +655,11 @@
 	#########################################################
 
 	function error_message($msg, $back_url = '', $full_page = true) {
-		$curr_dir = dirname(__FILE__);
 		global $Translation;
 
 		ob_start();
 
-		if($full_page) include($curr_dir . '/header.php');
+		if($full_page) include(__DIR__ . '/header.php');
 
 		echo '<div class="panel panel-danger">';
 			echo '<div class="panel-heading"><h3 class="panel-title">' . $Translation['error:'] . '</h3></div>';
@@ -877,7 +676,7 @@
 			echo '</div>';
 		echo '</div>';
 
-		if($full_page) include($curr_dir . '/footer.php');
+		if($full_page) include(__DIR__ . '/footer.php');
 
 		return ob_get_clean();
 	}
@@ -1198,10 +997,7 @@ EOT;
 			}
 		}
 
-		$html = ob_get_contents();
-		ob_end_clean();
-
-		return $html;
+		return ob_get_clean();
 	}
 
 	#########################################################

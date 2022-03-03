@@ -1,22 +1,10 @@
 <?php
 
 	/*
-		You can implement a new db driver in this file by uncommenting the line below
-		and replacing 'mssql' with the desired driver name, then adding cases for the
-		that driver in each function below ...
+		To implement a new db driver you should change the value of
+		the DATABASE cnonstant in definitions.php to the desired driver name, for example 'mssql'.
+		then adding cases for the that driver in each function below ...
 	*/
-	// define('DATABASE', 'mssql'); 
-
-
-
-
-	if(!defined('DATABASE')) {
-		if(function_exists('mysqli_connect')) {
-			define('DATABASE', 'mysqli');
-		} else {
-			define('DATABASE', 'mysql');
-		}
-	}
 
 
 	function db_link($link = NULL) {

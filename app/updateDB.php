@@ -1,13 +1,13 @@
 <?php
 	// check this file's MD5 to make sure it wasn't called before
-	$prevMD5 = @file_get_contents(dirname(__FILE__) . '/setup.md5');
-	$thisMD5 = md5(@file_get_contents(dirname(__FILE__) . '/updateDB.php'));
+	$tenantId = Authentication::tenantIdPadded();
+	$setupHash = __DIR__ . "/setup{$tenantId}.md5";
 
-	// check if setup already run
+	$prevMD5 = @file_get_contents($setupHash);
+	$thisMD5 = md5_file(__FILE__);
+
+	// check if this setup file already run
 	if($thisMD5 != $prevMD5) {
-		// $silent is set if this file is included from setup.php
-		if(!isset($silent)) $silent = true;
-
 		// set up tables
 		setupTable(
 			'invoices', " 
@@ -33,8 +33,7 @@
 				`invoice_template` VARCHAR(100) NULL,
 				`created` VARCHAR(200) NULL,
 				`last_updated` VARCHAR(200) NULL
-			) CHARSET utf8",
-			$silent
+			) CHARSET utf8"
 		);
 		setupIndexes('invoices', ['client',]);
 
@@ -57,8 +56,7 @@
 				`unpaid_sales` DECIMAL(10,2) NULL,
 				`paid_sales` DECIMAL(10,2) NULL,
 				`total_sales` DECIMAL(10,2) NULL
-			) CHARSET utf8",
-			$silent
+			) CHARSET utf8"
 		);
 
 		setupTable(
@@ -69,8 +67,7 @@
 				`item` INT UNSIGNED NULL,
 				`price` DECIMAL(10,2) NULL DEFAULT '0.00',
 				`date` DATE NULL
-			) CHARSET utf8",
-			$silent
+			) CHARSET utf8"
 		);
 		setupIndexes('item_prices', ['item',]);
 
@@ -86,8 +83,7 @@
 				`unit_price` DECIMAL(10,2) UNSIGNED NOT NULL,
 				`qty` DECIMAL(9,3) NULL DEFAULT '1',
 				`price` DECIMAL(9,2) NULL
-			) CHARSET utf8",
-			$silent
+			) CHARSET utf8"
 		);
 		setupIndexes('invoice_items', ['invoice','item',]);
 
@@ -98,14 +94,13 @@
 				PRIMARY KEY (`id`),
 				`item_description` TEXT NULL,
 				`unit_price` DECIMAL(10,2) NULL
-			) CHARSET utf8",
-			$silent
+			) CHARSET utf8"
 		);
 
 
 
 		// save MD5
-		@file_put_contents(dirname(__FILE__) . '/setup.md5', $thisMD5);
+		@file_put_contents($setupHash, $thisMD5);
 	}
 
 
@@ -122,7 +117,7 @@
 	}
 
 
-	function setupTable($tableName, $createSQL = '', $silent = true, $arrAlter = '') {
+	function setupTable($tableName, $createSQL = '', $arrAlter = '') {
 		global $Translation;
 		$oldTableName = '';
 		ob_start();
@@ -186,10 +181,24 @@
 					echo '<span class="label label-success">' . $Translation['ok'] . '</span>';
 				}
 			}
+
+			// set Admin group permissions for newly created table if membership_grouppermissions exists
+			if($ro = @db_query("SELECT COUNT(1) FROM `membership_grouppermissions`")) {
+				// get Admins group id
+				$ro = @db_query("SELECT `groupID` FROM `membership_groups` WHERE `name`='Admins'");
+				if($ro) {
+					$adminGroupID = intval(db_fetch_row($ro)[0]);
+					if($adminGroupID) @db_query("INSERT IGNORE INTO `membership_grouppermissions` SET
+						`groupID`='$adminGroupID',
+						`tableName`='$tableName',
+						`allowInsert`=1, `allowView`=1, `allowEdit`=1, `allowDelete`=1
+					");
+				}
+			}
 		}
 
 		echo '</div>';
 
 		$out = ob_get_clean();
-		if(!$silent) echo $out;
+		if(defined('APPGINI_SETUP') && APPGINI_SETUP) echo $out;
 	}

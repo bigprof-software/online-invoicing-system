@@ -8,8 +8,8 @@
 
 		/* data for selected record, or defaults if none is selected */
 		var data = {
-			invoice: <?php echo json_encode(array('id' => $rdata['invoice'], 'value' => $rdata['invoice'], 'text' => $jdata['invoice'])); ?>,
-			item: <?php echo json_encode(array('id' => $rdata['item'], 'value' => $rdata['item'], 'text' => $jdata['item'])); ?>,
+			invoice: <?php echo json_encode(['id' => $rdata['invoice'], 'value' => $rdata['invoice'], 'text' => $jdata['invoice']]); ?>,
+			item: <?php echo json_encode(['id' => $rdata['item'], 'value' => $rdata['item'], 'text' => $jdata['item']]); ?>,
 			current_price: <?php echo json_encode($jdata['current_price']); ?>
 		};
 

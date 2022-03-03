@@ -1,10 +1,12 @@
 <?php
-	$currDir = dirname(__FILE__);
-	include_once("{$currDir}/lib.php");
-	include_once("{$currDir}/header.php");
+	include_once(__DIR__ . '/lib.php');
 
 	$current_user = Request::val('currentUser', false);
 	$username = is_allowed_username(Request::val('memberID'), $current_user);
+
+	if(is_ajax()) exit('username-' . ($username ? 'available' : 'unavailable'));
+
+	include_once(__DIR__ . '/header.php');
 ?>
 
 <style>
@@ -30,4 +32,4 @@
 	<input type="button" value="Close" onClick="window.close();" autofocus class="btn btn-default btn-lg">
 </div>
 
-<?php include_once("{$currDir}/footer.php"); ?>
+<?php include_once(__DIR__ . '/footer.php');

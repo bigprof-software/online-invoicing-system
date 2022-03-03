@@ -348,7 +348,7 @@ class CI_Input {
 		}
 
 		// Remove Invisible Characters
-		$str = remove_invisible_characters($str);
+		$str = $this->remove_invisible_characters($str);
 
 		/*
 		 * URL Decode
@@ -380,7 +380,7 @@ class CI_Input {
 		$str = preg_replace_callback('/<\w+.*/si', array($this, '_decode_entity'), $str);
 
 		// Remove Invisible Characters Again!
-		$str = remove_invisible_characters($str);
+		$str = $this->remove_invisible_characters($str);
 
 		/*
 		 * Convert all tabs to spaces
@@ -895,34 +895,35 @@ class CI_Input {
 
 		return $str;
 	}
-}
 
-/**
- * Remove Invisible Characters
- *
- * This prevents sandwiching null characters
- * between ascii characters, like Java\0script.
- *
- * @param	string
- * @param	bool
- * @return	string
- */
-function remove_invisible_characters($str, $url_encoded = true) {
-	$non_displayables = array();
+	/**
+	 * Remove Invisible Characters
+	 *
+	 * This prevents sandwiching null characters
+	 * between ascii characters, like Java\0script.
+	 *
+	 * @param	string
+	 * @param	bool
+	 * @return	string
+	 */
+	public function remove_invisible_characters($str, $url_encoded = true) {
+		$non_displayables = array();
 
-	// every control character except newline (dec 10),
-	// carriage return (dec 13) and horizontal tab (dec 09)
-	if ($url_encoded) {
-		$non_displayables[] = '/%0[0-8bcef]/i';	// url encoded 00-08, 11, 12, 14, 15
-		$non_displayables[] = '/%1[0-9a-f]/i';	// url encoded 16-31
-		$non_displayables[] = '/%7f/i';	// url encoded 127
+		// every control character except newline (dec 10),
+		// carriage return (dec 13) and horizontal tab (dec 09)
+		if ($url_encoded) {
+			$non_displayables[] = '/%0[0-8bcef]/i';	// url encoded 00-08, 11, 12, 14, 15
+			$non_displayables[] = '/%1[0-9a-f]/i';	// url encoded 16-31
+			$non_displayables[] = '/%7f/i';	// url encoded 127
+		}
+
+		$non_displayables[] = '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S';	// 00-08, 11, 12, 14-31, 127
+
+		do {
+			$str = preg_replace($non_displayables, '', $str, -1, $count);
+		} while ($count);
+
+		return $str;
 	}
 
-	$non_displayables[] = '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S';	// 00-08, 11, 12, 14-31, 127
-
-	do {
-		$str = preg_replace($non_displayables, '', $str, -1, $count);
-	} while ($count);
-
-	return $str;
 }

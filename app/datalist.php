@@ -1,21 +1,6 @@
 <?php
 
-define('datalist_filters_count', 20);
-define('datalist_image_uploads_exist', false);
-define('datalist_max_records_multi_selection', 1000);
-define('datalist_max_page_lump', 50);
-define('datalist_max_records_dv_print', 100);
-define('datalist_auto_complete_size', 1000);
-define('datalist_date_separator', '/');
-define('datalist_date_format', 'dmY');
-define('datalist_max_records_per_page', 2000);
-
-$curr_dir = dirname(__FILE__);
-require_once($curr_dir . '/combo.class.php');
-require_once($curr_dir . '/data_combo.class.php');
-require_once($curr_dir . '/date_combo.class.php');
-
-class DataList{
+class DataList {
 	// this class generates the data table ...
 
 	var $QueryFieldsTV,
@@ -159,6 +144,8 @@ class DataList{
 
 		$this->applyPermissionsToQuery($DisplayRecords);
 
+		$setSelectedIDPreviousPage = $setSelectedIDNextPage = $previousRecordDV = $nextRecordDV = null;
+
 		if($SelectedID && !$Embedded && $this->AllowDVNavigation) {
 			$setSelectedIDPreviousPage = !empty(Request::val('setSelectedIDPreviousPage'));
 			$setSelectedIDNextPage = !empty(Request::val('setSelectedIDNextPage')) && !$setSelectedIDPreviousPage;
@@ -224,7 +211,7 @@ class DataList{
 		$this->HTML .= '   return false;';
 		$this->HTML .= '}';
 		$this->HTML .= '</script>';
-		$this->HTML .= '<input id="EnterAction" type="submit" style="position: fixed; left: 0px; top: -250px;" onclick="return enterAction();">';
+		$this->HTML .= '<input id="EnterAction" type="submit" style="visibility: hidden; position: fixed; left: 0px; top: -250px;" onclick="return enterAction();">';
 
 		$this->ContentType = 'tableview'; // default content type
 
@@ -234,6 +221,8 @@ class DataList{
 		}
 
 		// handle user commands ...
+		$filtersGET = null;
+
 		if($deselect_x != '') {
 			$SelectedID = '';
 			$this->showTV();
@@ -293,7 +282,7 @@ class DataList{
 			// delete only if either a csrf or jwt token is provided
 			if(!csrf_token(true) && !jwt_check_login()) die($this->translation['csrf token expired or invalid']);
 
-			$delete_res = call_user_func_array($this->TableName.'_delete', array($SelectedID, $this->AllowDeleteOfParents, $SkipChecks));
+			$delete_res = call_user_func_array($this->TableName.'_delete', [$SelectedID, $this->AllowDeleteOfParents, $SkipChecks]);
 			// handle ajax delete requests
 			if(is_ajax()) {
 				die($delete_res ? $delete_res : 'OK');
@@ -402,7 +391,7 @@ class DataList{
 			}
 
 			// check if magic filter files exist
-			$hooksDir = dirname(__FILE__) . '/hooks';
+			$hooksDir = APP_DIR . '/hooks';
 			$uff = "{$hooksDir}/{$this->TableName}.filters.{$mi['username']}.php"; // user-specific filter file
 			$gff = "{$hooksDir}/{$this->TableName}.filters.{$mi['group']}.php"; // group-specific filter file
 			$tff = "{$hooksDir}/{$this->TableName}.filters.php"; // table-specific filter file
@@ -564,10 +553,10 @@ class DataList{
 
 					elseif($isDate) {
 						$dateValue = mysql_datetime($this->FilterValue[$ij]);
-						$currentFilter .= $this->QueryFieldsIndexed[($this->FilterField[$ij])] . ' ' . $GLOBALS['filter_operators'][$this->FilterOperator[$ij]] . " '$dateValue'";
+						$currentFilter .= $this->QueryFieldsIndexed[($this->FilterField[$ij])] . ' ' . FILTER_OPERATORS[$this->FilterOperator[$ij]] . " '$dateValue'";
 
 					} else
-						$currentFilter .= $this->QueryFieldsIndexed[($this->FilterField[$ij])] . ' ' . $GLOBALS['filter_operators'][$this->FilterOperator[$ij]] . " '" . makeSafe($this->FilterValue[$ij]) . "'";
+						$currentFilter .= $this->QueryFieldsIndexed[($this->FilterField[$ij])] . ' ' . FILTER_OPERATORS[$this->FilterOperator[$ij]] . " '" . makeSafe($this->FilterValue[$ij]) . "'";
 
 				}
 			}
@@ -655,6 +644,7 @@ class DataList{
 
 			$tvRecords = $this->getTVRevords($FirstRecord);
 			$fieldCountTV = count($this->QueryFieldsTV);
+			$indexOfSelectedID = null;
 
 			if($SelectedID && count($tvRecords) && !$Embedded) {
 				if($setSelectedIDPreviousPage)
@@ -711,44 +701,44 @@ class DataList{
 				$selected_records_more = [];
 
 				if($this->AllowPrintingDV) {
-					$selected_records_more[] = array(
+					$selected_records_more[] = [
 						'function' => ($this->SeparateDV ? 'print_multiple_dv_sdv' : 'print_multiple_dv_tvdv'),
 						'title' => $this->translation['Print Preview Detail View'],
 						'icon' => 'print'
-					);
+					];
 				}
 
 				/* if user can mass-delete selected records, add action to 'More' menu */
 				if($this->AllowMassDelete && $this->AllowDelete) {
-					$selected_records_more[] = array(
+					$selected_records_more[] = [
 						'function' => 'mass_delete',
 						'title' => $this->translation['Delete'],
 						'icon' => 'trash',
 						'class' => 'text-danger'
-					);
+					];
 				}
 
 				/* if user is admin, add 'Change owner' action to 'More' menu */
 				/* also, add help link for adding more actions */
 				if(getLoggedAdmin() !== false) {
-					$selected_records_more[] = array(
+					$selected_records_more[] = [
 						'function' => 'mass_change_owner',
 						'title' => $this->translation['Change owner'],
 						'icon' => 'user'
-					);
-					$selected_records_more[] = array(
+					];
+					$selected_records_more[] = [
 						'function' => 'add_more_actions_link',
 						'title' => $this->translation['Add more actions'],
 						'icon' => 'question-sign',
 						'class' => 'text-info'
-					);
+					];
 				}
 
 				/* user-defined actions ... should be set in the {tablename}_batch_actions() function in hooks/{tablename}.php */
 				$user_actions = [];
 				if(function_exists($this->TableName.'_batch_actions')) {
 					$args = [];
-					$user_actions = call_user_func_array($this->TableName . '_batch_actions', array(&$args));
+					$user_actions = call_user_func_array($this->TableName . '_batch_actions', [&$args]);
 					if(is_array($user_actions) && count($user_actions)) {
 						$selected_records_more = array_merge($selected_records_more, $user_actions);
 					}
@@ -1098,9 +1088,9 @@ class DataList{
 					if(!$i) $this->HTML .= "\n\t<tfoot><tr><td colspan=".(count($this->ColCaption) + 1). '>' . $this->translation['No matches found!'] . '</td></tr></tfoot>';
 				}
 
-				$this->HTML = str_replace("<FirstRecord>", number_format($FirstRecord), $this->HTML);
-				$this->HTML = str_replace("<LastRecord>", number_format($i), $this->HTML);
-				$this->HTML = str_replace("<RecordCount>", number_format($RecordCount), $this->HTML);
+				$this->HTML = str_replace("<FirstRecord>", '<span class="first-record locale-int">' . $FirstRecord . '</span>', $this->HTML);
+				$this->HTML = str_replace("<LastRecord>", '<span class="last-record locale-int">' . $i . '</span>', $this->HTML);
+				$this->HTML = str_replace("<RecordCount>", '<span class="record-count locale-int">' . $RecordCount . '</span>', $this->HTML);
 				$tvShown = true;
 
 				$this->HTML .= "</table></div>\n";
@@ -1251,7 +1241,7 @@ class DataList{
 
 			if($selectedRecords && $selectedRecords <= datalist_max_records_dv_print) { // if records selected > {datalist_max_records_dv_print} don't show DV preview to avoid db performance issues.
 				foreach($record_selector as $id) {
-					$dvCode .= call_user_func_array($this->TableName . '_form', array($id, 0, 0, 0, 1, $this->TemplateDV, $this->TemplateDVP));
+					$dvCode .= call_user_func_array($this->TableName . '_form', [$id, 0, 0, 0, 1, $this->TemplateDV, $this->TemplateDVP]);
 				}
 
 				if($dvCode != '') {
@@ -1274,7 +1264,7 @@ class DataList{
 		if($PrintDV != '') $this->ContentType = 'print-detailview';
 
 		// call detail view javascript hook file if found
-		$dvJSHooksFile = dirname(__FILE__) . '/hooks/' . $this->TableName . '-dv.js';
+		$dvJSHooksFile = APP_DIR . '/hooks/' . $this->TableName . '-dv.js';
 		if(is_file($dvJSHooksFile) && ($this->ContentType == 'detailview' || $this->ContentType == 'tableview+detailview')) {
 			$this->HTML .= "\n<script src=\"hooks/{$this->TableName}-dv.js\"></script>\n";
 		}
@@ -1343,7 +1333,7 @@ class DataList{
 		/* validate FilterOperator */
 		foreach($fop as $i => $f) {
 			$fop[$i] = trim($f);
-			if($f && !in_array(trim($f), array_keys($GLOBALS['filter_operators']))) {
+			if($f && !in_array(trim($f), array_keys(FILTER_OPERATORS))) {
 				$fop[$i] = '';
 			}
 		}
@@ -1353,7 +1343,7 @@ class DataList{
 		for($i = 1; $i <= datalist_filters_count * $FiltersPerGroup; $i++) {
 			if(!isset($fand[$i]) && !isset($ffield[$i]) && !isset($fop[$i]) && !isset($fvalue[$i])) continue;
 
-			if(($fvalue[$i] == '' && !in_array($fop[$i], array('is-empty', 'is-not-empty'))) || !$ffield[$i]) {
+			if(($fvalue[$i] == '' && !in_array($fop[$i], ['is-empty', 'is-not-empty'])) || !$ffield[$i]) {
 				unset($ffield[$i], $fop[$i], $fvalue[$i]);
 				if($i % $FiltersPerGroup != 1) unset($fand[$i]);
 			} else {
@@ -1378,7 +1368,7 @@ class DataList{
 			if(!$fand[$i]) $fand[$i] = 'and';
 		}
 
-		return array($fand, $ffield, $fop, $fvalue);
+		return [$fand, $ffield, $fop, $fvalue];
 	}
 
 	/**
@@ -1623,7 +1613,7 @@ class DataList{
 		// hook: table_csv
 		if(function_exists($this->TableName.'_csv')) {
 			$args = [];
-			$mq = call_user_func_array($this->TableName . '_csv', array($csvQuery, $mi, &$args));
+			$mq = call_user_func_array($this->TableName . '_csv', [$csvQuery, $mi, &$args]);
 			$csvQuery = ($mq ? $mq : $csvQuery);
 		}
 

@@ -1,4 +1,4 @@
-<?php if(!defined('datalist_date_separator')) die('datalist.php not included!');
+<?php
 
 class DataCombo{
 	var $Query, // Only the first two fields of the query are used.
@@ -21,11 +21,7 @@ class DataCombo{
 		$HTML,      // this is returned. The combo html source after calling Render().
 		$MatchText; // will store the parent caption value of the matching item.
 
-	function __construct() {  // PHP 7 compatibility
-		$this->DataCombo();
-	}
-
-	function DataCombo() { // Constructor function
+	function __construct() {
 		$this->FirstItem = '';
 		$this->HTML = '';
 		$this->Class = 'form-control Lookup';
@@ -68,16 +64,27 @@ class DataCombo{
 		$this->MatchText = $combo->MatchText;
 		$this->SelectedText = $combo->SelectedText;
 		$this->SelectedData = $combo->SelectedData;
-		if($this->ListType == 2) {
-			$rnd = rand(100, 999);
-			$SelectedID = html_attr(urlencode($this->SelectedData));
-			$pt_perm = getTablePermissions($this->parent_table);
-			if($pt_perm['view'] || $pt_perm['edit']) {
-				$this->HTML = str_replace(">{$this->MatchText}</label>", ">{$this->MatchText}</label> <button type=\"button\" class=\"btn btn-default view_parent hspacer-lg\" id=\"{$this->parent_table}_view_parent\" title=" . html_attr($Translation['View']) . "><i class=\"glyphicon glyphicon-eye-open\"></i></button>", $combo->HTML);
-			}
-			$this->HTML = str_replace(' type="radio" ', ' type="radio" onclick="' . $this->SelectName . '_changed();" ', $this->HTML);
-		} else {
+		
+		if($this->ListType != 2) {
 			$this->HTML = $combo->HTML;
+			return;
 		}
+
+		$rnd = rand(100, 999);
+		$SelectedID = html_attr(urlencode($this->SelectedData));
+		$pt_perm = getTablePermissions($this->parent_table);
+		if($pt_perm['view'] || $pt_perm['edit'])
+			$this->HTML = str_replace(
+				">{$this->MatchText}</label>", 
+				">{$this->MatchText}</label> " .
+				"<button type=\"button\" class=\"btn btn-default view_parent hspacer-lg\" id=\"{$this->parent_table}_view_parent\" title=" . html_attr($Translation['View']) . "><i class=\"glyphicon glyphicon-eye-open\"></i></button>",
+				$combo->HTML
+			);
+
+		$this->HTML = str_replace(
+			' type="radio" ',
+			' type="radio" onclick="' . $this->SelectName . '_changed();" ',
+			$this->HTML
+		);
 	}
 }

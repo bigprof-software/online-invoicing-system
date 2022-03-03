@@ -1,6 +1,6 @@
-<?php if(!defined('datalist_date_separator')) die('datalist.php not included!');
+<?php
 
-class Combo{
+class Combo {
 	// The Combo class renders a drop down combo
 	// filled with elements in an array ListItem[]
 	// and associates each element with data from
@@ -28,11 +28,7 @@ class Combo{
 
 		$HTML; // the resulting output HTML code to use
 
-	function __construct() {  // PHP 7 compatibility
-		$this->Combo();
-	}
-
-	function Combo() { // Constructor function
+	function __construct() {
 		$this->Class = 'form-control';
 		$this->SelectedClass = 'active';
 		$this->HTML = '';
@@ -56,7 +52,7 @@ class Combo{
 			return 0;
 		}
 
-		if(!$this->SelectID) $this->SelectID = str_replace(array('[', ']'), '_', $this->SelectName);
+		if(!$this->SelectID) $this->SelectID = str_replace(['[', ']'], '_', $this->SelectName);
 
 		if($this->ListType != 2) {
 			if($this->ApplySelect2) {

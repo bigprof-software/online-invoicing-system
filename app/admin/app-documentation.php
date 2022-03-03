@@ -1,10 +1,7 @@
 <?php
-	$currDir = dirname(__FILE__);
-	require("{$currDir}/incCommon.php");
+	require(__DIR__ . '/incCommon.php');
 
 	$GLOBALS['page_title'] = $Translation['app documentation'];
-	include("{$currDir}/incHeader.php");
-
-	$app_title = 'Online Inovicing System';
+	include(__DIR__ . '/incHeader.php');
 	
-	include("{$currDir}/incFooter.php");
+	include(__DIR__ . '/incFooter.php');

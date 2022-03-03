@@ -1,7 +1,6 @@
 <?php if(function_exists('set_headers')) { set_headers(); } ?>
 <?php if(!isset($Translation)) die('No direct access allowed!'); ?><!DOCTYPE html>
 <?php if(!defined('PREPEND_PATH')) define('PREPEND_PATH', ''); ?>
-<?php if(!defined('datalist_db_encoding')) define('datalist_db_encoding', 'UTF-8'); ?>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
@@ -12,7 +11,7 @@
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<title>Online Inovicing System | <?php echo (isset($x->TableTitle) ? $x->TableTitle : ''); ?></title>
+		<title><?php echo APP_TITLE . (isset($x->TableTitle) ? ' | ' . $x->TableTitle : ''); ?></title>
 		<link id="browser_favicon" rel="shortcut icon" href="<?php echo PREPEND_PATH; ?>resources/images/appgini-icon.png">
 
 		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/initializr/css/bootstrap.css">
@@ -64,7 +63,7 @@
 
 		<script src="<?php echo PREPEND_PATH; ?>common.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>shortcuts.js"></script>
-		<?php if(isset($x->TableName) && is_file(dirname(__FILE__) . "/hooks/{$x->TableName}-tv.js")) { ?>
+		<?php if(isset($x->TableName) && is_file(__DIR__ . "/hooks/{$x->TableName}-tv.js")) { ?>
 			<script src="<?php echo PREPEND_PATH; ?>hooks/<?php echo $x->TableName; ?>-tv.js"></script>
 		<?php } ?>
 
@@ -75,7 +74,7 @@
 
 			<?php if(!Request::val('Embedded')) { ?>
 				<?php if(function_exists('htmlUserBar')) echo htmlUserBar(); ?>
-				<div style="height: 70px;" class="hidden-print"></div>
+				<div style="min-height: 70px;" class="hidden-print top-margin-adjuster"></div>
 			<?php } ?>
 
 			<?php if(class_exists('Notification', false)) echo Notification::placeholder(); ?>
@@ -89,6 +88,6 @@
 				<div style="height: 2rem;"></div>
 			<?php } ?>
 
-			<?php if(!defined('APPGINI_SETUP') && is_file(dirname(__FILE__) . '/hooks/header-extras.php')) { include(dirname(__FILE__).'/hooks/header-extras.php'); } ?>
+			<?php if(!defined('APPGINI_SETUP') && is_file(__DIR__ . '/hooks/header-extras.php')) { include(__DIR__ . '/hooks/header-extras.php'); } ?>
 			<!-- Add header template below here .. -->
 

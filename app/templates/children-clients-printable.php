@@ -1,9 +1,13 @@
-<?php if(!isset($Translation)) die('No direct access allowed.'); ?>
-<?php $current_table = 'clients'; ?>
 <?php
+	if(!isset($Translation)) die('No direct access allowed.');
+	$current_table = 'clients';
 	$cleaner = new CI_Input(datalist_db_encoding);
+	$firstRecord = null;
 ?>
 <script>
+	// show child records count in badge in tab title
+	$j(() => { $j('.child-count-<?php echo $parameters['ChildTable']; ?>-<?php echo $parameters['ChildLookupField']; ?>').text(<?php echo $totalMatches; ?>) });
+
 	<?php echo $current_table; ?>GetChildrenRecordsList = function(command) {
 		var param = {
 			ChildTable: "<?php echo $parameters['ChildTable']; ?>",
@@ -107,7 +111,7 @@
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][5]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][5]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php echo safe_html($record[5]); ?></td>
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][6]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][6]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php echo safe_html($record[6]); ?></td>
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][7]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][7]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php echo safe_html($record[7]); ?></td>
-						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][8]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][8]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><a href="mailto:<?php echo isEmail($record[8]); ?>" class="btn btn-info" title="<?php echo html_attr($record[8]); ?>"><i class="glyphicon glyphicon-envelope"></i></a></td>
+						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][8]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][8]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><a href="mailto:<?php echo html_attr($record[8]); ?>" class="btn btn-info" title="<?php echo html_attr($record[8]); ?>"><i class="glyphicon glyphicon-envelope"></i></a></td>
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][9]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][9]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php if($record[9]) { ?><a href="link.php?t=<?php echo $parameters['ChildTable']; ?>&f=website&i=<?php echo urlencode($record[$config['child-primary-key-index']]); ?>" target="_blank"><?php echo $cleaner->xss_clean($record[9]); ?></a><?php } ?></td>
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][11]}"; ?> text-right" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][11]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php echo safe_html($record[11]); ?></td>
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][12]}"; ?> text-right" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][12]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php echo safe_html($record[12]); ?></td>
@@ -122,7 +126,7 @@
 								<?php if($config['show-page-progress']) { ?>
 									<span style="margin: 10px;">
 										<?php $firstRecord = ($parameters['Page'] - 1) * $config['records-per-page'] + 1; ?>
-										<?php echo str_replace(array('<FirstRecord>', '<LastRecord>', '<RecordCount>'), array($firstRecord, $firstRecord + count($records) - 1, $totalMatches), $Translation['records x to y of z']); ?>
+										<?php echo str_replace(['<FirstRecord>', '<LastRecord>', '<RecordCount>'], ['<span class="first-record locale-int">' . $firstRecord . '</span>', '<span class="last-record locale-int">' . ($firstRecord + count($records) - 1) . '</span>', '<span class="record-count locale-int">' . $totalMatches . '</span>'], $Translation['records x to y of z']); ?>
 									</span>
 								<?php } ?>
 							<?php } else { ?>

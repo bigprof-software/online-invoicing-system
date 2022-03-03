@@ -8,7 +8,7 @@
 
 		/* data for selected record, or defaults if none is selected */
 		var data = {
-			client: <?php echo json_encode(array('id' => $rdata['client'], 'value' => $rdata['client'], 'text' => $jdata['client'])); ?>,
+			client: <?php echo json_encode(['id' => $rdata['client'], 'value' => $rdata['client'], 'text' => $jdata['client']]); ?>,
 			client_contact: <?php echo json_encode($jdata['client_contact']); ?>,
 			client_address: <?php echo json_encode($jdata['client_address']); ?>,
 			client_phone: <?php echo json_encode($jdata['client_phone']); ?>,
